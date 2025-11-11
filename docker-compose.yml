@@ -1,0 +1,26 @@
+version: '3.8'
+
+services:
+  solacheck:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: solacheck
+    restart: unless-stopped
+    networks:
+      - homepage_default  # Connect to homepage's network
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.solacheck.rule=Host(`nofey.de`) && PathPrefix(`/solacheck`)"
+      - "traefik.http.routers.solacheck.entrypoints=websecure"
+      - "traefik.http.routers.solacheck.tls.certresolver=letsencrypt"
+      - "traefik.http.services.solacheck.loadbalancer.server.port=3000"
+      # Strip /solacheck prefix when forwarding to Next.js
+      - "traefik.http.middlewares.solacheck-stripprefix.stripprefix.prefixes=/solacheck"
+      - "traefik.http.routers.solacheck.middlewares=solacheck-stripprefix"
+    environment:
+      - NODE_ENV=production
+
+networks:
+  homepage_default:
+    external: true

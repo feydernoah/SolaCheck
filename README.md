@@ -117,6 +117,107 @@ Modify the PWA configuration in `next.config.js` and `public/manifest.json`.
 
 TypeScript configuration is in `tsconfig.json`. Adjust as needed for your project.
 
+## Deployment
+
+This project uses GitHub Actions for automated deployment to your server via Docker.
+
+### How It Works
+
+When you push to the `main` branch, GitHub Actions will:
+1. SSH into your server
+2. Pull the latest code from GitHub
+3. Rebuild and restart the Docker container using docker-compose
+4. The app runs on localhost:3000 behind your existing web server
+
+### Setup Instructions
+
+**1. Setup Project Directory on Server**:
+
+SSH to your server and create the project directory:
+
+```bash
+ssh noah@nofey.de
+cd /home/noah
+git clone https://github.com/feydernoah/SolaCheck.git solacheck
+cd solacheck
+```
+
+**2. Configure GitHub Secrets**:
+
+Go to your GitHub repository → Settings → Secrets and variables → Actions → New repository secret
+
+Add these two secrets:
+- `SSH_PRIVATE_KEY` - Your SSH private key (you already have this from your homepage repo)
+- `SSH_KNOWN_HOSTS` - Run this on your local machine to get it:
+  ```bash
+  ssh-keyscan nofey.de
+  ```
+
+**3. Configure Your Web Server** (choose your web server):
+
+**For Nginx:**
+
+Add this to your existing site configuration (e.g., `/etc/nginx/sites-available/your-site`):
+
+```nginx
+# Add this location block to your existing server block
+location /solacheck {
+    proxy_pass http://localhost:3000;
+    proxy_http_version 1.1;
+    proxy_set_header Upgrade $http_upgrade;
+    proxy_set_header Connection 'upgrade';
+    proxy_set_header Host $host;
+    proxy_cache_bypass $http_upgrade;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $scheme;
+}
+```
+
+Then reload Nginx:
+```bash
+sudo nginx -t  # Test configuration
+sudo systemctl reload nginx
+```
+
+**For Apache:**
+
+Enable required modules and add to your site config:
+```bash
+sudo a2enmod proxy proxy_http
+```
+
+Add this to your VirtualHost:
+```apache
+# Add this to your existing <VirtualHost> block
+ProxyPass /solacheck http://localhost:3000
+ProxyPassReverse /solacheck http://localhost:3000
+ProxyPreserveHost On
+```
+
+Then reload Apache:
+```bash
+sudo apachectl configtest
+sudo systemctl reload apache2
+```
+
+**4. Deploy!**
+
+Push to main branch:
+```bash
+git add .
+git commit -m "Setup CI/CD"
+git push origin main
+```
+
+Your app will be accessible at: `https://nofey.de/solacheck`
+
+### Monitoring Deployments
+
+- **GitHub Actions**: Check the "Actions" tab in your GitHub repository
+- **View Logs**: SSH to your server and run `docker-compose logs -f`
+- **Container Status**: `docker-compose ps`
+
 ## Learn More
 
 - [Next.js Documentation](https://nextjs.org/docs)
