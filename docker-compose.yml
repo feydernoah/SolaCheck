@@ -7,17 +7,19 @@ services:
       dockerfile: Dockerfile
     container_name: solacheck
     restart: unless-stopped
-    networks:
-      - homepage_default  # Connect to homepage's network
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.solacheck.rule=Host(`nofey.de`) && PathPrefix(`/solacheck`)"
       - "traefik.http.routers.solacheck.entrypoints=websecure"
       - "traefik.http.routers.solacheck.tls.certresolver=letsencrypt"
       - "traefik.http.services.solacheck.loadbalancer.server.port=3000"
+      - "traefik.docker.network=homepage_default"
+    networks:
+      - homepage_default
     environment:
       - NODE_ENV=production
 
 networks:
   homepage_default:
+    name: homepage_default
     external: true
