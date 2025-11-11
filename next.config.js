@@ -10,6 +10,8 @@ const nextConfig = {
   reactStrictMode: true,
   turbopack: {},
   output: 'standalone', // Required for Docker deployment
+  basePath: '/solacheck', // Serve from /solacheck path
+  assetPrefix: '/solacheck',
 };
 
 module.exports = withPWA(nextConfig);

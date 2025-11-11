@@ -15,9 +15,6 @@ services:
       - "traefik.http.routers.solacheck.entrypoints=websecure"
       - "traefik.http.routers.solacheck.tls.certresolver=letsencrypt"
       - "traefik.http.services.solacheck.loadbalancer.server.port=3000"
-      # Strip /solacheck prefix when forwarding to Next.js
-      - "traefik.http.middlewares.solacheck-stripprefix.stripprefix.prefixes=/solacheck"
-      - "traefik.http.routers.solacheck.middlewares=solacheck-stripprefix"
     environment:
       - NODE_ENV=production
 
