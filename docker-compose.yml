@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   solacheck:
     build:
@@ -13,13 +11,11 @@ services:
       - "traefik.http.routers.solacheck.entrypoints=websecure"
       - "traefik.http.routers.solacheck.tls.certresolver=letsencrypt"
       - "traefik.http.services.solacheck.loadbalancer.server.port=3000"
-      - "traefik.docker.network=homepage_default"
     networks:
-      - homepage_default
+      - traefik-net
     environment:
       - NODE_ENV=production
 
 networks:
-  homepage_default:
-    name: homepage_default
+  traefik-net:
     external: true
