@@ -6,7 +6,11 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "start:standalone": "node .next/standalone/server.js",
+    "lint": "next lint",
+    "test": "playwright test",
+    "test:ui": "playwright test --ui",
+    "test:headed": "playwright test --headed"
   },
   "keywords": [],
   "author": "",
@@ -18,8 +22,9 @@
     "react-dom": "^19.2.0"
   },
   "devDependencies": {
+    "@playwright/test": "^1.56.1",
     "@tailwindcss/postcss": "^4.1.16",
-    "@types/node": "^24.9.1",
+    "@types/node": "^24.10.1",
     "@types/react": "^19.2.2",
     "autoprefixer": "^10.4.21",
     "postcss": "^8.5.6",
