@@ -23,10 +23,12 @@ export default defineConfig({
 
   ...(process.env.CI ? {
     webServer: {
-      command: 'npm run build && npm run start:standalone',
+      command: 'npm run build:test && npm run start',
       url: 'http://localhost:3000',
-      reuseExistingServer: false,
-      timeout: 120000,
+      reuseExistingServer: !process.env.CI,
+      timeout: 180000, // 3 minutes for build + start
+      stderr: 'pipe',
+      stdout: 'pipe',
     },
   } : {}),
 });

@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "npm run lint && next build",
+    "build:test": "next build",
     "start": "next start",
     "start:standalone": "node .next/standalone/server.js",
     "lint": "eslint --cache --cache-location .next/cache/eslint/",
