@@ -71,7 +71,7 @@ export default function Home() {
   const currentAnswer = answers[currentQ.id];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800 p-4">
+    <div className="min-h-screen bg-linear-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800 p-4">
       {/* Burger Menu */}
       <div className="fixed top-4 right-4 z-50">
         <button
