@@ -23,12 +23,10 @@ export default defineConfig({
 
   ...(process.env.CI ? {
     webServer: {
-      command: 'npm run build:test && npm run start',
-      url: 'http://localhost:3000',
+      command: 'npm run build:test && npm run start:standalone',
+      url: 'http://localhost:3000/solacheck',
       reuseExistingServer: !process.env.CI,
-      timeout: 180000, // 3 minutes for build + start
-      stderr: 'pipe',
-      stdout: 'pipe',
+      timeout: 180000,
     },
   } : {}),
 });
