@@ -54,10 +54,11 @@ export default function Home() {
   };
 
   const handleCheckboxAnswer = (option: string) => {
-    const currentAnswers = (answers[questions[currentQuestion].id] as string[]) || [];
-    const newAnswers = currentAnswers.includes(option)
-      ? currentAnswers.filter((a) => a !== option)
-      : [...currentAnswers, option];
+    const currentAnswers = answers[questions[currentQuestion].id] as string[] | undefined;
+    const existingAnswers = currentAnswers ?? [];
+    const newAnswers = existingAnswers.includes(option)
+      ? existingAnswers.filter((a) => a !== option)
+      : [...existingAnswers, option];
     setAnswers({ ...answers, [questions[currentQuestion].id]: newAnswers });
   };
 
@@ -71,7 +72,7 @@ export default function Home() {
   const currentAnswer = answers[currentQ.id];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800 p-4">
+    <div className="min-h-screen bg-linear-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800 p-4">
       {/* Burger Menu */}
       <div className="fixed top-4 right-4 z-50">
         <button
@@ -111,7 +112,7 @@ export default function Home() {
               <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
                 <div
                   className="bg-indigo-600 h-2 rounded-full transition-all duration-300"
-                  style={{ width: `${((currentQuestion + 1) / questions.length) * 100}%` }}
+                  style={{ width: `${(((currentQuestion + 1) / questions.length) * 100).toString()}%` }}
                 ></div>
               </div>
             </div>
@@ -133,14 +134,14 @@ export default function Home() {
                 />
               ) : (
                 <div className="space-y-3">
-                  {currentQ.options?.map((option) => (
+                  {currentQ.options.map((option) => (
                     <label
                       key={option}
                       className="flex items-center space-x-3 p-3 border-2 border-gray-200 dark:border-gray-600 rounded-lg cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
                     >
                       <input
                         type="checkbox"
-                        checked={(currentAnswer as string[] || []).includes(option)}
+                        checked={(currentAnswer as string[] | undefined ?? []).includes(option)}
                         onChange={() => handleCheckboxAnswer(option)}
                         className="w-5 h-5 text-indigo-600 rounded focus:ring-indigo-500"
                       />
