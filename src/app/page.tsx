@@ -1,40 +1,26 @@
 "use client";
 
 import { useState } from "react";
+import { Button } from "@/components/ui/Button";
+import { Card } from "@/components/ui/Card";
+import { OptionTile } from "@/components/ui/OptionTile";
 
 const questions = [
   {
     id: 1,
-    question: 'What is your name?',
-    type: 'text' as const,
-  },
-  {
-    id: 2,
-    question: 'What is your favorite color?',
-    type: 'text' as const,
-  },
-  {
-    id: 3,
-    question: 'Which programming languages do you know?',
-    type: 'checkbox' as const,
-    options: ['JavaScript', 'TypeScript', 'Python', 'Java', 'C++'],
-  },
-  {
-    id: 4,
-    question: 'What is your experience level?',
-    type: 'checkbox' as const,
-    options: ['Beginner', 'Intermediate', 'Advanced', 'Expert'],
-  },
-  {
-    id: 5,
-    question: 'Any additional comments?',
-    type: 'text' as const,
+    question: 'Wo soll das BKW installiert werden?',
+    type: 'tile' as const,
+    options: [
+      { value: 'balkon', label: 'Balkon', icon: '🏢' },
+      { value: 'terrasse', label: 'Terrasse', icon: '🏡' },
+      { value: 'hauswand', label: 'Hauswand', icon: '🧱' },
+    ],
   },
 ];
 
 export default function Home() {
   const [currentQuestion, setCurrentQuestion] = useState(0);
-  const [answers, setAnswers] = useState<Record<number, string | string[]>>({});
+  const [answers, setAnswers] = useState<Record<number, string>>({});
   const [menuOpen, setMenuOpen] = useState(false);
 
   const handleNext = () => {
@@ -49,17 +35,8 @@ export default function Home() {
     }
   };
 
-  const handleTextAnswer = (value: string) => {
+  const handleTileAnswer = (value: string) => {
     setAnswers({ ...answers, [questions[currentQuestion].id]: value });
-  };
-
-  const handleCheckboxAnswer = (option: string) => {
-    const currentAnswers = answers[questions[currentQuestion].id] as string[] | undefined;
-    const existingAnswers = currentAnswers ?? [];
-    const newAnswers = existingAnswers.includes(option)
-      ? existingAnswers.filter((a) => a !== option)
-      : [...existingAnswers, option];
-    setAnswers({ ...answers, [questions[currentQuestion].id]: newAnswers });
   };
 
   const handleReset = () => {
@@ -92,7 +69,7 @@ export default function Home() {
               onClick={handleReset}
               className="w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded transition-colors"
             >
-              🔄 Reset & Start Over
+              🔄 Neu starten
             </button>
           </div>
         )}
@@ -100,86 +77,74 @@ export default function Home() {
 
       {/* Main Content */}
       <div className="flex items-center justify-center min-h-screen">
-        <div className="w-full max-w-2xl">
-          {/* Question Box */}
-          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl p-8 md:p-12 transition-all duration-300">
+        <div className="w-full max-w-4xl px-4">
+          {/* Question Card */}
+          <Card padding="lg" className="animate-fade-in">
             {/* Progress Indicator */}
             <div className="mb-8">
               <div className="flex justify-between text-sm text-gray-600 dark:text-gray-400 mb-2">
-                <span>Question {currentQuestion + 1} of {questions.length}</span>
+                <span>Frage {currentQuestion + 1} von {questions.length}</span>
                 <span>{Math.round(((currentQuestion + 1) / questions.length) * 100)}%</span>
               </div>
               <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
                 <div
-                  className="bg-indigo-600 h-2 rounded-full transition-all duration-300"
+                  className="bg-brand-primary h-2 rounded-full transition-all duration-300"
                   style={{ width: `${(((currentQuestion + 1) / questions.length) * 100).toString()}%` }}
                 ></div>
               </div>
             </div>
 
             {/* Question */}
-            <h2 className="text-2xl md:text-3xl font-bold text-gray-800 dark:text-white mb-8">
+            <h2 className="text-heading-2 md:text-heading-1 font-bold text-gray-800 dark:text-white mb-8">
               {currentQ.question}
             </h2>
 
             {/* Answer Input */}
             <div className="mb-8">
-              {currentQ.type === 'text' ? (
-                <input
-                  type="text"
-                  value={(currentAnswer as string) || ''}
-                  onChange={(e) => handleTextAnswer(e.target.value)}
-                  className="w-full px-4 py-3 border-2 border-gray-300 dark:border-gray-600 rounded-lg focus:border-indigo-600 focus:outline-none bg-white dark:bg-gray-700 text-gray-800 dark:text-white"
-                  placeholder="Type your answer here..."
-                />
-              ) : (
-                <div className="space-y-3">
-                  {currentQ.options.map((option) => (
-                    <label
-                      key={option}
-                      className="flex items-center space-x-3 p-3 border-2 border-gray-200 dark:border-gray-600 rounded-lg cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
-                    >
-                      <input
-                        type="checkbox"
-                        checked={(currentAnswer as string[] | undefined ?? []).includes(option)}
-                        onChange={() => handleCheckboxAnswer(option)}
-                        className="w-5 h-5 text-indigo-600 rounded focus:ring-indigo-500"
-                      />
-                      <span className="text-gray-800 dark:text-white">{option}</span>
-                    </label>
-                  ))}
-                </div>
-              )}
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                {currentQ.options.map((option) => (
+                  <OptionTile
+                    key={option.value}
+                    label={option.label}
+                    icon={<span className="text-5xl">{option.icon}</span>}
+                    selected={currentAnswer === option.value}
+                    onClick={() => handleTileAnswer(option.value)}
+                  />
+                ))}
+              </div>
             </div>
 
             {/* Navigation */}
             <div className="flex justify-between items-center">
-              <button
+              <Button
                 onClick={handlePrevious}
                 disabled={currentQuestion === 0}
-                className="px-6 py-3 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-white rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                variant="secondary"
+                size="lg"
               >
-                ← Previous
-              </button>
+                ← Zurück
+              </Button>
 
               {currentQuestion === questions.length - 1 ? (
-                <button
-                  onClick={() => alert('Survey completed! Answers: ' + JSON.stringify(answers, null, 2))}
-                  className="px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+                <Button
+                  onClick={() => alert('Fragebogen abgeschlossen! Antworten: ' + JSON.stringify(answers, null, 2))}
+                  variant="primary"
+                  size="lg"
                 >
-                  Submit ✓
-                </button>
+                  Absenden ✓
+                </Button>
               ) : (
-                <button
+                <Button
                   onClick={handleNext}
-                  className="px-6 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors flex items-center gap-2"
+                  variant="primary"
+                  size="lg"
+                  disabled={!currentAnswer}
                 >
-                  Next
-                  <span className="text-xl">→</span>
-                </button>
+                  Weiter →
+                </Button>
               )}
             </div>
-          </div>
+          </Card>
         </div>
       </div>
     </div>
