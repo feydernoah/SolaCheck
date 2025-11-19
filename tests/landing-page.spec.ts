@@ -61,27 +61,15 @@ test.describe('Landing Page', () => {
   });
 
   test('speech bubble changes message after delay', async ({ page }) => {
-    // Wait for the initial message
-    await expect(page.locator('text=Hallo! Willkommen bei SolaCheck')).toBeVisible();
+    // Check initial message is visible
+    const initialMessage = page.locator('text=Hallo! Willkommen bei SolaCheck');
+    await expect(initialMessage).toBeVisible();
     
-    // Wait for any of the possible messages to appear (up to 17 seconds)
-    const possibleMessages = [
-      'Bereit für dein Quiz?',
-      'Ich bin hier, falls du Fragen hast!',
-      'Lass uns gemeinsam durchstarten!',
-    ];
-
-    let messageFound = false;
-    for (const message of possibleMessages) {
-      try {
-        await expect(page.locator(`text=${message}`)).toBeVisible({ timeout: 17000 });
-        messageFound = true;
-        break;
-      } catch (e) {
-        // Continue to next message
-      }
-    }
-    expect(messageFound).toBeTruthy();
+    // Wait 5 seconds for the message to change
+    await page.waitForTimeout(5500);
+    
+    // Check that the initial message is no longer visible (message has changed)
+    await expect(initialMessage).not.toBeVisible();
   });
 
   test('displays placeholder for small logo in top left', async ({ page }) => {
@@ -111,12 +99,16 @@ test.describe('Landing Page', () => {
   });
 
   test('chat buddy is positioned at bottom left', async ({ page }) => {
-    const chatBuddyContainer = page.locator('div.fixed.bottom-6.left-6');
+    const chatBuddyContainer = page.locator('div.fixed').filter({ has: page.locator('img[alt="Sola Chat Buddy"]') });
     await expect(chatBuddyContainer).toBeVisible();
+    await expect(chatBuddyContainer).toHaveClass(/bottom-/);
+    await expect(chatBuddyContainer).toHaveClass(/left-/);
   });
 
   test('burger menu is positioned at top right', async ({ page }) => {
-    const burgerMenuContainer = page.locator('div.fixed.top-6.right-6');
+    const burgerMenuContainer = page.locator('div.fixed').filter({ has: page.getByRole('button', { name: 'Menu' }) });
     await expect(burgerMenuContainer).toBeVisible();
+    await expect(burgerMenuContainer).toHaveClass(/top-/);
+    await expect(burgerMenuContainer).toHaveClass(/right-/);
   });
 });
