@@ -45,11 +45,12 @@ test.describe('Landing Page', () => {
     const burgerMenu = page.getByRole('button', { name: 'Menu' });
     await burgerMenu.click();
     
-    // Wait a moment for the menu to appear
-    await page.waitForTimeout(100);
+    // Wait for the menu dropdown to appear
+    const homeButton = page.locator('text=Home');
+    await homeButton.waitFor({ state: 'visible', timeout: 10000 });
     
     // Menu dropdown should be visible
-    await expect(page.locator('text=Home')).toBeVisible();
+    await expect(homeButton).toBeVisible();
     await expect(page.locator('text=Quiz starten')).toBeVisible();
   });
 
@@ -59,20 +60,26 @@ test.describe('Landing Page', () => {
   });
 
   test('displays speech bubble with welcome message', async ({ page }) => {
-    const speechBubble = page.locator('text=Hallo! Willkommen bei SolaCheck');
+    const speechBubble = page.locator('text=Hallo! Willkommen bei SolaCheck. Ich bin Sola und helfe dir gerne weiter! 👋');
     await expect(speechBubble).toBeVisible();
   });
 
   test('speech bubble changes message after delay', async ({ page }) => {
     // Check initial message is visible
-    const initialMessage = page.locator('text=Hallo! Willkommen bei SolaCheck');
+    const initialMessage = page.locator('text=Hallo! Willkommen bei SolaCheck. Ich bin Sola und helfe dir gerne weiter! 👋');
     await expect(initialMessage).toBeVisible();
     
-    // Wait 6 seconds for the message to change (5s interval + buffer for CI)
-    await page.waitForTimeout(6000);
+    // Wait for one of the other messages to appear (check all possible messages)
+    const secondMessage = page.locator('text=Bereit für dein Quiz? Klick einfach auf den Start-Button! 🚀');
+    const thirdMessage = page.locator('text=Ich bin hier, falls du Fragen hast! 😊');
+    const fourthMessage = page.locator('text=Lass uns gemeinsam durchstarten! 💪');
     
-    // Check that the initial message is no longer visible (message has changed)
-    await expect(initialMessage).not.toBeVisible({ timeout: 1000 });
+    // At least one of these should become visible within 10 seconds
+    await Promise.race([
+      secondMessage.waitFor({ state: 'visible', timeout: 10000 }),
+      thirdMessage.waitFor({ state: 'visible', timeout: 10000 }),
+      fourthMessage.waitFor({ state: 'visible', timeout: 10000 })
+    ]);
   });
 
   test('displays placeholder for small logo in top left', async ({ page }) => {
