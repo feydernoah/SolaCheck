@@ -20,12 +20,12 @@ export function Card({
   };
   
   const hoverEffect = hover 
-    ? 'hover:shadow-card-hover transition-shadow duration-300' 
+    ? 'hover:shadow-xl transition-shadow duration-300' 
     : '';
   
   return (
     <div 
-      className={`bg-white dark:bg-gray-800 rounded-2xl shadow-card ${paddings[padding]} ${hoverEffect} ${className}`}
+      className={`bg-white rounded-2xl shadow-lg border border-gray-200 ${paddings[padding]} ${hoverEffect} ${className}`}
     >
       {children}
     </div>

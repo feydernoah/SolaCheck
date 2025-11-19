@@ -12,7 +12,7 @@ const config: Config = {
       // Company brand colors - customize these later
       colors: {
         brand: {
-          primary: '#4F46E5',      // Indigo - replace with company color
+          primary: '#FACC15',      // yellow-400 - matches landing page
           secondary: '#06B6D4',    // Cyan - replace with company color
           accent: '#F59E0B',       // Amber - replace with company color
         },

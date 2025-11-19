@@ -25,18 +25,19 @@ export function OptionTile({
         rounded-xl border-2 transition-all duration-200
         flex flex-col items-center justify-center gap-3
         disabled:opacity-50 disabled:cursor-not-allowed
+        bg-white
         ${
           selected
-            ? 'border-brand-primary bg-brand-primary/10 shadow-tile-hover scale-[0.98]'
-            : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:border-brand-primary/50 hover:shadow-tile hover:scale-[1.02] active:scale-[0.98]'
+            ? 'border-yellow-400 shadow-lg scale-[0.98]'
+            : 'border-gray-200 hover:border-gray-300 hover:shadow-md hover:scale-[1.02] active:scale-[0.98]'
         }
       `}
     >
       {/* Icon Container */}
       {icon && (
         <div className={`
-          text-4xl sm:text-5xl transition-transform duration-200
-          ${selected ? 'scale-110' : ''}
+          text-5xl sm:text-6xl transition-all duration-200
+          ${selected ? 'scale-110 text-yellow-400' : 'text-gray-600'}
         `}>
           {icon}
         </div>
@@ -45,16 +46,16 @@ export function OptionTile({
       {/* Label */}
       <span className={`
         text-base sm:text-lg font-semibold text-center
-        ${selected ? 'text-brand-primary' : 'text-gray-700 dark:text-gray-200'}
+        ${selected ? 'text-gray-800' : 'text-gray-700'}
       `}>
         {label}
       </span>
       
       {/* Selection Indicator */}
       {selected && (
-        <div className="absolute top-3 right-3 w-6 h-6 bg-brand-primary rounded-full flex items-center justify-center animate-scale-in">
+        <div className="absolute top-3 right-3 w-6 h-6 bg-yellow-400 rounded-full flex items-center justify-center animate-scale-in">
           <svg 
-            className="w-4 h-4 text-white" 
+            className="w-4 h-4 text-gray-800" 
             fill="none" 
             strokeLinecap="round" 
             strokeLinejoin="round" 
