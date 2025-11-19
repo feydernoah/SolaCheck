@@ -95,8 +95,9 @@ test.describe('Landing Page', () => {
     // Hover over button
     await startButton.hover();
     
-    // Button should have hover:bg-yellow-400 class
-    await expect(startButton).toHaveClass(/hover:bg-yellow-400/);
+    // Check that the background color changes to yellow-400 (rgb(253, 224, 71))
+    const bgColor = await startButton.evaluate((el) => getComputedStyle(el).backgroundColor);
+    expect(bgColor).toBe('rgb(253, 224, 71)');
   });
 
   test('page has white background', async ({ page }) => {
