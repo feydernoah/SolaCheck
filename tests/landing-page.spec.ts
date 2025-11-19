@@ -45,6 +45,9 @@ test.describe('Landing Page', () => {
     const burgerMenu = page.getByRole('button', { name: 'Menu' });
     await burgerMenu.click();
     
+    // Wait a moment for the menu to appear
+    await page.waitForTimeout(100);
+    
     // Menu dropdown should be visible
     await expect(page.locator('text=Home')).toBeVisible();
     await expect(page.locator('text=Quiz starten')).toBeVisible();
@@ -65,11 +68,11 @@ test.describe('Landing Page', () => {
     const initialMessage = page.locator('text=Hallo! Willkommen bei SolaCheck');
     await expect(initialMessage).toBeVisible();
     
-    // Wait 5 seconds for the message to change
-    await page.waitForTimeout(5500);
+    // Wait 6 seconds for the message to change (5s interval + buffer for CI)
+    await page.waitForTimeout(6000);
     
     // Check that the initial message is no longer visible (message has changed)
-    await expect(initialMessage).not.toBeVisible();
+    await expect(initialMessage).not.toBeVisible({ timeout: 1000 });
   });
 
   test('displays placeholder for small logo in top left', async ({ page }) => {
