@@ -14,6 +14,7 @@ const chatMessages = [
 export default function LandingPage() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [currentMessageIndex, setCurrentMessageIndex] = useState(0);
+  const [speechBubbleVisible, setSpeechBubbleVisible] = useState(true);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -91,22 +92,30 @@ export default function LandingPage() {
         <div className="flex items-start gap-2 sm:gap-2 md:gap-3">
           {/* Chat Buddy Image */}
           <div className="flex-shrink-0">
-            <Image
-              src="/solacheck/SolaWinkend.png"
-              alt="Sola Chat Buddy"
-              width={200}
-              height={200}
-              className="w-32 min-[375px]:w-36 sm:w-40 md:w-48 lg:w-52 xl:w-52 h-auto"
-              unoptimized
-            />
+            <button
+              onClick={() => setSpeechBubbleVisible(!speechBubbleVisible)}
+              className="cursor-pointer active:scale-95 transition-transform"
+              aria-label="Toggle speech bubble"
+            >
+              <Image
+                src="/solacheck/SolaWinkend.png"
+                alt="Sola Chat Buddy"
+                width={200}
+                height={200}
+                className="w-32 min-[375px]:w-36 sm:w-40 md:w-48 lg:w-52 xl:w-52 h-auto"
+                unoptimized
+              />
+            </button>
           </div>
 
           {/* Speech Bubble */}
-          <div className="bg-white p-3 min-[375px]:p-3.5 sm:p-4 md:p-6 lg:p-6 xl:p-6 rounded-2xl rounded-bl-none shadow-lg border border-gray-200 max-w-[160px] min-[375px]:max-w-[180px] sm:max-w-[200px] md:max-w-md lg:max-w-md xl:max-w-[280px] min-[1330px]:!max-w-[305px] min-[1380px]:!max-w-[330px] min-[1430px]:!max-w-[355px] min-[1480px]:!max-w-[380px] min-[1530px]:!max-w-[405px] min-[1580px]:!max-w-[430px] min-[1605px]:!max-w-md -mt-2 min-[375px]:-mt-3 sm:-mt-4 md:-mt-8">
-            <p className="text-gray-800 text-[10px] min-[375px]:text-xs sm:text-xs md:text-lg lg:text-lg xl:text-lg leading-snug">
-              {chatMessages[currentMessageIndex]}
-            </p>
-          </div>
+          {speechBubbleVisible && (
+            <div className="bg-white p-3 min-[375px]:p-3.5 sm:p-4 md:p-6 lg:p-6 xl:p-6 rounded-2xl rounded-bl-none shadow-lg border border-gray-200 max-w-[160px] min-[375px]:max-w-[180px] sm:max-w-[200px] md:max-w-md lg:max-w-md xl:max-w-[280px] min-[1330px]:!max-w-[305px] min-[1380px]:!max-w-[330px] min-[1430px]:!max-w-[355px] min-[1480px]:!max-w-[380px] min-[1530px]:!max-w-[405px] min-[1580px]:!max-w-[430px] min-[1605px]:!max-w-md -mt-2 min-[375px]:-mt-3 sm:-mt-4 md:-mt-8">
+              <p className="text-gray-800 text-[10px] min-[375px]:text-xs sm:text-xs md:text-lg lg:text-lg xl:text-lg leading-snug">
+                {chatMessages[currentMessageIndex]}
+              </p>
+            </div>
+          )}
         </div>
       </div>
     </div>
