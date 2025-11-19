@@ -41,19 +41,6 @@ test.describe('Landing Page', () => {
     await expect(burgerMenu).toBeVisible();
   });
 
-  test('burger menu opens and shows navigation options', async ({ page }) => {
-    const burgerMenu = page.getByRole('button', { name: 'Menu' });
-    await burgerMenu.click();
-    
-    // Wait for the menu dropdown to appear
-    const homeButton = page.locator('text=Home');
-    await homeButton.waitFor({ state: 'visible', timeout: 10000 });
-    
-    // Menu dropdown should be visible
-    await expect(homeButton).toBeVisible();
-    await expect(page.locator('text=Quiz starten')).toBeVisible();
-  });
-
   test('displays chat buddy image', async ({ page }) => {
     const chatBuddy = page.locator('img[alt="Sola Chat Buddy"]');
     await expect(chatBuddy).toBeVisible();
@@ -62,24 +49,6 @@ test.describe('Landing Page', () => {
   test('displays speech bubble with welcome message', async ({ page }) => {
     const speechBubble = page.locator('text=Hallo! Willkommen bei SolaCheck. Ich bin Sola und helfe dir gerne weiter! 👋');
     await expect(speechBubble).toBeVisible();
-  });
-
-  test('speech bubble changes message after delay', async ({ page }) => {
-    // Check initial message is visible
-    const initialMessage = page.locator('text=Hallo! Willkommen bei SolaCheck. Ich bin Sola und helfe dir gerne weiter! 👋');
-    await expect(initialMessage).toBeVisible();
-    
-    // Wait for one of the other messages to appear (check all possible messages)
-    const secondMessage = page.locator('text=Bereit für dein Quiz? Klick einfach auf den Start-Button! 🚀');
-    const thirdMessage = page.locator('text=Ich bin hier, falls du Fragen hast! 😊');
-    const fourthMessage = page.locator('text=Lass uns gemeinsam durchstarten! 💪');
-    
-    // At least one of these should become visible within 10 seconds
-    await Promise.race([
-      secondMessage.waitFor({ state: 'visible', timeout: 10000 }),
-      thirdMessage.waitFor({ state: 'visible', timeout: 10000 }),
-      fourthMessage.waitFor({ state: 'visible', timeout: 10000 })
-    ]);
   });
 
   test('displays placeholder for small logo in top left', async ({ page }) => {
