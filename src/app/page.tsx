@@ -4,6 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { useState, useEffect } from "react";
 import { BurgerMenu } from "@/components/BurgerMenu";
+import { Button } from "@/components/ui/Button";
 
 const chatMessages = [
   "Hallo! Willkommen bei SolaCheck. Ich bin Sola und helfe dir gerne weiter! 👋",
@@ -53,9 +54,9 @@ export default function LandingPage() {
 
         {/* Start Button */}
         <Link href="/quiz">
-          <button className="mb-24 sm:mb-32 md:mb-32 lg:mb-32 xl:mb-0 px-10 py-4 sm:px-12 sm:py-4 md:px-12 md:py-4 lg:px-16 lg:py-6 xl:px-16 xl:py-6 bg-gray-400 text-white text-lg sm:text-xl md:text-xl lg:text-2xl xl:text-2xl font-semibold rounded-full active:bg-yellow-400 active:text-gray-800 md:hover:bg-yellow-400 md:hover:text-gray-800 transition-colors shadow-lg active:shadow-xl md:hover:shadow-xl transform active:scale-105 md:hover:scale-105 transition-transform">
+          <Button size="lg" className="mb-24 sm:mb-32 md:mb-32 lg:mb-32 xl:mb-0 px-10 py-4 sm:px-12 sm:py-4 md:px-12 md:py-4 lg:px-16 lg:py-6 xl:px-16 xl:py-6 text-lg sm:text-xl md:text-xl lg:text-2xl xl:text-2xl">
             Start
-          </button>
+          </Button>
         </Link>
       </div>
 
