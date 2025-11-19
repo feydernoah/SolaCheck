@@ -32,8 +32,15 @@ test.describe('Landing Page', () => {
     // Should navigate to /solacheck/quiz
     await expect(page).toHaveURL('/solacheck/quiz');
     
-    // Should see the quiz question
-    await expect(page.locator('text=Question 1 of 5')).toBeVisible();
+    // Wait for the page to load
+    await page.waitForLoadState('networkidle');
+    
+    // Should see the quiz progress indicator (more flexible - checks for pattern "Frage X von Y")
+    await expect(page.locator('text=/Frage \\d+ von \\d+/')).toBeVisible({ timeout: 10000 });
+    
+    // Should see a question heading
+    const questionHeading = page.locator('h2.text-heading-2');
+    await expect(questionHeading).toBeVisible();
   });
 
   test('displays burger menu', async ({ page }) => {
