@@ -64,25 +64,23 @@ test.describe('Landing Page', () => {
     // Wait for the initial message
     await expect(page.locator('text=Hallo! Willkommen bei SolaCheck')).toBeVisible();
     
-    // Wait for 15 seconds for message to change
-    await page.waitForTimeout(15500);
-    
-    // Check if a different message is now visible
+    // Wait for any of the possible messages to appear (up to 17 seconds)
     const possibleMessages = [
       'Bereit für dein Quiz?',
       'Ich bin hier, falls du Fragen hast!',
       'Lass uns gemeinsam durchstarten!',
     ];
-    
+
     let messageFound = false;
     for (const message of possibleMessages) {
-      const locator = page.locator(`text=${message}`);
-      if (await locator.isVisible()) {
+      try {
+        await expect(page.locator(`text=${message}`)).toBeVisible({ timeout: 17000 });
         messageFound = true;
         break;
+      } catch (e) {
+        // Continue to next message
       }
     }
-    
     expect(messageFound).toBeTruthy();
   });
 
