@@ -27,11 +27,18 @@ test.describe('SolaCheck - Basic Health Check', () => {
   test('progress bar shows correct percentage', async ({ page }) => {
     await page.goto('/solacheck/quiz');
 
+    // Wait for page to be fully loaded
+    await page.waitForLoadState('networkidle');
+
     // Check that progress bar exists and shows a percentage
     await expect(page.locator('text=/\\d+%/')).toBeVisible();
     
-    // Check that the progress bar element itself is visible
+    // Check that the progress bar container is visible (gray background)
+    const progressBarContainer = page.locator('.bg-gray-200.rounded-full.h-2');
+    await expect(progressBarContainer).toBeVisible();
+    
+    // Check that the yellow progress bar exists (it may have width 0 if no answer selected)
     const progressBar = page.locator('.bg-yellow-400.h-2.rounded-full');
-    await expect(progressBar).toBeVisible();
+    await expect(progressBar).toBeAttached();
   });
 });
