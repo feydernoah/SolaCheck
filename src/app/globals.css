@@ -8,3 +8,27 @@
     url("https://db.onlinewebfonts.com/t/f0968336c01fbfad47f8a946b3b8e0cb.ttf")format("truetype"),
     url("https://db.onlinewebfonts.com/t/f0968336c01fbfad47f8a946b3b8e0cb.svg#GT Pressura Mono Bold Bold")format("svg");
 }
+@font-face {
+    font-family: "GT Pressura Bold";
+    src: url("/fonts/GT-Pressura-Bold.otf") format("otf");
+    font-weight: normal;
+    font-style: normal;
+  }
+@font-face {
+    font-family: "IBM Plex Sans Bold";
+    src: url("https://db.onlinewebfonts.com/t/c3ab44273b1f49238a905ed0c53016b6.eot");
+    src: url("https://db.onlinewebfonts.com/t/c3ab44273b1f49238a905ed0c53016b6.eot?#iefix")format("embedded-opentype"),
+    url("https://db.onlinewebfonts.com/t/c3ab44273b1f49238a905ed0c53016b6.woff2")format("woff2"),
+    url("https://db.onlinewebfonts.com/t/c3ab44273b1f49238a905ed0c53016b6.woff")format("woff"),
+    url("https://db.onlinewebfonts.com/t/c3ab44273b1f49238a905ed0c53016b6.ttf")format("truetype"),
+    url("https://db.onlinewebfonts.com/t/c3ab44273b1f49238a905ed0c53016b6.svg#IBM Plex Sans Bold")format("svg");
+}
+@font-face {
+    font-family: "IBM Plex Sans Regular";
+    src: url("https://db.onlinewebfonts.com/t/c7ebe84a7fdd7533f76e961497204b57.eot");
+    src: url("https://db.onlinewebfonts.com/t/c7ebe84a7fdd7533f76e961497204b57.eot?#iefix")format("embedded-opentype"),
+    url("https://db.onlinewebfonts.com/t/c7ebe84a7fdd7533f76e961497204b57.woff2")format("woff2"),
+    url("https://db.onlinewebfonts.com/t/c7ebe84a7fdd7533f76e961497204b57.woff")format("woff"),
+    url("https://db.onlinewebfonts.com/t/c7ebe84a7fdd7533f76e961497204b57.ttf")format("truetype"),
+    url("https://db.onlinewebfonts.com/t/c7ebe84a7fdd7533f76e961497204b57.svg#IBM Plex Sans Regular")format("svg");
+}
