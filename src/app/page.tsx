@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import HKAButton from "./ui/hka-button";
 
 const questions = [
   {
@@ -163,20 +164,22 @@ export default function Home() {
               </button>
 
               {currentQuestion === questions.length - 1 ? (
-                <button
+                <HKAButton
                   onClick={() => alert('Survey completed! Answers: ' + JSON.stringify(answers, null, 2))}
-                  className="px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+                  color="approve"
+                  size="medium"
                 >
                   Submit ✓
-                </button>
+                </HKAButton>
               ) : (
-                <button
+                <HKAButton
                   onClick={handleNext}
-                  className="px-6 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors flex items-center gap-2"
+                  color="primary"
+                  size="medium"
                 >
                   Next
-                  <span className="text-xl">→</span>
-                </button>
+                  <span className="text-xl"> {'>'}</span>
+                </HKAButton>
               )}
             </div>
           </div>

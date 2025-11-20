@@ -1,1 +1,10 @@
 @import "tailwindcss";
+@font-face {
+    font-family: "GT Pressura Mono Bold Bold";
+    src: url("https://db.onlinewebfonts.com/t/f0968336c01fbfad47f8a946b3b8e0cb.eot");
+    src: url("https://db.onlinewebfonts.com/t/f0968336c01fbfad47f8a946b3b8e0cb.eot?#iefix")format("embedded-opentype"),
+    url("https://db.onlinewebfonts.com/t/f0968336c01fbfad47f8a946b3b8e0cb.woff2")format("woff2"),
+    url("https://db.onlinewebfonts.com/t/f0968336c01fbfad47f8a946b3b8e0cb.woff")format("woff"),
+    url("https://db.onlinewebfonts.com/t/f0968336c01fbfad47f8a946b3b8e0cb.ttf")format("truetype"),
+    url("https://db.onlinewebfonts.com/t/f0968336c01fbfad47f8a946b3b8e0cb.svg#GT Pressura Mono Bold Bold")format("svg");
+}
