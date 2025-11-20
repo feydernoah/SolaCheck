@@ -1,10 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { OptionTile } from "@/components/ui/OptionTile";
 import { BurgerMenu } from "@/components/BurgerMenu";
+import { LocationInput } from "@/components/LocationInput";
 import { 
   MdBalcony, 
   MdDeck, 
@@ -359,9 +360,9 @@ export default function Home() {
     setAnswers({ ...answers, [questions[currentQuestion].id]: newAnswers });
   };
 
-  const handleTextAnswer = (value: string) => {
-    setAnswers({ ...answers, [questions[currentQuestion].id]: value });
-  };
+  const handleTextAnswer = useCallback((value: string) => {
+    setAnswers((prev) => ({ ...prev, [questions[currentQuestion].id]: value }));
+  }, [currentQuestion]);
 
   const currentQ = questions[currentQuestion];
   const currentAnswer = answers[currentQ.id];
@@ -459,22 +460,34 @@ export default function Home() {
 
               {/* Text Input Type */}
               {currentQ.type === 'text' && (
-                <div className="max-w-md">
-                  <div className="flex items-center gap-2">
-                    <input
-                      type={currentQ.unit ? 'number' : 'text'}
+                <>
+                  {/* Spezielle LocationInput für Frage 2 (Wohnort) */}
+                  {currentQ.id === 2 ? (
+                    <LocationInput
                       value={currentTextAnswer}
-                      onChange={(e) => handleTextAnswer(e.target.value)}
+                      onChange={handleTextAnswer}
                       placeholder={currentQ.placeholder}
-                      step={currentQ.unit === '€/kWh' ? '0.01' : '1'}
-                      min="0"
-                      className="flex-1 p-4 border-2 border-gray-200 rounded-lg focus:border-yellow-400 focus:outline-none transition-colors text-lg"
                     />
-                    {currentQ.unit && (
-                      <span className="text-gray-600 font-medium">{currentQ.unit}</span>
-                    )}
-                  </div>
-                </div>
+                  ) : (
+                    /* Normaler Text/Number Input für andere Fragen */
+                    <div className="max-w-md">
+                      <div className="flex items-center gap-2">
+                        <input
+                          type={currentQ.unit ? 'number' : 'text'}
+                          value={currentTextAnswer}
+                          onChange={(e) => handleTextAnswer(e.target.value)}
+                          placeholder={currentQ.placeholder}
+                          step={currentQ.unit === '€/kWh' ? '0.01' : '1'}
+                          min="0"
+                          className="flex-1 p-4 border-2 border-gray-200 rounded-lg focus:border-yellow-400 focus:outline-none transition-colors text-lg"
+                        />
+                        {currentQ.unit && (
+                          <span className="text-gray-600 font-medium">{currentQ.unit}</span>
+                        )}
+                      </div>
+                    </div>
+                  )}
+                </>
               )}
 
               {/* Multiselect Type */}
