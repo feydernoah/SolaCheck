@@ -3,7 +3,7 @@ import React from "react";
 type ButtonProps = {
   children: React.ReactNode;
   onClick?: () => void;
-  color?: "primary" | "secondary" | "warning" | "approve";
+  color?: "primary" | "secondary" | "approve";
   size?: "small" | "medium" | "large";
   disabled?: boolean;
 };
@@ -20,8 +20,7 @@ const HKAButton: React.FC<ButtonProps> = ({
 
   const colorStyles = {
     primary: "bg-[#d72305] text-white hover:text-black",
-    secondary: "bg-[#f5c8c1] text-black hover:text-gray-700",
-    warning: "bg-red-600 text-white hover:bg-red-700 hover:text-gray-300",
+    secondary: "bg-[#f7d3cd] text-black hover:bg-[#eb9182]",
     approve: "bg-[#288732] text-white hover:bg-[#d4e7d6] hover:text-black",
   };
 

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import HKAButton from "./ui/hka-button";
+import HKAButton from "../components/ui/hka-button";
 
 const questions = [
   {
@@ -155,13 +155,14 @@ export default function Home() {
 
             {/* Navigation */}
             <div className="flex justify-between items-center">
-              <button
+              <HKAButton
                 onClick={handlePrevious}
                 disabled={currentQuestion === 0}
-                className="px-6 py-3 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-white rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                color="secondary"
+                size="medium"
               >
-                ← Previous
-              </button>
+                {'<'} Previous
+              </HKAButton>
 
               {currentQuestion === questions.length - 1 ? (
                 <HKAButton
