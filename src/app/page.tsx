@@ -3,6 +3,8 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useState, useEffect } from "react";
+import { BurgerMenu } from "@/components/BurgerMenu";
+import { Button } from "@/components/ui/Button";
 
 const chatMessages = [
   "Hallo! Willkommen bei SolaCheck. Ich bin Sola und helfe dir gerne weiter! 👋",
@@ -12,7 +14,6 @@ const chatMessages = [
 ];
 
 export default function LandingPage() {
-  const [menuOpen, setMenuOpen] = useState(false);
   const [currentMessageIndex, setCurrentMessageIndex] = useState(0);
   const [speechBubbleVisible, setSpeechBubbleVisible] = useState(true);
 
@@ -27,35 +28,7 @@ export default function LandingPage() {
   return (
     <div className="min-h-screen bg-white relative overflow-hidden">
       {/* Burger Menu - Top Right */}
-      <div className="fixed top-4 right-4 sm:top-5 sm:right-5 md:top-6 md:right-6 z-50">
-        <button
-          onClick={() => setMenuOpen(!menuOpen)}
-          className="bg-white p-3 sm:p-4 md:p-4 lg:p-5 xl:p-5 rounded-lg shadow-lg hover:shadow-xl transition-shadow border border-gray-200"
-          aria-label="Menu"
-        >
-          <div className="w-6 sm:w-7 md:w-7 lg:w-8 xl:w-8 h-0.5 bg-gray-800 mb-2"></div>
-          <div className="w-6 sm:w-7 md:w-7 lg:w-8 xl:w-8 h-0.5 bg-gray-800 mb-2"></div>
-          <div className="w-6 sm:w-7 md:w-7 lg:w-8 xl:w-8 h-0.5 bg-gray-800"></div>
-        </button>
-
-        {/* Menu Dropdown */}
-        {menuOpen && (
-          <div className="absolute right-0 mt-2 w-48 md:w-56 lg:w-64 xl:w-64 bg-white rounded-lg shadow-xl p-2 border border-gray-200">
-            <button
-              onClick={() => setMenuOpen(false)}
-              className="w-full text-left px-4 py-3 md:py-3 lg:py-4 xl:py-4 text-sm md:text-base lg:text-lg xl:text-lg active:bg-gray-100 md:hover:bg-gray-100 rounded transition-colors text-gray-800"
-            >
-              Home
-            </button>
-            <Link
-              href="/quiz"
-              className="block w-full text-left px-4 py-3 md:py-3 lg:py-4 xl:py-4 text-sm md:text-base lg:text-lg xl:text-lg active:bg-gray-100 md:hover:bg-gray-100 rounded transition-colors text-gray-800"
-            >
-              Quiz starten
-            </Link>
-          </div>
-        )}
-      </div>
+      <BurgerMenu showHome={false} showQuiz />
 
       {/* Small Logo - Top Left (Placeholder for now) */}
       <div className="fixed top-4 left-4 sm:top-5 sm:left-5 md:top-6 md:left-6 z-40">
@@ -81,9 +54,9 @@ export default function LandingPage() {
 
         {/* Start Button */}
         <Link href="/quiz">
-          <button className="mb-24 sm:mb-32 md:mb-32 lg:mb-32 xl:mb-0 px-10 py-4 sm:px-12 sm:py-4 md:px-12 md:py-4 lg:px-16 lg:py-6 xl:px-16 xl:py-6 bg-gray-400 text-white text-lg sm:text-xl md:text-xl lg:text-2xl xl:text-2xl font-semibold rounded-full active:bg-yellow-400 active:text-gray-800 md:hover:bg-yellow-400 md:hover:text-gray-800 transition-colors shadow-lg active:shadow-xl md:hover:shadow-xl transform active:scale-105 md:hover:scale-105 transition-transform">
+          <Button size="lg" className="mb-24 sm:mb-32 md:mb-32 lg:mb-32 xl:mb-0 px-10 py-4 sm:px-12 sm:py-4 md:px-12 md:py-4 lg:px-16 lg:py-6 xl:px-16 xl:py-6 text-lg sm:text-xl md:text-xl lg:text-2xl xl:text-2xl">
             Start
-          </button>
+          </Button>
         </Link>
       </div>
 
