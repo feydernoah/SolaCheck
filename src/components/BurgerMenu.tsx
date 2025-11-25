@@ -2,10 +2,12 @@
 
 import Link from "next/link";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 interface BurgerMenuProps {
   showHome?: boolean;
   showQuiz?: boolean;
+  onHomeClick?: () => boolean | undefined;
   additionalItems?: {
     label: string;
     href: string;
@@ -16,9 +18,23 @@ interface BurgerMenuProps {
 export function BurgerMenu({ 
   showHome = true, 
   showQuiz = true,
+  onHomeClick,
   additionalItems = []
 }: BurgerMenuProps) {
   const [menuOpen, setMenuOpen] = useState(false);
+  const router = useRouter();
+
+  const handleHomeClick = (e: React.MouseEvent) => {
+    if (onHomeClick) {
+      const shouldNavigate = onHomeClick();
+      if (shouldNavigate === false) {
+        e.preventDefault();
+        return;
+      }
+    }
+    setMenuOpen(false);
+    router.push('/');
+  };
 
   return (
     <div className="fixed top-4 right-4 sm:top-5 sm:right-5 md:top-6 md:right-6 z-50">
@@ -36,13 +52,12 @@ export function BurgerMenu({
       {menuOpen && (
         <div className="absolute right-0 mt-2 w-48 md:w-56 lg:w-64 xl:w-64 bg-white rounded-lg shadow-xl p-2 border border-gray-200">
           {showHome && (
-            <Link
-              href="/"
+            <button
+              onClick={handleHomeClick}
               className="block w-full text-left px-4 py-3 md:py-3 lg:py-4 xl:py-4 text-sm md:text-base lg:text-lg xl:text-lg active:bg-gray-100 md:hover:bg-gray-100 rounded transition-colors text-gray-800"
-              onClick={() => setMenuOpen(false)}
             >
               Home
-            </Link>
+            </button>
           )}
           
           {showQuiz && (

@@ -11,6 +11,8 @@ A modern Progressive Web App (PWA) built with Next.js, TypeScript, and Tailwind 
 - 🎨 **Tailwind CSS v4** - Modern utility-first CSS framework
 - 🔒 **TypeScript** - Full type safety
 - 🚀 **API Routes** - Built-in backend functionality
+- 🧪 **Playwright Testing** - End-to-end tests with Docker support
+- 🐳 **Docker** - Containerized for consistent deployments
 - 🎯 **Minimal Setup** - No bloat, just what you need
 
 ## Getting Started
@@ -19,6 +21,7 @@ A modern Progressive Web App (PWA) built with Next.js, TypeScript, and Tailwind 
 
 - Node.js 18+ installed
 - npm or yarn package manager
+- Docker (for running tests in Docker)
 
 ### Installation
 
@@ -38,33 +41,136 @@ npm install
 npm run dev
 ```
 
-4. Open [http://localhost:3000](http://localhost:3000) in your browser.
+4. Open [http://localhost:3000/solacheck](http://localhost:3000/solacheck) in your browser.
 
 ## Available Scripts
 
-- `npm run dev` - Start development server
-- `npm run build` - Build for production
-- `npm run start` - Start production server
-- `npm run lint` - Run linter
+### Development
+
+| Command | Description |
+|---------|-------------|
+| `npm run dev` | Start development server with hot reload |
+| `npm run build` | Build for production (runs lint first) |
+| `npm run start` | Start production server |
+| `npm run lint` | Run ESLint |
+| `npm run lint:fix` | Run ESLint and auto-fix issues |
+
+### Testing
+
+| Command | Description | When to Use |
+|---------|-------------|-------------|
+| `npm run test` | Run Playwright tests locally | Quick local testing during development |
+| `npm run test:ui` | Run tests with Playwright UI | Debugging tests interactively |
+| `npm run test:headed` | Run tests in headed browser | Watch tests execute visually |
+| `npm run test:docker` | Run tests in Docker container | **Recommended for CI parity** - ensures same environment as CI |
+| `npm run test:docker:down` | Clean up Docker test containers | After Docker tests complete |
+
+### When to Use Which Test Command
+
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│                         Testing Decision Tree                        │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                      │
+│  Quick feedback during development?                                  │
+│    └── npm run test                                                  │
+│                                                                      │
+│  Need to debug a failing test?                                       │
+│    └── npm run test:ui                                               │
+│                                                                      │
+│  Want to see the browser while tests run?                            │
+│    └── npm run test:headed                                           │
+│                                                                      │
+│  Tests pass locally but fail in CI?                                  │
+│    └── npm run test:docker  (matches CI environment exactly)         │
+│                                                                      │
+│  Before pushing to ensure CI will pass?                              │
+│    └── npm run test:docker  (best practice)                          │
+│                                                                      │
+└─────────────────────────────────────────────────────────────────────┘
+```
+
+## Testing
+
+### Local Testing
+
+For fast feedback during development, run tests locally:
+
+```bash
+# First, start the dev server in one terminal
+npm run dev
+
+# Then run tests in another terminal
+npm run test
+```
+
+### Docker Testing (Recommended for CI Parity)
+
+Tests can differ between local machines (Mac, Windows, Linux) and CI due to:
+- Different browser versions
+- Font rendering differences
+- System library variations
+
+To ensure your tests pass in CI, run them in Docker:
+
+```bash
+# Run tests in Docker (same environment as CI)
+npm run test:docker
+
+# Clean up after testing
+npm run test:docker:down
+```
+
+This uses the official Playwright Docker image which provides:
+- Consistent Chromium browser version
+- Identical font rendering
+- Same system libraries as CI
+
+### Test Architecture
+
+Tests use **Playwright's web-first assertions** which auto-retry until conditions are met:
+
+```typescript
+// ✅ Good - auto-retries until button is enabled
+await expect(page.getByRole('button', { name: 'Submit' })).toBeEnabled();
+
+// ❌ Bad - flaky, doesn't retry
+await page.waitForTimeout(500);
+expect(await button.isEnabled()).toBe(true);
+```
 
 ## Project Structure
 
 ```
 SolaCheck/
 ├── src/
-│   └── app/
-│       ├── api/
-│       │   └── hello/
-│       │       └── route.ts      # Sample API endpoint
-│       ├── layout.tsx             # Root layout
-│       ├── page.tsx               # Home page
-│       └── globals.css            # Global styles
+│   ├── app/
+│   │   ├── api/                   # API routes
+│   │   ├── quiz/                  # Quiz page
+│   │   ├── layout.tsx             # Root layout
+│   │   ├── page.tsx               # Home page
+│   │   └── globals.css            # Global styles
+│   ├── components/                # React components
+│   │   ├── ui/                    # UI components (Button, Card, etc.)
+│   │   ├── AddressInput.tsx       # Address input with GPS
+│   │   └── BurgerMenu.tsx         # Navigation menu
+│   └── hooks/                     # Custom React hooks
+│       ├── useQuizProgress.ts     # Cookie-based progress persistence
+│       └── useReverseGeocoding.ts # Nominatim API integration
+├── tests/                         # Playwright E2E tests
+│   ├── address-input.spec.ts
+│   ├── burger-menu-reset.spec.ts
+│   ├── quiz-progress.spec.ts
+│   └── landing-page.spec.ts
 ├── public/
 │   ├── manifest.json              # PWA manifest
 │   └── icon-*.png                 # PWA icons
-├── next.config.js                 # Next.js configuration
-├── tailwind.config.ts             # Tailwind configuration
-└── tsconfig.json                  # TypeScript configuration
+├── docker-compose.yml             # Production Docker config
+├── docker-compose.test.yml        # Test Docker config (all-in-one)
+├── Dockerfile                     # Production Dockerfile
+├── Dockerfile.test                # All-in-one test Dockerfile
+├── playwright.config.ts           # Playwright configuration
+└── next.config.js                 # Next.js configuration
 ```
 
 ## PWA Support
@@ -85,37 +191,24 @@ npm run start
 
 Then visit the app in Chrome and look for the install prompt.
 
-## API Routes
+## CI/CD Pipeline
 
-Example API endpoint is available at `/api/hello`:
+### How It Works
 
-```typescript
-// src/app/api/hello/route.ts
-export async function GET() {
-  return NextResponse.json({
-    message: "Hello from the API!",
-    timestamp: new Date().toISOString(),
-  });
-}
-```
+The GitHub Actions workflow (`.github/workflows/ci-cd.yml`) runs on every push and PR:
 
-## Customization
+1. **Lint** - ESLint checks code quality
+2. **Test in Docker** - Playwright tests run in Docker for consistency
+3. **Deploy** (main branch only) - SSH to server and rebuild containers
 
-### Styling
+### Why Docker for Tests?
 
-Tailwind CSS is configured and ready to use. Customize in `src/app/globals.css`:
+Tests run in Docker containers to ensure:
 
-```css
-@import "tailwindcss";
-```
-
-### PWA Settings
-
-Modify the PWA configuration in `next.config.js` and `public/manifest.json`.
-
-### TypeScript
-
-TypeScript configuration is in `tsconfig.json`. Adjust as needed for your project.
+- Same browser version as CI
+- Identical font rendering
+- Consistent system libraries
+- No "works on my machine" issues
 
 ## Deployment
 

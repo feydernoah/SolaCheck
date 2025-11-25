@@ -13,7 +13,9 @@
     "lint:nocache": "eslint",
     "test": "playwright test",
     "test:ui": "playwright test --ui",
-    "test:headed": "playwright test --headed"
+    "test:headed": "playwright test --headed",
+    "test:docker": "docker compose -f docker-compose.test.yml up --build --abort-on-container-exit --exit-code-from test",
+    "test:docker:down": "docker compose -f docker-compose.test.yml down -v --remove-orphans"
   },
   "keywords": [],
   "author": "",
