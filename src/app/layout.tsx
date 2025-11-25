@@ -4,10 +4,10 @@ import "./globals.css";
 export const metadata: Metadata = {
   title: "SolaCheck",
   description: "AWP Projekt für das Zukunftsforum Nachhaltigkeit",
-  manifest: "/manifest.json",
+  manifest: "/solacheck/manifest.json",
   icons: {
-    icon: "/icon-192x192.png",
-    apple: "/icon-192x192.png",
+    icon: "/solacheck/icon-192x192.png",
+    apple: "/solacheck/icon-192x192.png",
   },
 };
 

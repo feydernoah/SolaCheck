@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 interface BurgerMenuProps {
   showHome?: boolean;
   showQuiz?: boolean;
-  onHomeClick?: () => boolean | void; // Return false to prevent navigation
+  onHomeClick?: () => boolean | undefined;
   additionalItems?: {
     label: string;
     href: string;
