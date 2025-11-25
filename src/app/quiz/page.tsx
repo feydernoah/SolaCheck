@@ -371,9 +371,12 @@ export default function Home() {
   }, [currentQuestion, updateAnswer]);
 
   const handleResetQuiz = useCallback(() => {
-    if (window.confirm('Möchtest du das Quiz wirklich zurücksetzen? Dein bisheriger Fortschritt geht verloren.')) {
+    const confirmed = window.confirm('Möchtest du das Quiz wirklich zurücksetzen? Dein bisheriger Fortschritt geht verloren.');
+    if (confirmed) {
       resetProgress();
+      return true; // Allow navigation
     }
+    return false; // Prevent navigation
   }, [resetProgress]);
 
   const currentQ = questions[currentQuestion];
