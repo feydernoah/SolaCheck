@@ -61,7 +61,6 @@ test.describe('Quiz Dependencies', () => {
   }
 
 
-
   /**
    * Helper: Get current question text
    */
@@ -249,8 +248,7 @@ test.describe('Quiz Dependencies', () => {
     await page.getByRole('button', { name: /Unter 40/i }).click();
     await page.getByRole('button', { name: 'Weiter' }).click();
 
-    // Question 6: Select "Hauswand" (NOT in ['hauswand', 'flachdach', 'weiss-nicht'] dependency)
-    // Wait, let me select "Balkonboden" instead which is NOT in the list
+    // Select installation location that requires balcony size question (not in skip list)
     await page.locator('button').filter({ hasText: /Balkonboden/i }).click();
     await page.getByRole('button', { name: 'Weiter' }).click();
 
@@ -262,8 +260,7 @@ test.describe('Quiz Dependencies', () => {
     await page.locator('button').filter({ hasText: /Süden/i }).first().click();
     await page.getByRole('button', { name: 'Weiter' }).click();
 
-    // Question 8 should NOT be shown (Q6 is not in ['hauswand', 'flachdach', 'weiss-nicht'])
-    // Actually Q8 SHOULD be shown for Balkonboden since it's not in the dependency list
+    // Question 8 should be shown for Balkonboden (not in skip list)
     questionText = await getCurrentQuestionText(page);
     expect(questionText).toContain('Wie groß ist dein Balkon');
   });

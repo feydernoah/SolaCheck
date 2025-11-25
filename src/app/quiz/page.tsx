@@ -181,7 +181,7 @@ const questions: Question[] = [
     ],
   },
 
-  // Kategorie 3: Stromverbrauch & Tarif
+  // Kategorie 3: Geräte & Nutzungsmuster
   {
     id: 10,
     category: 'Geräte & Nutzungsmuster',
