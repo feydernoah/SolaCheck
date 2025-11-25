@@ -16,42 +16,6 @@ services:
     environment:
       - NODE_ENV=production
 
-  # Test runner service - uses official Playwright Docker image for consistent test execution
-  playwright:
-    build:
-      context: .
-      dockerfile: Dockerfile.playwright
-    container_name: solacheck-playwright
-    depends_on:
-      - solacheck-test
-    environment:
-      - CI=true
-      - BASE_URL=http://solacheck-test:3000
-    networks:
-      - test-net
-    volumes:
-      - ./playwright-report:/app/playwright-report
-      - ./test-results:/app/test-results
-
-  # Test application server
-  solacheck-test:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    container_name: solacheck-test
-    networks:
-      - test-net
-    environment:
-      - NODE_ENV=production
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:3000/solacheck"]
-      interval: 5s
-      timeout: 10s
-      retries: 10
-      start_period: 30s
-
 networks:
   traefik-net:
     external: true
-  test-net:
-    driver: bridge
