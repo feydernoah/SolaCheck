@@ -1,11 +1,12 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useCallback } from "react";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { OptionTile } from "@/components/ui/OptionTile";
 import { BurgerMenu } from "@/components/BurgerMenu";
-import { LocationInput } from "@/components/LocationInput";
+import { AddressInput } from "@/components/AddressInput";
+import { useQuizProgress } from "@/hooks/useQuizProgress";
 import { 
   MdBalcony, 
   MdDeck, 
@@ -332,8 +333,13 @@ const questions: Question[] = [
 ];
 
 export default function Home() {
-  const [currentQuestion, setCurrentQuestion] = useState(0);
-  const [answers, setAnswers] = useState<Record<number, string | string[]>>({});
+  const { 
+    currentQuestion, 
+    answers, 
+    setCurrentQuestion, 
+    updateAnswer, 
+    resetProgress 
+  } = useQuizProgress();
 
   const handleNext = () => {
     if (currentQuestion < questions.length - 1) {
@@ -348,7 +354,7 @@ export default function Home() {
   };
 
   const handleAnswer = (value: string) => {
-    setAnswers({ ...answers, [questions[currentQuestion].id]: value });
+    updateAnswer(questions[currentQuestion].id, value);
   };
 
   const handleMultiSelectAnswer = (value: string) => {
@@ -357,12 +363,18 @@ export default function Home() {
     const newAnswers = currentAnswers.includes(value)
       ? currentAnswers.filter((v) => v !== value)
       : [...currentAnswers, value];
-    setAnswers({ ...answers, [questions[currentQuestion].id]: newAnswers });
+    updateAnswer(questions[currentQuestion].id, newAnswers);
   };
 
   const handleTextAnswer = useCallback((value: string) => {
-    setAnswers((prev) => ({ ...prev, [questions[currentQuestion].id]: value }));
-  }, [currentQuestion]);
+    updateAnswer(questions[currentQuestion].id, value);
+  }, [currentQuestion, updateAnswer]);
+
+  const handleResetQuiz = useCallback(() => {
+    if (window.confirm('Möchtest du das Quiz wirklich zurücksetzen? Dein bisheriger Fortschritt geht verloren.')) {
+      resetProgress();
+    }
+  }, [resetProgress]);
 
   const currentQ = questions[currentQuestion];
   const currentAnswer = answers[currentQ.id];
@@ -379,7 +391,7 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-white relative overflow-hidden p-4">
       {/* Burger Menu */}
-      <BurgerMenu showHome showQuiz={false} />
+      <BurgerMenu showHome showQuiz={false} onHomeClick={handleResetQuiz} />
 
       {/* Main Content */}
       <div className="flex items-center justify-center min-h-screen">
@@ -461,12 +473,11 @@ export default function Home() {
               {/* Text Input Type */}
               {currentQ.type === 'text' && (
                 <>
-                  {/* Spezielle LocationInput für Frage 2 (Wohnort) */}
+                  {/* Spezielle AddressInput für Frage 2 (Wohnort) */}
                   {currentQ.id === 2 ? (
-                    <LocationInput
+                    <AddressInput
                       value={currentTextAnswer}
                       onChange={handleTextAnswer}
-                      placeholder={currentQ.placeholder}
                     />
                   ) : (
                     /* Normaler Text/Number Input für andere Fragen */
