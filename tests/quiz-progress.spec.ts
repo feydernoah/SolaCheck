@@ -15,8 +15,8 @@ async function getQuizCookie(page: Page) {
  * Wait for quiz to be ready - uses web-first assertions with auto-retry
  */
 async function waitForQuizReady(page: Page) {
-  // Web-first assertion - auto-retries until question indicator is visible
-  await expect(page.locator('text=/Frage \\d+ von \\d+/')).toBeVisible();
+  // Web-first assertion - auto-retries until progress percentage is visible
+  await expect(page.locator('text=/\\d+%/')).toBeVisible();
 }
 
 /**
@@ -37,8 +37,8 @@ async function clickAgeButton(page: Page) {
 async function clickNextButton(page: Page) {
   const nextButton = page.getByRole('button', { name: 'Weiter' });
   await nextButton.click();
-  // Wait for question number to change (question 2 visible)
-  await expect(page.locator('text=/Frage 2 von \\d+/')).toBeVisible();
+  // Wait for question to change by checking the heading contains different text
+  await expect(page.locator('h2').first()).not.toContainText(/Wie alt bist du/i);
 }
 
 test.describe('Quiz Progress Persistence', () => {
@@ -84,15 +84,15 @@ test.describe('Quiz Progress Persistence', () => {
     await clickAgeButton(page);
     await clickNextButton(page);
 
-    // Verify we're on question 2
-    await expect(page.locator('text=/Frage 2 von \\d+/')).toBeVisible();
+    // Verify we're on question 2 by checking the heading
+    await expect(page.locator('h2').first()).toContainText(/Wo wohnst du/i);
 
     // Reload the page
     await page.reload();
     await waitForQuizReady(page);
 
     // Should still be on question 2 after reload
-    await expect(page.locator('text=/Frage 2 von \\d+/')).toBeVisible();
+    await expect(page.locator('h2').first()).toContainText(/Wo wohnst du/i);
   });
 
   test('preserves answers after page reload', async ({ page }) => {
@@ -108,14 +108,14 @@ test.describe('Quiz Progress Persistence', () => {
     await waitForQuizReady(page);
 
     // Should be on question 2 after reload
-    await expect(page.locator('text=/Frage 2 von \\d+/')).toBeVisible();
+    await expect(page.locator('h2').first()).toContainText(/Wo wohnst du/i);
 
     // Go back to first question
     const backButton = page.getByRole('button', { name: 'Zurück' });
     await backButton.click();
 
     // Verify we're on question 1
-    await expect(page.locator('text=/Frage 1 von \\d+/')).toBeVisible();
+    await expect(page.locator('h2').first()).toContainText(/Wie alt bist du/i);
     
     // Verify age buttons are still visible
     await expect(page.getByRole('button', { name: /Jahre/i }).first()).toBeVisible();
@@ -127,6 +127,6 @@ test.describe('Quiz Progress Persistence', () => {
     await waitForQuizReady(page);
 
     // Should start at question 1
-    await expect(page.locator('text=/Frage 1 von \\d+/')).toBeVisible();
+    await expect(page.locator('h2').first()).toContainText(/Wie alt bist du/i);
   });
 });

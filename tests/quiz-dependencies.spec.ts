@@ -5,7 +5,7 @@ test.describe('Quiz Dependencies', () => {
     await page.context().clearCookies();
     await page.goto('/solacheck/quiz');
     // Wait for quiz to be ready
-    await expect(page.locator('text=/Frage \\d+ von \\d+/')).toBeVisible();
+    await expect(page.locator('text=/\\d+%/')).toBeVisible();
   });
 
   /**
@@ -78,28 +78,23 @@ test.describe('Quiz Dependencies', () => {
     // Navigate to question 6 by answering questions 1-5
     await selectAge(page);
     await page.getByRole('button', { name: 'Weiter' }).click();
-    await expect(page.locator('text=/Frage 2 von \\d+/')).toBeVisible();
 
     // Question 2: Fill address
     await fillInAddress(page);
     await page.getByRole('button', { name: 'Weiter' }).click();
-    await expect(page.locator('text=/Frage 3 von \\d+/')).toBeVisible();
 
     // Question 3: Select household size
     await selectHouseholdSize(page);
     await page.getByRole('button', { name: 'Weiter' }).click();
-    await expect(page.locator('text=/Frage 4 von \\d+/')).toBeVisible();
 
     // Question 4: Select "Mietwohnung" (renter)
     await selectHousingType(page, 'mietwohnung');
     await page.getByRole('button', { name: 'Weiter' }).click();
-    await expect(page.locator('text=/Frage 5 von \\d+/')).toBeVisible();
 
     // Question 5: Select apartment size - "Unter 40 m²"
     await page.getByRole('button', { name: /Unter 40/i }).click();
     await expect(page.getByRole('button', { name: 'Weiter' })).toBeEnabled();
     await page.getByRole('button', { name: 'Weiter' }).click();
-    await expect(page.locator('text=/Frage 6 von \\d+/')).toBeVisible();
 
     // Question 6: Verify "Flachdach" is NOT available for renters
     const flachdachOption = page.locator('button').filter({ hasText: /Flachdach/i });
@@ -116,25 +111,20 @@ test.describe('Quiz Dependencies', () => {
     // Navigate to question 6 by answering questions 1-5
     await selectAge(page);
     await page.getByRole('button', { name: 'Weiter' }).click();
-    await expect(page.locator('text=/Frage 2 von \\d+/')).toBeVisible();
 
     await fillInAddress(page);
     await page.getByRole('button', { name: 'Weiter' }).click();
-    await expect(page.locator('text=/Frage 3 von \\d+/')).toBeVisible();
 
     await selectHouseholdSize(page);
     await page.getByRole('button', { name: 'Weiter' }).click();
-    await expect(page.locator('text=/Frage 4 von \\d+/')).toBeVisible();
 
     // Question 4: Select "Einfamilienhaus" (homeowner)
     await selectHousingType(page, 'einfamilienhaus');
     await page.getByRole('button', { name: 'Weiter' }).click();
-    await expect(page.locator('text=/Frage 5 von \\d+/')).toBeVisible();
 
     await page.getByRole('button', { name: /Unter 40/i }).click();
     await expect(page.getByRole('button', { name: 'Weiter' })).toBeEnabled();
     await page.getByRole('button', { name: 'Weiter' }).click();
-    await expect(page.locator('text=/Frage 6 von \\d+/')).toBeVisible();
 
     // Question 6: Verify "Flachdach" IS available for homeowners
     const flachdachOption = page.locator('button').filter({ hasText: /Flachdach/i });
@@ -156,7 +146,6 @@ test.describe('Quiz Dependencies', () => {
     await page.getByRole('button', { name: 'Weiter' }).click();
     await page.getByRole('button', { name: /Unter 40/i }).click();
     await page.getByRole('button', { name: 'Weiter' }).click();
-    await expect(page.locator('text=/Frage 6 von \\d+/')).toBeVisible();
 
     // Question 6: Select "Balkonbrüstung" (not in ['flachdach', 'weiss-nicht'])
     await page.locator('button').filter({ hasText: /Balkonbrüstung/i }).click();
@@ -180,7 +169,6 @@ test.describe('Quiz Dependencies', () => {
     await page.getByRole('button', { name: 'Weiter' }).click();
     await page.getByRole('button', { name: /Unter 40/i }).click();
     await page.getByRole('button', { name: 'Weiter' }).click();
-    await expect(page.locator('text=/Frage 6 von \\d+/')).toBeVisible();
 
     // Question 6: Select "Flachdach"
     await page.locator('button').filter({ hasText: /Flachdach/i }).click();
@@ -204,7 +192,6 @@ test.describe('Quiz Dependencies', () => {
     await page.getByRole('button', { name: 'Weiter' }).click();
     await page.getByRole('button', { name: /Unter 40/i }).click();
     await page.getByRole('button', { name: 'Weiter' }).click();
-    await expect(page.locator('text=/Frage 6 von \\d+/')).toBeVisible();
 
     // Question 6: Select "Weiß ich noch nicht"
     await page.locator('button').filter({ hasText: /Weiß ich noch nicht/i }).click();
@@ -363,27 +350,22 @@ test.describe('Quiz Dependencies', () => {
     // Q1: Age
     await selectAge(page);
     await page.getByRole('button', { name: 'Weiter' }).click();
-    await expect(page.locator('text=/Frage 2 von \\d+/')).toBeVisible();
 
     // Q2: Address
     await fillInAddress(page);
     await page.getByRole('button', { name: 'Weiter' }).click();
-    await expect(page.locator('text=/Frage 3 von \\d+/')).toBeVisible();
 
     // Q3: Household size
     await selectHouseholdSize(page);
     await page.getByRole('button', { name: 'Weiter' }).click();
-    await expect(page.locator('text=/Frage 4 von \\d+/')).toBeVisible();
 
     // Q4: Housing type
     await selectHousingType(page, 'einfamilienhaus');
     await page.getByRole('button', { name: 'Weiter' }).click();
-    await expect(page.locator('text=/Frage 5 von \\d+/')).toBeVisible();
 
     // Q5: Apartment size
     await page.getByRole('button', { name: /Unter 40/i }).click();
     await page.getByRole('button', { name: 'Weiter' }).click();
-    await expect(page.locator('text=/Frage 6 von \\d+/')).toBeVisible();
 
     // Q6: Installation location - select Balkonbrüstung
     await page.locator('button').filter({ hasText: /Balkonbrüstung/i }).click();
@@ -413,7 +395,6 @@ test.describe('Quiz Dependencies', () => {
     // Q1: Answer age
     await selectAge(page);
     await page.getByRole('button', { name: 'Weiter' }).click();
-    await expect(page.locator('text=/Frage 2 von \\d+/')).toBeVisible();
 
     // Q2: Try to click Weiter without entering address
     const weiterButton = page.getByRole('button', { name: 'Weiter' });

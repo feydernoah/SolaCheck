@@ -5,7 +5,7 @@ test.describe('Address Input Component', () => {
     await page.context().clearCookies();
     await page.goto('/solacheck/quiz');
     // Web-first assertion - wait for quiz to be ready
-    await expect(page.locator('text=/Frage \\d+ von \\d+/')).toBeVisible();
+    await expect(page.locator('text=/\\d+%/')).toBeVisible();
   });
 
   /**
