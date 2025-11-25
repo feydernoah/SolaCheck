@@ -1,0 +1,18 @@
+# Docker Compose for running Playwright tests in a consistent environment
+# Usage: docker compose -f docker-compose.test.yml up --build --abort-on-container-exit
+
+services:
+  # Single container that builds, runs app, and runs tests
+  # This avoids network issues with Chromium SSL errors on non-localhost hostnames
+  test:
+    build:
+      context: .
+      dockerfile: Dockerfile.test
+    container_name: solacheck-test
+    environment:
+      - CI=true
+      - NODE_ENV=production
+    volumes:
+      # Mount report directories to access results after tests complete
+      - ./playwright-report:/app/playwright-report
+      - ./test-results:/app/test-results

@@ -1,6 +1,45 @@
-import { test, expect } from '@playwright/test';
+import { test, expect, type Page } from '@playwright/test';
 
 const COOKIE_NAME = 'solacheck_quiz_progress';
+
+/**
+ * Wait for quiz to be ready - uses web-first assertions with auto-retry
+ */
+async function waitForQuizReady(page: Page) {
+  await expect(page.locator('text=/Frage \\d+ von \\d+/')).toBeVisible();
+}
+
+/**
+ * Click an age button and wait for "Weiter" to become enabled
+ * This proves the click was registered - no manual timeouts needed
+ */
+async function clickAgeButton(page: Page) {
+  const ageButton = page.getByRole('button', { name: /Jahre/i }).first();
+  await ageButton.click();
+  await expect(page.getByRole('button', { name: 'Weiter' })).toBeEnabled();
+}
+
+/**
+ * Click "Weiter" and wait for question 2 to appear
+ */
+async function clickNextButton(page: Page) {
+  const nextButton = page.getByRole('button', { name: 'Weiter' });
+  await nextButton.click();
+  await expect(page.locator('text=/Frage 2 von \\d+/')).toBeVisible();
+}
+
+/**
+ * Open burger menu and click Home button
+ */
+async function openMenuAndClickHome(page: Page) {
+  const menuButton = page.getByRole('button', { name: 'Menu' });
+  await menuButton.click();
+  
+  // Wait for dropdown to be visible
+  const homeButton = page.getByRole('button', { name: 'Home' });
+  await expect(homeButton).toBeVisible();
+  await homeButton.click();
+}
 
 test.describe('Burger Menu - Home Reset', () => {
   test.beforeEach(async ({ page }) => {
@@ -9,15 +48,14 @@ test.describe('Burger Menu - Home Reset', () => {
 
   test('burger menu is visible on quiz page', async ({ page }) => {
     await page.goto('/solacheck/quiz');
-    await page.waitForLoadState('networkidle');
+    await waitForQuizReady(page);
 
-    const menuButton = page.getByRole('button', { name: 'Menu' });
-    await expect(menuButton).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Menu' })).toBeVisible();
   });
 
   test('burger menu opens and shows home option', async ({ page }) => {
     await page.goto('/solacheck/quiz');
-    await page.waitForLoadState('networkidle');
+    await waitForQuizReady(page);
 
     // Open menu
     await page.getByRole('button', { name: 'Menu' }).click();
@@ -28,90 +66,73 @@ test.describe('Burger Menu - Home Reset', () => {
 
   test('home click shows confirmation dialog', async ({ page }) => {
     await page.goto('/solacheck/quiz');
-    await page.waitForLoadState('networkidle');
+    await waitForQuizReady(page);
 
-    // Just answer question 1 (age) - no need to advance further for this test
-    const ageButton = page.getByRole('button', { name: /Jahre/i }).first();
-    await ageButton.click();
-    await page.waitForTimeout(200);
+    // Answer question 1
+    await clickAgeButton(page);
 
     // Setup dialog handler before clicking home
     let dialogMessage = '';
     page.on('dialog', async dialog => {
       dialogMessage = dialog.message();
-      await dialog.dismiss(); // Cancel the dialog
+      await dialog.dismiss();
     });
 
     // Open menu and click home
-    await page.getByRole('button', { name: 'Menu' }).click();
-    await page.getByRole('button', { name: 'Home' }).click();
+    await openMenuAndClickHome(page);
 
-    // Wait for dialog to be processed
-    await page.waitForTimeout(500);
-
-    // Verify dialog was shown with correct message
-    expect(dialogMessage).toContain('Quiz');
+    // Use expect.poll to wait for dialog to be processed
+    await expect.poll(() => dialogMessage, {
+      message: 'Dialog should contain Quiz and Fortschritt',
+      timeout: 5000,
+    }).toContain('Quiz');
+    
     expect(dialogMessage).toContain('Fortschritt');
   });
 
   test('canceling confirmation dialog stays on quiz page', async ({ page }) => {
     await page.goto('/solacheck/quiz');
-    await page.waitForLoadState('networkidle');
+    await waitForQuizReady(page);
 
     // Answer question 1 and advance to question 2
-    const ageButton = page.getByRole('button', { name: /Jahre/i }).first();
-    await ageButton.click();
-    await page.waitForTimeout(100);
-    
-    const nextButton = page.getByRole('button', { name: 'Weiter' });
-    await expect(nextButton).toBeEnabled({ timeout: 3000 });
-    await nextButton.click();
-    await page.waitForTimeout(300);
+    await clickAgeButton(page);
+    await clickNextButton(page);
 
-    // Setup dialog handler BEFORE clicking home - dismiss means "Cancel"
+    // Verify we're on question 2
+    await expect(page.locator('text=/Frage 2 von \\d+/')).toBeVisible();
+
+    // Setup dialog handler - dismiss means "Cancel"
     page.on('dialog', dialog => dialog.dismiss());
 
     // Open menu and click home
-    await page.getByRole('button', { name: 'Menu' }).click();
-    await page.getByRole('button', { name: 'Home' }).click();
+    await openMenuAndClickHome(page);
 
-    // Wait for dialog to be processed
-    await page.waitForTimeout(500);
-
-    // When dialog is dismissed (canceled), the quiz resets but stays on quiz page
-    // because handleResetQuiz returns false, but we only call resetProgress inside the if
-    // So user stays on current page
+    // When canceled, user stays on quiz page with progress preserved
     await expect(page).toHaveURL(/\/quiz/);
-    
-    // Note: Progress is preserved because dialog was dismissed
     await expect(page.locator('text=/Frage 2 von \\d+/')).toBeVisible();
   });
 
   test('confirming dialog navigates to home and resets progress', async ({ page }) => {
     await page.goto('/solacheck/quiz');
-    await page.waitForLoadState('networkidle');
+    await waitForQuizReady(page);
 
     // Answer question 1 and advance
-    const ageButton = page.getByRole('button', { name: /Jahre/i }).first();
-    await ageButton.click();
-    await page.waitForTimeout(100);
-    
-    const nextButton = page.getByRole('button', { name: 'Weiter' });
-    await expect(nextButton).toBeEnabled({ timeout: 3000 });
-    await nextButton.click();
-    await page.waitForTimeout(300);
+    await clickAgeButton(page);
+    await clickNextButton(page);
+
+    // Verify we're on question 2
+    await expect(page.locator('text=/Frage 2 von \\d+/')).toBeVisible();
 
     // Verify we have a cookie with progress
     let cookies = await page.context().cookies();
     let progressCookie = cookies.find(c => c.name === COOKIE_NAME);
     expect(progressCookie).toBeDefined();
 
-    // Setup dialog handler BEFORE clicking home
+    // Setup dialog handler - accept means "Confirm"
     page.on('dialog', dialog => dialog.accept());
 
     // Open menu and click home
-    await page.getByRole('button', { name: 'Menu' }).click();
-    await page.getByRole('button', { name: 'Home' }).click();
+    await openMenuAndClickHome(page);
 
     // Should navigate to home page
     await expect(page).toHaveURL('/solacheck');
@@ -124,34 +145,27 @@ test.describe('Burger Menu - Home Reset', () => {
 
   test('restarting quiz after reset starts at question 1', async ({ page }) => {
     await page.goto('/solacheck/quiz');
-    await page.waitForLoadState('networkidle');
+    await waitForQuizReady(page);
 
-    // Make some progress - answer question 1 and advance
-    const ageButton = page.getByRole('button', { name: /Jahre/i }).first();
-    await ageButton.click();
-    await page.waitForTimeout(100);
-    
-    const nextButton = page.getByRole('button', { name: 'Weiter' });
-    await expect(nextButton).toBeEnabled({ timeout: 3000 });
-    await nextButton.click();
-    await page.waitForTimeout(300);
+    // Make some progress
+    await clickAgeButton(page);
+    await clickNextButton(page);
 
     // Verify we're on question 2
     await expect(page.locator('text=/Frage 2 von \\d+/')).toBeVisible();
 
-    // Setup dialog handler BEFORE clicking home
+    // Setup dialog handler
     page.on('dialog', dialog => dialog.accept());
 
     // Reset via home
-    await page.getByRole('button', { name: 'Menu' }).click();
-    await page.getByRole('button', { name: 'Home' }).click();
+    await openMenuAndClickHome(page);
 
-    // Wait for navigation
+    // Wait for navigation to home
     await expect(page).toHaveURL('/solacheck');
 
     // Go back to quiz
     await page.goto('/solacheck/quiz');
-    await page.waitForLoadState('networkidle');
+    await waitForQuizReady(page);
 
     // Should be at question 1
     await expect(page.locator('text=/Frage 1 von \\d+/')).toBeVisible();
@@ -159,21 +173,23 @@ test.describe('Burger Menu - Home Reset', () => {
 
   test('menu behavior when dialog is canceled', async ({ page }) => {
     await page.goto('/solacheck/quiz');
-    await page.waitForLoadState('networkidle');
+    await waitForQuizReady(page);
 
     // Dismiss dialog (cancel)
     page.on('dialog', dialog => dialog.dismiss());
 
-    // Open menu and click home
-    await page.getByRole('button', { name: 'Menu' }).click();
+    // Open menu
+    const menuButton = page.getByRole('button', { name: 'Menu' });
+    await menuButton.click();
     
+    // Wait for dropdown
     const menuDropdown = page.locator('div.absolute.right-0');
     await expect(menuDropdown).toBeVisible();
     
+    // Click home
     await page.getByRole('button', { name: 'Home' }).click();
-    await page.waitForTimeout(500);
 
-    // When canceled, user stays on quiz page (navigation prevented)
+    // When canceled, user stays on quiz page
     await expect(page).toHaveURL(/\/quiz/);
   });
 });

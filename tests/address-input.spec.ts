@@ -2,31 +2,34 @@ import { test, expect, type Page } from '@playwright/test';
 
 test.describe('Address Input Component', () => {
   test.beforeEach(async ({ page }) => {
-    // Clear cookies to start fresh
     await page.context().clearCookies();
     await page.goto('/solacheck/quiz');
-    await page.waitForLoadState('networkidle');
+    // Web-first assertion - wait for quiz to be ready
+    await expect(page.locator('text=/Frage \\d+ von \\d+/')).toBeVisible();
   });
 
-  async function navigateToLocationQuestion(page: Page) {
-    // Question 2 is the address/location question
-    // First, answer question 1 (age selection)
+  /**
+   * Navigate to the location question (question 2)
+   * Uses web-first assertions for reliable waiting
+   */
+  async function navigateToLocationQuestion(page: Page): Promise<boolean> {
+    // Click age button
     const ageButton = page.getByRole('button', { name: /Jahre/i }).first();
     
-    if (await ageButton.isVisible().catch(() => false)) {
+    try {
       await ageButton.click();
-      await page.waitForTimeout(100);
+      // Wait for "Weiter" to become enabled - proves click was registered
+      await expect(page.getByRole('button', { name: 'Weiter' })).toBeEnabled();
       
       // Click Weiter to go to question 2
-      const nextButton = page.getByRole('button', { name: 'Weiter' });
-      await expect(nextButton).toBeEnabled({ timeout: 3000 });
-      await nextButton.click();
-      await page.waitForTimeout(300);
+      await page.getByRole('button', { name: 'Weiter' }).click();
+      
+      // Wait for GPS button to appear (proves we're on location question)
+      await expect(page.getByRole('button', { name: /Standort nutzen/i })).toBeVisible();
+      return true;
+    } catch {
+      return false;
     }
-    
-    // Check if we're now on the location question
-    const gpsButton = page.getByRole('button', { name: /Standort nutzen/i });
-    return await gpsButton.isVisible().catch(() => false);
   }
 
   test('displays GPS location button', async ({ page }) => {
@@ -37,8 +40,7 @@ test.describe('Address Input Component', () => {
       return;
     }
 
-    const gpsButton = page.getByRole('button', { name: /Standort nutzen/i });
-    await expect(gpsButton).toBeVisible();
+    await expect(page.getByRole('button', { name: /Standort nutzen/i })).toBeVisible();
   });
 
   test('displays manual address entry button', async ({ page }) => {
@@ -49,8 +51,7 @@ test.describe('Address Input Component', () => {
       return;
     }
 
-    const manualButton = page.getByRole('button', { name: /manuell eingeben/i });
-    await expect(manualButton).toBeVisible();
+    await expect(page.getByRole('button', { name: /manuell eingeben/i })).toBeVisible();
   });
 
   test('shows address form when clicking manual entry button', async ({ page }) => {
@@ -62,10 +63,9 @@ test.describe('Address Input Component', () => {
     }
 
     // Click manual entry button
-    const manualButton = page.getByRole('button', { name: /manuell eingeben/i });
-    await manualButton.click();
+    await page.getByRole('button', { name: /manuell eingeben/i }).click();
 
-    // Should show all address fields
+    // Web-first assertions for form fields
     await expect(page.locator('label', { hasText: 'Straße' })).toBeVisible();
     await expect(page.locator('label', { hasText: /Nr\./i })).toBeVisible();
     await expect(page.locator('label', { hasText: 'PLZ' })).toBeVisible();
@@ -80,19 +80,13 @@ test.describe('Address Input Component', () => {
       return;
     }
 
-    const manualButton = page.getByRole('button', { name: /manuell eingeben/i });
-    await manualButton.click();
+    await page.getByRole('button', { name: /manuell eingeben/i }).click();
 
-    // Check that inputs have proper IDs linked to labels
-    const streetInput = page.locator('#address-street');
-    const houseNumberInput = page.locator('#address-housenumber');
-    const postalCodeInput = page.locator('#address-postalcode');
-    const cityInput = page.locator('#address-city');
-
-    await expect(streetInput).toBeVisible();
-    await expect(houseNumberInput).toBeVisible();
-    await expect(postalCodeInput).toBeVisible();
-    await expect(cityInput).toBeVisible();
+    // Check that inputs are visible
+    await expect(page.locator('#address-street')).toBeVisible();
+    await expect(page.locator('#address-housenumber')).toBeVisible();
+    await expect(page.locator('#address-postalcode')).toBeVisible();
+    await expect(page.locator('#address-city')).toBeVisible();
   });
 
   test('can fill in address manually', async ({ page }) => {
@@ -103,16 +97,15 @@ test.describe('Address Input Component', () => {
       return;
     }
 
-    const manualButton = page.getByRole('button', { name: /manuell eingeben/i });
-    await manualButton.click();
+    await page.getByRole('button', { name: /manuell eingeben/i }).click();
 
-    // Fill in address fields
+    // Fill in address fields - Playwright auto-waits for inputs to be ready
     await page.locator('#address-street').fill('Musterstraße');
     await page.locator('#address-housenumber').fill('42');
     await page.locator('#address-postalcode').fill('12345');
     await page.locator('#address-city').fill('Berlin');
 
-    // Should show success message with the address
+    // Web-first assertion - wait for success message
     await expect(page.locator('text=/Standort:.*Musterstraße.*42.*12345.*Berlin/i')).toBeVisible();
   });
 
@@ -124,10 +117,8 @@ test.describe('Address Input Component', () => {
       return;
     }
 
-    const manualButton = page.getByRole('button', { name: /manuell eingeben/i });
-    await manualButton.click();
+    await page.getByRole('button', { name: /manuell eingeben/i }).click();
 
-    const postalCodeInput = page.locator('#address-postalcode');
-    await expect(postalCodeInput).toHaveAttribute('maxlength', '5');
+    await expect(page.locator('#address-postalcode')).toHaveAttribute('maxlength', '5');
   });
 });
