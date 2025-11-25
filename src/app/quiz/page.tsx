@@ -387,8 +387,7 @@ export default function Home() {
 
             {/* Progress Indicator */}
             <div className="mb-8">
-              <div className="flex justify-between text-sm text-gray-600 mb-2">
-                <span>Frage {currentQuestion + 1} von {questions.length}</span>
+              <div className="flex justify-end text-sm text-gray-600 mb-2">
                 <span>{Math.round(((currentQuestion + 1) / questions.length) * 100)}%</span>
               </div>
               <div className="w-full bg-gray-200 rounded-full h-2">
