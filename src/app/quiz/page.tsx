@@ -30,6 +30,12 @@ interface Question {
   infoHint?: string;
   placeholder?: string;
   unit?: string;
+  dependencies?: {
+    questionId: number;
+    answerValue: string | string[];
+    excludeOptions?: string[];
+    includeOptions?: string[];
+  }[];
 }
 
 const questions: Question[] = [
@@ -92,44 +98,10 @@ const questions: Question[] = [
     ],
     infoHint: 'Die Wohnfläche findest du meist im Mietvertrag oder in der Hausdokumentation. Wenn du unsicher bist, schätze einfach grob.',
   },
-  {
-    id: 6,
-    category: 'Über dich & deine Wohnsituation',
-    question: 'Wird deine Wohnung überwiegend mit Strom beheizt (z. B. Nachtspeicher, Elektro-Heizung)?',
-    type: 'button',
-    options: [
-      { value: 'ja', label: 'Ja' },
-      { value: 'nein', label: 'Nein' },
-      { value: 'weiss-nicht', label: 'Weiß ich nicht' },
-    ],
-  },
-  {
-    id: 7,
-    category: 'Über dich & deine Wohnsituation',
-    question: 'Hast du einen elektrisch betriebenen Durchlauferhitzer für Warmwasser?',
-    type: 'button',
-    options: [
-      { value: 'ja', label: 'Ja' },
-      { value: 'nein', label: 'Nein' },
-      { value: 'weiss-nicht', label: 'Weiß ich nicht' },
-    ],
-    infoHint: 'Einen Durchlauferhitzer erkennst du meist als Gerät im Bad/Küche, das das Wasser direkt beim Durchlaufen erhitzt.',
-  },
   
   // Kategorie 2: Balkon & Installationsort
   {
-    id: 8,
-    category: 'Balkon & Installationsort',
-    question: 'Hast du einen Balkon oder eine Terrasse, auf der ein Balkonkraftwerk montiert werden könnte?',
-    type: 'tile',
-    options: [
-      { value: 'balkon', label: 'Ja, Balkon', icon: <MdBalcony /> },
-      { value: 'terrasse', label: 'Ja, Terrasse', icon: <MdDeck /> },
-      { value: 'nein', label: 'Nein', icon: <MdHomeWork /> },
-    ],
-  },
-  {
-    id: 9,
+    id: 6,
     category: 'Balkon & Installationsort',
     question: 'Wo würdest du das Balkonkraftwerk am ehesten montieren?',
     type: 'tile',
@@ -140,9 +112,16 @@ const questions: Question[] = [
       { value: 'flachdach', label: 'Flachdach', icon: <MdHome /> },
       { value: 'weiss-nicht', label: 'Weiß ich noch nicht', icon: <MdHome /> },
     ],
+    dependencies: [
+      {
+        questionId: 4,
+        answerValue: 'mietwohnung',
+        excludeOptions: ['flachdach'],
+      },
+    ],
   },
   {
-    id: 10,
+    id: 7,
     category: 'Balkon & Installationsort',
     question: 'In welche Richtung zeigt dein Balkon bzw. der geplante Montageort?',
     type: 'button',
@@ -156,21 +135,16 @@ const questions: Question[] = [
       { value: 'weiss-nicht', label: 'Weiß ich nicht' },
     ],
     infoHint: 'Du kannst die Himmelsrichtung z. B. mit dem Kompass am Smartphone herausfinden. Eine grobe Angabe ist vollkommen ausreichend: Sonne morgens = eher Osten, Sonne nachmittags/abends = eher Westen, Sonne mittags = eher Süden.',
-  },
-  {
-    id: 11,
-    category: 'Balkon & Installationsort',
-    question: 'Wie stark ist dein Balkon / Montageort normalerweise beschattet?',
-    type: 'button',
-    options: [
-      { value: 'keine', label: 'Keine oder kaum Verschattung' },
-      { value: 'etwas', label: 'Ab und zu etwas Schatten' },
-      { value: 'mehrere-stunden', label: 'Mehrere Stunden am Tag im Schatten' },
-      { value: 'ganzen-tag', label: 'Fast den ganzen Tag im Schatten' },
+    dependencies: [
+      {
+        questionId: 6,
+        answerValue: ['flachdach', 'weiss-nicht'],
+        excludeOptions: [],
+      },
     ],
   },
   {
-    id: 12,
+    id: 8,
     category: 'Balkon & Installationsort',
     question: 'Wie groß ist dein Balkon ungefähr?',
     type: 'button',
@@ -180,31 +154,36 @@ const questions: Question[] = [
       { value: 'gross', label: 'Groß (mehr als 3 m)' },
     ],
     infoHint: 'Es reicht eine grobe Einschätzung, wir wollen nur einschätzen, ob ein oder zwei Module Platz haben könnten.',
+    dependencies: [
+      {
+        questionId: 6,
+        answerValue: ['hauswand', 'flachdach', 'weiss-nicht'],
+        excludeOptions: [],
+      },
+    ],
+  },
+  {
+    id: 9,
+    category: 'Balkon & Installationsort',
+    question: 'Wie stark ist dein Balkon / Montageort normalerweise beschattet?',
+    type: 'button',
+    options: [
+      { value: 'keine', label: 'Keine oder kaum Verschattung' },
+      { value: 'etwas', label: 'Ab und zu etwas Schatten' },
+      { value: 'mehrere-stunden', label: 'Mehrere Stunden am Tag im Schatten' },
+      { value: 'ganzen-tag', label: 'Fast den ganzen Tag im Schatten' },
+    ],
+    dependencies: [
+      {
+        questionId: 6,
+        answerValue: 'weiss-nicht',
+      },
+    ],
   },
 
-  // Kategorie 3: Stromverbrauch & Tarif
+  // Kategorie 3: Geräte & Nutzungsmuster
   {
-    id: 13,
-    category: 'Stromverbrauch & Tarif',
-    question: 'Wie hoch ist dein jährlicher Stromverbrauch im Durchschnitt?',
-    type: 'text',
-    placeholder: '2500',
-    unit: 'kWh pro Jahr',
-    infoHint: 'Du findest den Jahresstromverbrauch in kWh auf deiner letzten Jahresabrechnung oder im Kundenportal deines Stromanbieters. Wenn du es nicht weißt, nutzen wir typische Durchschnittswerte (z. B. nach Haushaltsgröße).',
-  },
-  {
-    id: 14,
-    category: 'Stromverbrauch & Tarif',
-    question: 'Wie hoch ist dein aktueller Strompreis pro kWh (brutto)?',
-    type: 'text',
-    placeholder: '0,38',
-    unit: '€/kWh',
-    infoHint: 'Der Strompreis steht auf deiner Stromrechnung in ct/kWh oder €/kWh. Falls du es nicht weißt, nehmen wir einen durchschnittlichen Richtwert für Deutschland.',
-  },
-
-  // Kategorie 4: Geräte & Nutzungsmuster
-  {
-    id: 15,
+    id: 10,
     category: 'Geräte & Nutzungsmuster',
     question: 'Welche dieser Geräte nutzt du regelmäßig (mehrmals pro Woche)?',
     type: 'multiselect',
@@ -230,24 +209,10 @@ const questions: Question[] = [
     ],
     infoHint: 'Diese Info hilft uns nur grob einzuschätzen, wie hoch dein Stromverbrauch tagsüber ist. Du musst nichts exakt ausrechnen, eine ehrliche Einschätzung reicht.',
   },
-  {
-    id: 16,
-    category: 'Geräte & Nutzungsmuster',
-    question: 'Wann bist du normalerweise zuhause?',
-    type: 'multiselect',
-    options: [
-      { value: 'morgens', label: 'Vor allem morgens' },
-      { value: 'nachmittags', label: 'Vor allem nachmittags' },
-      { value: 'abends', label: 'Vor allem abends' },
-      { value: 'tagueber', label: 'Häufig tagsüber (z. B. Homeoffice)' },
-      { value: 'unregelmaessig', label: 'Sehr unregelmäßig' },
-    ],
-    infoHint: 'Diese Angabe hilft uns, deinen möglichen Eigenverbrauch abzuschätzen: Wenn du tagsüber da bist, kannst du mehr Solarstrom direkt selbst nutzen.',
-  },
 
-  // Kategorie 5: Budget & Investitionsbereitschaft
+  // Kategorie 4: Budget & Investitionsbereitschaft
   {
-    id: 17,
+    id: 11,
     category: 'Budget & Investitionsbereitschaft',
     question: 'Wie viel würdest du ungefähr in ein Balkonkraftwerk investieren wollen?',
     type: 'button',
@@ -260,21 +225,7 @@ const questions: Question[] = [
     ],
   },
   {
-    id: 18,
-    category: 'Budget & Investitionsbereitschaft',
-    question: 'Gibt es in deiner Stadt/Gemeinde Förderprogramme für Balkonkraftwerke, von denen du profitieren könntest?',
-    type: 'button',
-    options: [
-      { value: 'ja', label: 'Ja, ich kenne ein Förderprogramm' },
-      { value: 'vermutlich', label: 'Ich vermute, ja, bin mir aber nicht sicher' },
-      { value: 'nein', label: 'Nein / weiß ich nicht' },
-    ],
-    infoHint: 'Viele Städte und Gemeinden bieten Zuschüsse (z. B. 50–200 €) für Balkonkraftwerke an. Wenn du es nicht weißt, geben wir dir am Ende einen Hinweis, wo du das prüfen kannst.',
-  },
-
-  // Kategorie 6: Interesse an Nachhaltigkeit
-  {
-    id: 19,
+    id: 12,
     category: 'Interesse an Nachhaltigkeit',
     question: 'Wie wichtig ist dir die CO₂-Einsparung durch ein Balkonkraftwerk?',
     type: 'button',
@@ -284,53 +235,70 @@ const questions: Question[] = [
       { value: 'nebensaechlich', label: 'Eher nebensächlich' },
     ],
   },
-  {
-    id: 20,
-    category: 'Interesse an Nachhaltigkeit',
-    question: 'Wie würdest du deine Einsparungen am liebsten sehen?',
-    type: 'button',
-    options: [
-      { value: 'euro', label: 'In Euro pro Jahr' },
-      { value: 'co2', label: 'In kg CO₂ pro Jahr' },
-      { value: 'baeume', label: 'In "Baumäquivalenten"' },
-      { value: 'egal', label: 'Egal, Hauptsache verständlich' },
-    ],
-  },
-  {
-    id: 21,
-    category: 'Interesse an Nachhaltigkeit',
-    question: 'Bist du bereit, einige Geräte tagsüber laufen zu lassen (z. B. Waschmaschine, Spülmaschine)?',
-    type: 'button',
-    options: [
-      { value: 'ja', label: 'Ja, gerne' },
-      { value: 'vielleicht', label: 'Vielleicht' },
-      { value: 'nein', label: 'Nein' },
-    ],
-    infoHint: 'Höherer Eigenverbrauch → bessere Amortisation.',
-  },
-  {
-    id: 22,
-    category: 'Interesse an Nachhaltigkeit',
-    question: 'Lädst du ein E-Auto regelmäßig zuhause?',
-    type: 'button',
-    options: [
-      { value: 'taeglich', label: 'Ja, täglich' },
-      { value: 'gelegentlich', label: 'Ja, gelegentlich' },
-      { value: 'nein', label: 'Nein' },
-    ],
-  },
-  {
-    id: 23,
-    category: 'Interesse an Nachhaltigkeit',
-    question: 'Wie lange wirst du voraussichtlich noch an deinem aktuellen Wohnort wohnen?',
-    type: 'button',
-    options: [
-      { value: '<2', label: 'Weniger als 2 Jahre' },
-      { value: '2-5', label: '2–5 Jahre' },
-      { value: '>5', label: 'Länger als 5 Jahre' },
-    ],
-  },
 ];
+
+// Hilfsfunktion um gefilterte Optionen basierend auf Abhängigkeiten zu berechnen
+const getFilteredOptions = (question: Question, answers: Record<number, string | string[]>): QuestionOption[] => {
+  if (!question.options) return [];
+  
+  if (!question.dependencies || question.dependencies.length === 0) {
+    return question.options;
+  }
+
+  let filteredOptions = [...question.options];
+
+  for (const dependency of question.dependencies) {
+    const answerToCheck = answers[dependency.questionId];
+    const dependencyMet = Array.isArray(dependency.answerValue)
+      ? dependency.answerValue.includes(answerToCheck as string)
+      : answerToCheck === dependency.answerValue;
+
+    if (dependencyMet) {
+      if (dependency.excludeOptions) {
+        filteredOptions = filteredOptions.filter(
+          (option) => !dependency.excludeOptions?.includes(option.value)
+        );
+      }
+      if (dependency.includeOptions) {
+        filteredOptions = filteredOptions.filter(
+          (option) => dependency.includeOptions?.includes(option.value)
+        );
+      }
+    }
+  }
+
+  return filteredOptions;
+};
+
+// Hilfsfunktion um zu prüfen, ob eine Frage angezeigt werden soll
+const isQuestionVisible = (question: Question, answers: Record<number, string | string[]>): boolean => {
+  if (!question.dependencies || question.dependencies.length === 0) {
+    return true;
+  }
+
+  for (const dependency of question.dependencies) {
+    const answerToCheck = answers[dependency.questionId];
+    const dependencyMet = Array.isArray(dependency.answerValue)
+      ? dependency.answerValue.includes(answerToCheck as string)
+      : answerToCheck === dependency.answerValue;
+
+    // Abhängigkeiten für Sichtbarkeit: Haben excludeOptions oder includeOptions, aber NICHT leer
+    const hasFilterOptions = 
+      ((dependency.excludeOptions ?? []).length > 0) ||
+      ((dependency.includeOptions ?? []).length > 0);
+
+    // Nur Abhängigkeiten berücksichtigen, die KEINE Filteroptionen haben
+    // Diese definieren Sichtbarkeitsbedingungen für ganze Fragen
+    if (!hasFilterOptions) {
+      // Wenn die Abhängigkeit erfüllt ist, soll die Frage NICHT angezeigt werden
+      if (dependencyMet) {
+        return false;
+      }
+    }
+  }
+
+  return true;
+};
 
 export default function Home() {
   const { 
@@ -342,14 +310,22 @@ export default function Home() {
   } = useQuizProgress();
 
   const handleNext = () => {
-    if (currentQuestion < questions.length - 1) {
-      setCurrentQuestion(currentQuestion + 1);
+    let nextQuestion = currentQuestion + 1;
+    while (nextQuestion < questions.length && !isQuestionVisible(questions[nextQuestion], answers)) {
+      nextQuestion++;
+    }
+    if (nextQuestion < questions.length) {
+      setCurrentQuestion(nextQuestion);
     }
   };
 
   const handlePrevious = () => {
-    if (currentQuestion > 0) {
-      setCurrentQuestion(currentQuestion - 1);
+    let previousQuestion = currentQuestion - 1;
+    while (previousQuestion >= 0 && !isQuestionVisible(questions[previousQuestion], answers)) {
+      previousQuestion--;
+    }
+    if (previousQuestion >= 0) {
+      setCurrentQuestion(previousQuestion);
     }
   };
 
@@ -383,6 +359,7 @@ export default function Home() {
   const currentAnswer = answers[currentQ.id];
   const currentMultiSelectAnswers = Array.isArray(currentAnswer) ? currentAnswer : [];
   const currentTextAnswer = typeof currentAnswer === 'string' ? currentAnswer : '';
+  const filteredOptions = getFilteredOptions(currentQ, answers);
 
   const isAnswered = () => {
     if (currentQ.type === 'multiselect') {
@@ -410,8 +387,7 @@ export default function Home() {
 
             {/* Progress Indicator */}
             <div className="mb-8">
-              <div className="flex justify-between text-sm text-gray-600 mb-2">
-                <span>Frage {currentQuestion + 1} von {questions.length}</span>
+              <div className="flex justify-end text-sm text-gray-600 mb-2">
                 <span>{Math.round(((currentQuestion + 1) / questions.length) * 100)}%</span>
               </div>
               <div className="w-full bg-gray-200 rounded-full h-2">
@@ -440,9 +416,9 @@ export default function Home() {
             {/* Answer Input */}
             <div className="mb-8">
               {/* Tile Type */}
-              {currentQ.type === 'tile' && currentQ.options && (
+              {currentQ.type === 'tile' && filteredOptions.length > 0 && (
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {currentQ.options.map((option) => (
+                  {filteredOptions.map((option) => (
                     <OptionTile
                       key={option.value}
                       label={option.label}
@@ -455,9 +431,9 @@ export default function Home() {
               )}
 
               {/* Button Type */}
-              {currentQ.type === 'button' && currentQ.options && (
+              {currentQ.type === 'button' && filteredOptions.length > 0 && (
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  {currentQ.options.map((option) => (
+                  {filteredOptions.map((option) => (
                     <button
                       key={option.value}
                       onClick={() => handleAnswer(option.value)}
@@ -505,9 +481,9 @@ export default function Home() {
               )}
 
               {/* Multiselect Type */}
-              {currentQ.type === 'multiselect' && currentQ.options && (
+              {currentQ.type === 'multiselect' && filteredOptions.length > 0 && (
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-                  {currentQ.options.map((option) => (
+                  {filteredOptions.map((option) => (
                     <button
                       key={option.value}
                       onClick={() => handleMultiSelectAnswer(option.value)}

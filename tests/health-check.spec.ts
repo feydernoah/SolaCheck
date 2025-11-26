@@ -6,7 +6,7 @@ test.describe('SolaCheck - Basic Health Check', () => {
 
     await expect(page).toHaveTitle(/SolaCheck/i);
 
-    await expect(page.locator('text=/Frage \\d+ von \\d+/')).toBeVisible();
+    await expect(page.locator('text=/\\d+%/')).toBeVisible();
 
     const questionHeading = page.locator('h2.text-heading-2');
     await expect(questionHeading).toBeVisible();

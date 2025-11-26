@@ -6,7 +6,7 @@ const COOKIE_NAME = 'solacheck_quiz_progress';
  * Wait for quiz to be ready - uses web-first assertions with auto-retry
  */
 async function waitForQuizReady(page: Page) {
-  await expect(page.locator('text=/Frage \\d+ von \\d+/')).toBeVisible();
+  await expect(page.locator('text=/\\d+%/')).toBeVisible();
 }
 
 /**
@@ -20,12 +20,13 @@ async function clickAgeButton(page: Page) {
 }
 
 /**
- * Click "Weiter" and wait for question 2 to appear
+ * Click "Weiter" and wait for next question to appear
  */
 async function clickNextButton(page: Page) {
   const nextButton = page.getByRole('button', { name: 'Weiter' });
   await nextButton.click();
-  await expect(page.locator('text=/Frage 2 von \\d+/')).toBeVisible();
+  // Wait for question to change by verifying navigation buttons are enabled
+  await expect(page.getByRole('button', { name: 'Zurück' })).toBeEnabled();
 }
 
 /**
@@ -98,8 +99,9 @@ test.describe('Burger Menu - Home Reset', () => {
     await clickAgeButton(page);
     await clickNextButton(page);
 
-    // Verify we're on question 2
-    await expect(page.locator('text=/Frage 2 von \\d+/')).toBeVisible();
+    // Verify we're on question 2 by checking the heading
+    const heading = page.locator('h2').first();
+    await expect(heading).toContainText(/Wo wohnst du|Wie viele Personen/i);
 
     // Setup dialog handler - dismiss means "Cancel"
     page.on('dialog', dialog => dialog.dismiss());
@@ -109,7 +111,7 @@ test.describe('Burger Menu - Home Reset', () => {
 
     // When canceled, user stays on quiz page with progress preserved
     await expect(page).toHaveURL(/\/quiz/);
-    await expect(page.locator('text=/Frage 2 von \\d+/')).toBeVisible();
+    await expect(heading).toContainText(/Wo wohnst du|Wie viele Personen/i);
   });
 
   test('confirming dialog navigates to home and resets progress', async ({ page }) => {
@@ -120,8 +122,9 @@ test.describe('Burger Menu - Home Reset', () => {
     await clickAgeButton(page);
     await clickNextButton(page);
 
-    // Verify we're on question 2
-    await expect(page.locator('text=/Frage 2 von \\d+/')).toBeVisible();
+    // Verify we're on question 2 by checking the heading
+    const heading = page.locator('h2').first();
+    await expect(heading).toContainText(/Wo wohnst du|Wie viele Personen/i);
 
     // Verify we have a cookie with progress
     let cookies = await page.context().cookies();
@@ -151,8 +154,9 @@ test.describe('Burger Menu - Home Reset', () => {
     await clickAgeButton(page);
     await clickNextButton(page);
 
-    // Verify we're on question 2
-    await expect(page.locator('text=/Frage 2 von \\d+/')).toBeVisible();
+    // Verify we're on question 2 by checking the heading
+    let heading = page.locator('h2').first();
+    await expect(heading).toContainText(/Wo wohnst du|Wie viele Personen/i);
 
     // Setup dialog handler
     page.on('dialog', dialog => dialog.accept());
@@ -168,7 +172,8 @@ test.describe('Burger Menu - Home Reset', () => {
     await waitForQuizReady(page);
 
     // Should be at question 1
-    await expect(page.locator('text=/Frage 1 von \\d+/')).toBeVisible();
+    heading = page.locator('h2').first();
+    await expect(heading).toContainText(/Wie alt bist du/i);
   });
 
   test('menu behavior when dialog is canceled', async ({ page }) => {

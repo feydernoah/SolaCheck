@@ -35,8 +35,8 @@ test.describe('Landing Page', () => {
     // Wait for the page to load
     await page.waitForLoadState('networkidle');
     
-    // Should see the quiz progress indicator (more flexible - checks for pattern "Frage X von Y")
-    await expect(page.locator('text=/Frage \\d+ von \\d+/')).toBeVisible({ timeout: 10000 });
+    // Should see the progress indicator with percentage
+    await expect(page.locator('text=/\\d+%/')).toBeVisible({ timeout: 10000 });
     
     // Should see a question heading
     const questionHeading = page.locator('h2.text-heading-2');
