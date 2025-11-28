@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback } from "react";
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { OptionTile } from "@/components/ui/OptionTile";
@@ -301,6 +302,7 @@ const isQuestionVisible = (question: Question, answers: Record<number, string | 
 };
 
 export default function Home() {
+  const router = useRouter();
   const { 
     currentQuestion, 
     answers, 
@@ -526,7 +528,7 @@ export default function Home() {
 
               {currentQuestion === questions.length - 1 ? (
                 <Button
-                  onClick={() => alert('Fragebogen abgeschlossen! Antworten: ' + JSON.stringify(answers, null, 2))}
+                  onClick={() => router.push('/results')}
                   disabled={!isAnswered()}
                   variant="primary"
                   size="lg"
