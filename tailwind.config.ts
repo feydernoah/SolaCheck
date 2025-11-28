@@ -66,6 +66,9 @@ const config: Config = {
         'fade-in': 'fadeIn 0.3s ease-in',
         'slide-up': 'slideUp 0.3s ease-out',
         'scale-in': 'scaleIn 0.2s ease-out',
+        'spin-slow': 'spin 3s linear infinite',
+        'spin-slower': 'spin 12s linear infinite',
+        'orbit': 'orbit 4s linear infinite',
       },
       keyframes: {
         fadeIn: {
@@ -79,6 +82,10 @@ const config: Config = {
         scaleIn: {
           '0%': { transform: 'scale(0.95)', opacity: '0' },
           '100%': { transform: 'scale(1)', opacity: '1' },
+        },
+        orbit: {
+          '0%': { transform: 'rotate(0deg)' },
+          '100%': { transform: 'rotate(360deg)' },
         },
       },
     },

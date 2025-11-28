@@ -1,5 +1,17 @@
 import { BalconyPowerPlant, RecommendationResult } from '@/types/recommendations';
 
+// Interface für Standort-Daten
+interface LocationData {
+  street?: string;
+  houseNumber?: string;
+  postalCode?: string;
+  city?: string;
+  coordinates?: {
+    lat: number;
+    lon: number;
+  };
+}
+
 // Mock-Daten für BKWs
 const mockBalconyPowerPlants: BalconyPowerPlant[] = [
   {
@@ -68,7 +80,7 @@ function getLocationText(locationData: string | string[]): string {
   }
   
   try {
-    const parsed = JSON.parse(locationData);
+    const parsed = JSON.parse(locationData) as LocationData;
     if (parsed.city && parsed.postalCode) {
       return `${parsed.city} (${parsed.postalCode})`;
     } else if (parsed.city) {
