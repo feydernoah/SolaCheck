@@ -1,4 +1,5 @@
 import { BalconyPowerPlant, RecommendationResult } from '@/types/recommendations';
+import { balconyPowerPlants } from '@/data/balconyPowerPlants';
 
 // Interface für Standort-Daten
 interface LocationData {
@@ -11,65 +12,6 @@ interface LocationData {
     lon: number;
   };
 }
-
-// Mock-Daten für BKWs
-const mockBalconyPowerPlants: BalconyPowerPlant[] = [
-  {
-    id: 'aukee-400',
-    name: 'AuKEE 400W',
-    manufacturer: 'AuKEE',
-    power: 400,
-    price: 299,
-    efficiency: 22,
-    warranty: 10,
-    description: 'Kompakt und anfängerfreundlich',
-    pricePerWatt: 0.75,
-  },
-  {
-    id: 'deye-800',
-    name: 'DEYE 800W',
-    manufacturer: 'DEYE',
-    power: 800,
-    price: 649,
-    efficiency: 22.5,
-    warranty: 12,
-    description: 'Doppelmodule für maximale Leistung',
-    pricePerWatt: 0.81,
-  },
-  {
-    id: 'trina-600',
-    name: 'Trina 600W',
-    manufacturer: 'Trina Solar',
-    power: 600,
-    price: 449,
-    efficiency: 23,
-    warranty: 15,
-    description: 'Beste Preis-Leistungs-Ratio',
-    pricePerWatt: 0.75,
-  },
-  {
-    id: 'longi-800',
-    name: 'LONGi 800W Premium',
-    manufacturer: 'LONGi',
-    power: 800,
-    price: 799,
-    efficiency: 24,
-    warranty: 15,
-    description: 'Premium Qualität mit höchster Effizienz',
-    pricePerWatt: 0.99,
-  },
-  {
-    id: 'growatt-600',
-    name: 'Growatt 600W',
-    manufacturer: 'Growatt',
-    power: 600,
-    price: 399,
-    efficiency: 22,
-    warranty: 10,
-    description: 'Zuverlässig und günstig',
-    pricePerWatt: 0.67,
-  },
-];
 
 /**
  * Extrahiert Standortinformationen aus dem JSON-String
@@ -95,6 +37,25 @@ function getLocationText(locationData: string | string[]): string {
 }
 
 /**
+ * Konvertiert Budget-Auswahl in maximalen Preis
+ */
+function getBudgetLimit(budget: string): number {
+  switch (budget) {
+    case 'bis-400':
+      return 400;
+    case '400-700':
+      return 700;
+    case '700-1000':
+      return 1000;
+    case '>1000':
+      return Infinity;
+    case 'weiss-nicht':
+    default:
+      return Infinity;
+  }
+}
+
+/**
  * Bestimmt basierend auf Quiz-Antworten, ob ein BKW empfohlen wird
  * und wählt passende Modelle aus
  */
@@ -106,6 +67,7 @@ export function generateRecommendation(answers: Record<number, string | string[]
   const direction = answers[7] as string; // Frage 7: Himmelsrichtung
   
   const locationText = getLocationText(locationRaw);
+  const maxBudget = getBudgetLimit(budget);
   
   // Wenn zu viel Schatten oder zu wenig Budget → kein Empfehlung
   const isRecommended = 
@@ -120,13 +82,37 @@ export function generateRecommendation(answers: Record<number, string | string[]
     };
   }
 
+  // Filtere BKWs nach Budget
+  const affordablePlants = balconyPowerPlants.filter(plant => plant.price <= maxBudget);
+  
   // Berechne günstigstes, leistungsstärkstes und bestes Preis-Leistungs-Verhältnis
-  const cheapest = [...mockBalconyPowerPlants].sort((a, b) => a.price - b.price)[0];
-  const mostPowerful = [...mockBalconyPowerPlants].sort((a, b) => b.power - a.power)[0];
+  const cheapest = [...affordablePlants].sort((a, b) => a.price - b.price)[0];
+  const mostPowerful = [...affordablePlants].sort((a, b) => b.power - a.power)[0];
   
   // Sortiere nach Preis pro Watt für beste Preis-Leistung
-  const bestValue = [...mockBalconyPowerPlants]
-    .sort((a, b) => (a.pricePerWatt ?? Infinity) - (b.pricePerWatt ?? Infinity))[0];
+  // Aber schließe bereits ausgewählte Modelle aus (cheapest und mostPowerful)
+  const excludedIds = new Set([cheapest.id, mostPowerful.id].filter(Boolean));
+  const remainingPlants = affordablePlants.filter(plant => !excludedIds.has(plant.id));
+  
+  // Falls nach Ausschluss noch Modelle übrig sind, wähle bestes Preis-Leistungs-Verhältnis
+  // Ansonsten: Wähle das Modell mit dem besten Kompromiss (höchste Leistung bei niedrigstem Preis)
+  let bestValue: BalconyPowerPlant | undefined;
+  
+  if (remainingPlants.length > 0) {
+    // Normale Auswahl: Bester €/W Wert aus verbleibenden Modellen
+    bestValue = [...remainingPlants]
+      .sort((a, b) => (a.pricePerWatt ?? Infinity) - (b.pricePerWatt ?? Infinity))[0];
+  } else if (affordablePlants.length > 2) {
+    // Fallback: Wenn nur 2 unterschiedliche vorhanden sind (cheapest + mostPowerful identisch)
+    // Wähle das mit dem zweitbesten Preis-Leistungs-Verhältnis
+    const sorted = [...affordablePlants]
+      .sort((a, b) => (a.pricePerWatt ?? Infinity) - (b.pricePerWatt ?? Infinity));
+    bestValue = sorted[1] || sorted[0]; // Zweites Element oder erstes als Fallback
+  } else {
+    // Nur 1-2 Modelle verfügbar: Nimm das beste verfügbare
+    bestValue = [...affordablePlants]
+      .sort((a, b) => (a.pricePerWatt ?? Infinity) - (b.pricePerWatt ?? Infinity))[0];
+  }
 
   // Erstelle personalisierten Text basierend auf Antworten
   let reasoningText = 'Basierend auf deinen Angaben sind die Bedingungen für ein Balkonkraftwerk sehr gut! ';
