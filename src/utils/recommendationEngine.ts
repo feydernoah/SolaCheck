@@ -69,7 +69,7 @@ export function generateRecommendation(answers: Record<number, string | string[]
   const locationText = getLocationText(locationRaw);
   const maxBudget = getBudgetLimit(budget);
   
-  // Wenn zu viel Schatten oder zu wenig Budget → kein Empfehlung
+  // Wenn zu viel Schatten oder zu wenig Budget → keine Empfehlung
   const isRecommended = 
     shadow !== 'ganzen-tag' && 
     budget !== 'weiss-nicht';
