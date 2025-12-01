@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback } from "react";
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { OptionTile } from "@/components/ui/OptionTile";
@@ -301,12 +302,13 @@ const isQuestionVisible = (question: Question, answers: Record<number, string | 
 };
 
 export default function Home() {
+  const router = useRouter();
   const { 
     currentQuestion, 
     answers, 
     setCurrentQuestion, 
     updateAnswer, 
-    resetProgress 
+    resetWithConfirmation 
   } = useQuizProgress();
 
   const handleNext = () => {
@@ -346,15 +348,6 @@ export default function Home() {
     updateAnswer(questions[currentQuestion].id, value);
   }, [currentQuestion, updateAnswer]);
 
-  const handleResetQuiz = useCallback(() => {
-    const confirmed = window.confirm('Möchtest du das Quiz wirklich zurücksetzen? Dein bisheriger Fortschritt geht verloren.');
-    if (confirmed) {
-      resetProgress();
-      return true; // Allow navigation
-    }
-    return false; // Prevent navigation
-  }, [resetProgress]);
-
   const currentQ = questions[currentQuestion];
   const currentAnswer = answers[currentQ.id];
   const currentMultiSelectAnswers = Array.isArray(currentAnswer) ? currentAnswer : [];
@@ -371,7 +364,7 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-white relative overflow-hidden p-4">
       {/* Burger Menu */}
-      <BurgerMenu showHome showQuiz={false} onHomeClick={handleResetQuiz} />
+      <BurgerMenu showHome showQuiz={false} onHomeClick={resetWithConfirmation} />
 
       {/* Main Content */}
       <div className="flex items-center justify-center min-h-screen">
@@ -526,7 +519,7 @@ export default function Home() {
 
               {currentQuestion === questions.length - 1 ? (
                 <Button
-                  onClick={() => alert('Fragebogen abgeschlossen! Antworten: ' + JSON.stringify(answers, null, 2))}
+                  onClick={() => router.push('/results')}
                   disabled={!isAnswered()}
                   variant="primary"
                   size="lg"

@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 interface BurgerMenuProps {
   showHome?: boolean;
   showQuiz?: boolean;
-  onHomeClick?: () => boolean | undefined;
+  onHomeClick?: () => boolean;
   additionalItems?: {
     label: string;
     href: string;
@@ -27,7 +27,7 @@ export function BurgerMenu({
   const handleHomeClick = (e: React.MouseEvent) => {
     if (onHomeClick) {
       const shouldNavigate = onHomeClick();
-      if (shouldNavigate === false) {
+      if (!shouldNavigate) {
         e.preventDefault();
         return;
       }

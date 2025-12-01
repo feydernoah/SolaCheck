@@ -15,6 +15,7 @@ interface UseQuizProgressReturn {
   setAnswers: (answers: Record<number, string | string[]>) => void;
   updateAnswer: (questionId: number, answer: string | string[]) => void;
   resetProgress: () => void;
+  resetWithConfirmation: () => boolean;
   isLoaded: boolean;
 }
 
@@ -88,6 +89,15 @@ export function useQuizProgress(): UseQuizProgressReturn {
     deleteCookie(COOKIE_NAME);
   }, []);
 
+  const resetWithConfirmation = useCallback(() => {
+    const confirmed = window.confirm('Möchtest du das Quiz wirklich zurücksetzen? Dein bisheriger Fortschritt geht verloren.');
+    if (confirmed) {
+      resetProgress();
+      return true;
+    }
+    return false;
+  }, [resetProgress]);
+
   return {
     currentQuestion,
     answers,
@@ -95,6 +105,7 @@ export function useQuizProgress(): UseQuizProgressReturn {
     setAnswers,
     updateAnswer,
     resetProgress,
+    resetWithConfirmation,
     isLoaded,
   };
 }
