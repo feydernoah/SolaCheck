@@ -1,0 +1,300 @@
+import { test, expect } from '@playwright/test';
+
+test.describe('Results Page - UI Components', () => {
+  test.beforeEach(async ({ page, context }) => {
+    // Setze Cookie mit Quiz-Antworten
+    await context.addCookies([{
+      name: 'solacheck_quiz_progress',
+      value: encodeURIComponent(JSON.stringify({
+        currentQuestion: 12,
+        answers: {
+          1: '25-34',
+          2: '{"city":"München","postalCode":"80331","coordinates":{"lat":48.1351,"lon":11.5820}}',
+          3: '2',
+          4: 'eigentumswohnung',
+          5: '70-100',
+          6: 'ja',
+          7: 'sueden',
+          8: '4-6',
+          9: 'kaum',
+          10: 'ja',
+          11: '400-700',
+          12: 'sehr-wichtig'
+        }
+      })),
+      domain: 'localhost',
+      path: '/',
+      sameSite: 'Lax'
+    }]);
+    
+    // Navigiere zur Results-Seite
+    await page.goto('/solacheck/results');
+    
+    // Warte bis Loading vorbei ist
+    await page.waitForTimeout(2000);
+  });
+
+  test('displays loading screen initially', async ({ page }) => {
+    // Reload page um Loading Screen zu sehen
+    await page.reload();
+    const loadingText = page.locator('text=Berechne deine Empfehlung...');
+    await expect(loadingText).toBeVisible({ timeout: 1000 });
+  });
+
+  test('loading screen disappears after delay', async ({ page }) => {
+    // Reload und warte auf Verschwinden
+    await page.reload();
+    await page.waitForTimeout(2000);
+    const loadingText = page.locator('text=Berechne deine Empfehlung...');
+    await expect(loadingText).not.toBeVisible();
+  });
+
+  test('displays burger menu', async ({ page }) => {
+    const burgerMenu = page.getByRole('button', { name: 'Menu' });
+    await expect(burgerMenu).toBeVisible();
+  });
+
+  test('displays recommendation header with buddy image', async ({ page }) => {
+    // Sollte entweder SolaGluecklich oder SolaNachdenklich zeigen
+    const happyBuddy = page.locator('img[alt="Sola Happy"]');
+    const thinkingBuddy = page.locator('img[alt="Sola Nachdenklich"]');
+    
+    const isHappyVisible = await happyBuddy.isVisible().catch(() => false);
+    const isThinkingVisible = await thinkingBuddy.isVisible().catch(() => false);
+    
+    expect(isHappyVisible || isThinkingVisible).toBeTruthy();
+  });
+
+  test('displays recommendation title', async ({ page }) => {
+    // Prüfe ob ein Heading mit Empfehlung existiert
+    const heading = page.locator('h1');
+    await expect(heading).toBeVisible();
+    await expect(heading).toContainText(/Balkonkraftwerk/);
+  });
+
+  test('displays reasoning text', async ({ page }) => {
+    // Reasoning-Text sollte sichtbar sein
+    const reasoningText = page.locator('p.text-body-lg');
+    await expect(reasoningText).toBeVisible();
+  });
+});
+
+test.describe('Results Page - Positive Recommendation', () => {
+  test.beforeEach(async ({ page, context }) => {
+    // Setze Cookie mit Quiz-Antworten für positive Empfehlung
+    await context.addCookies([{
+      name: 'solacheck_quiz_progress',
+      value: encodeURIComponent(JSON.stringify({
+        currentQuestion: 11,
+        answers: {
+          1: '25-34',
+          2: '{"city":"München","postalCode":"80331"}',
+          7: 'sueden',
+          9: 'kaum',
+          11: '400-700'
+        }
+      })),
+      domain: 'localhost',
+      path: '/',
+      sameSite: 'Lax'
+    }]);
+    
+    await page.goto('/solacheck/results');
+    await page.waitForTimeout(2000);
+  });
+
+  test('displays happy buddy image for positive recommendation', async ({ page }) => {
+    const happyBuddy = page.locator('img[alt="Sola Happy"]');
+    await expect(happyBuddy).toBeVisible();
+  });
+
+  test('displays three recommendation cards', async ({ page }) => {
+    // Sollte 3 Produktkarten anzeigen
+    const cards = page.locator('[class*="grid"] > div').filter({ has: page.locator('text=/€/') });
+    await expect(cards).toHaveCount(3);
+  });
+
+  test('displays badges on recommendation cards', async ({ page }) => {
+    // Prüfe auf die 3 Badge-Typen
+    await expect(page.locator('text=💰 Günstigstes')).toBeVisible();
+    await expect(page.locator('text=⭐ Beste Preis-Leistung')).toBeVisible();
+    await expect(page.locator('text=⚡ Maximale Leistung')).toBeVisible();
+  });
+
+  test('recommendation cards display product details', async ({ page }) => {
+    // Prüfe ob Produktdetails angezeigt werden (first() um strict mode zu vermeiden)
+    await expect(page.locator('text=/\\d+W/').first()).toBeVisible(); // Watt
+    await expect(page.locator('text=/\\d+ €/').first()).toBeVisible(); // Preis (mit Leerzeichen vor €)
+    await expect(page.locator('text=/\\d+ Jahre/').first()).toBeVisible(); // Garantie
+  });
+
+  test('displays info box with additional information', async ({ page }) => {
+    const infoBox = page.locator('text=Noch Fragen?');
+    await expect(infoBox).toBeVisible();
+    
+    const infoText = page.locator('text=Alle gezeigten Modelle sind zuverlässig');
+    await expect(infoText).toBeVisible();
+  });
+
+  test('displays CO2-Bilanz CTA button', async ({ page }) => {
+    const co2Button = page.locator('text=CO₂-Bilanz berechnen');
+    await expect(co2Button).toBeVisible();
+  });
+
+  test('displays "Neues Quiz starten" button', async ({ page }) => {
+    const newQuizButton = page.locator('text=Neues Quiz starten');
+    await expect(newQuizButton).toBeVisible();
+  });
+
+  test('CO2-Bilanz button links to /carbon-footprint', async ({ page }) => {
+    const co2Button = page.locator('text=CO₂-Bilanz berechnen');
+    const href = await co2Button.locator('..').getAttribute('href');
+    expect(href).toBe('/solacheck/carbon-footprint');
+  });
+
+  test('"Neues Quiz starten" button resets progress', async ({ page, context }) => {
+    const newQuizButton = page.getByRole('button', { name: 'Neues Quiz starten' });
+    await newQuizButton.click();
+    
+    // Sollte zur Startseite navigieren (ohne trailing slash)
+    await expect(page).toHaveURL(/\/solacheck\/?$/);
+    
+    // Cookie sollte gelöscht sein
+    const cookies = await context.cookies();
+    const quizCookie = cookies.find(c => c.name === 'solacheck_quiz_progress');
+    expect(quizCookie).toBeUndefined();
+  });
+});
+
+test.describe('Results Page - Negative Recommendation', () => {
+  test.beforeEach(async ({ page, context }) => {
+    // Setze Cookie mit Quiz-Antworten für negative Empfehlung
+    await context.addCookies([{
+      name: 'solacheck_quiz_progress',
+      value: encodeURIComponent(JSON.stringify({
+        currentQuestion: 11,
+        answers: {
+          1: '25-34',
+          2: '{"city":"Berlin","postalCode":"10115"}',
+          7: 'norden',
+          9: 'ganzen-tag',
+          11: '400-700'
+        }
+      })),
+      domain: 'localhost',
+      path: '/',
+      sameSite: 'Lax'
+    }]);
+    
+    await page.goto('/solacheck/results');
+    await page.waitForTimeout(2000);
+  });
+
+  test('displays thinking buddy image for negative recommendation', async ({ page }) => {
+    const thinkingBuddy = page.locator('img[alt="Sola Nachdenklich"]');
+    await expect(thinkingBuddy).toBeVisible();
+  });
+
+  test('does not display recommendation cards', async ({ page }) => {
+    // Keine Produktkarten bei negativer Empfehlung
+    const badges = page.locator('text=💰 Günstigstes');
+    await expect(badges).not.toBeVisible();
+  });
+
+  test('displays only "Zur Startseite" button', async ({ page }) => {
+    const homeButton = page.getByRole('button', { name: 'Zur Startseite' });
+    await expect(homeButton).toBeVisible();
+    
+    // CO2-Button sollte nicht sichtbar sein
+    const co2Button = page.locator('text=CO₂-Bilanz berechnen');
+    await expect(co2Button).not.toBeVisible();
+  });
+
+  test('"Zur Startseite" button navigates home and resets', async ({ page, context }) => {
+    const homeButton = page.getByRole('button', { name: 'Zur Startseite' });
+    await homeButton.click();
+    
+    await expect(page).toHaveURL(/\/solacheck\/?$/);
+    
+    const cookies = await context.cookies();
+    const quizCookie = cookies.find(c => c.name === 'solacheck_quiz_progress');
+    expect(quizCookie).toBeUndefined();
+  });
+});
+
+test.describe('Results Page - Redirect Logic', () => {
+  test('redirects to quiz if no answers in cookie', async ({ page }) => {
+    // Gehe direkt zur Results-Seite ohne Cookie
+    await page.goto('/solacheck/results');
+    
+    // Sollte zum Quiz umleiten
+    await expect(page).toHaveURL('/solacheck/quiz', { timeout: 3000 });
+  });
+});
+
+test.describe('Results Page - Responsive Design', () => {
+  test.beforeEach(async ({ page, context }) => {
+    await context.addCookies([{
+      name: 'solacheck_quiz_progress',
+      value: encodeURIComponent(JSON.stringify({
+        currentQuestion: 11,
+        answers: {
+          1: '25-34',
+          2: '{"city":"Hamburg","postalCode":"20095"}',
+          7: 'suedwest',
+          9: 'kaum',
+          11: '700-1000'
+        }
+      })),
+      domain: 'localhost',
+      path: '/',
+      sameSite: 'Lax'
+    }]);
+    
+    await page.goto('/solacheck/results');
+    await page.waitForTimeout(2000);
+  });
+
+  test('recommendation cards are in grid layout on desktop', async ({ page }) => {
+    const grid = page.locator('[class*="grid"][class*="md:grid-cols-3"]');
+    await expect(grid).toBeVisible();
+  });
+
+  test('CTA buttons stack vertically on mobile, horizontal on desktop', async ({ page }) => {
+    const ctaContainer = page.locator('[class*="flex-col"][class*="sm:flex-row"]').filter({ 
+      has: page.locator('text=CO₂-Bilanz berechnen') 
+    });
+    await expect(ctaContainer).toBeVisible();
+  });
+
+  test('content is centered and has max-width', async ({ page }) => {
+    const contentContainer = page.locator('.max-w-5xl');
+    await expect(contentContainer).toBeVisible();
+  });
+});
+
+test.describe('Results Page - Data Privacy Notice', () => {
+  test.beforeEach(async ({ page, context }) => {
+    await context.addCookies([{
+      name: 'solacheck_quiz_progress',
+      value: encodeURIComponent(JSON.stringify({
+        currentQuestion: 11,
+        answers: {
+          9: 'kaum',
+          11: '400-700'
+        }
+      })),
+      domain: 'localhost',
+      path: '/',
+      sameSite: 'Lax'
+    }]);
+    
+    await page.goto('/solacheck/results');
+    await page.waitForTimeout(2000);
+  });
+
+  test('displays data privacy notice', async ({ page }) => {
+    const privacyNotice = page.locator('text=Deine Quiz-Antworten werden nicht gespeichert');
+    await expect(privacyNotice).toBeVisible();
+  });
+});
