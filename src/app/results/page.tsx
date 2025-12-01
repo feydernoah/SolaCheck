@@ -15,7 +15,7 @@ import { RecommendationResult } from '@/types/recommendations';
 
 export default function ResultsPage() {
   const router = useRouter();
-  const { answers, resetProgress } = useQuizProgress();
+  const { answers, resetWithConfirmation } = useQuizProgress();
   const [recommendation, setRecommendation] = useState<RecommendationResult | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -36,6 +36,12 @@ export default function ResultsPage() {
 
     return () => clearTimeout(timer);
   }, [answers, router]);
+
+  const handleNewQuiz = () => {
+    if (resetWithConfirmation()) {
+      router.push('/');
+    }
+  };
 
   if (!recommendation) {
     return <LoadingScreen isVisible={isLoading} />;
@@ -164,10 +170,7 @@ export default function ResultsPage() {
                   variant="outline"
                   size="lg"
                   className="px-12"
-                  onClick={() => {
-                    resetProgress();
-                    router.push('/');
-                  }}
+                  onClick={handleNewQuiz}
                 >
                   Neues Quiz starten
                 </Button>
@@ -177,23 +180,13 @@ export default function ResultsPage() {
                 variant="primary"
                 size="lg"
                 className="px-12"
-                onClick={() => {
-                  resetProgress();
-                  router.push('/');
-                }}
+                onClick={handleNewQuiz}
               >
                 Zur Startseite
               </Button>
             )}
           </div>
 
-          {/* Additional Info */}
-          <Card padding="md" className="bg-gray-50 text-center">
-            <p className="text-body-sm text-gray-600">
-              💾 Deine Quiz-Antworten werden nicht gespeichert. 
-              Bei erneutem Besuch startest du wieder von vorne.
-            </p>
-          </Card>
         </div>
       </div>
     </div>

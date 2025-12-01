@@ -156,6 +156,13 @@ test.describe('Results Page - Positive Recommendation', () => {
 
   test('"Neues Quiz starten" button resets progress', async ({ page, context }) => {
     const newQuizButton = page.getByRole('button', { name: 'Neues Quiz starten' });
+    
+    // Handle the confirmation dialog
+    page.on('dialog', async dialog => {
+      expect(dialog.message()).toContain('Möchtest du das Quiz wirklich zurücksetzen');
+      await dialog.accept();
+    });
+    
     await newQuizButton.click();
     
     // Sollte zur Startseite navigieren (ohne trailing slash)
@@ -215,6 +222,13 @@ test.describe('Results Page - Negative Recommendation', () => {
 
   test('"Zur Startseite" button navigates home and resets', async ({ page, context }) => {
     const homeButton = page.getByRole('button', { name: 'Zur Startseite' });
+    
+    // Handle the confirmation dialog
+    page.on('dialog', async dialog => {
+      expect(dialog.message()).toContain('Möchtest du das Quiz wirklich zurücksetzen');
+      await dialog.accept();
+    });
+    
     await homeButton.click();
     
     await expect(page).toHaveURL(/\/solacheck\/?$/);
@@ -274,32 +288,5 @@ test.describe('Results Page - Responsive Design', () => {
   test('content is centered and has max-width', async ({ page }) => {
     const contentContainer = page.locator('.max-w-5xl');
     await expect(contentContainer).toBeVisible();
-  });
-});
-
-test.describe('Results Page - Data Privacy Notice', () => {
-  test.beforeEach(async ({ page, context }) => {
-    await context.addCookies([{
-      name: 'solacheck_quiz_progress',
-      value: encodeURIComponent(JSON.stringify({
-        currentQuestion: 11,
-        answers: {
-          9: 'kaum',
-          11: '400-700'
-        }
-      })),
-      domain: 'localhost',
-      path: '/',
-      sameSite: 'Lax'
-    }]);
-    
-    await page.goto('/solacheck/results');
-    // Wait for page to be ready by checking for h1 heading
-    await page.locator('h1').waitFor({ state: 'visible' });
-  });
-
-  test('displays data privacy notice', async ({ page }) => {
-    const privacyNotice = page.locator('text=Deine Quiz-Antworten werden nicht gespeichert');
-    await expect(privacyNotice).toBeVisible();
   });
 });
