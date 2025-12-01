@@ -30,8 +30,8 @@ test.describe('Results Page - UI Components', () => {
     // Navigiere zur Results-Seite
     await page.goto('/solacheck/results');
     
-    // Warte bis Loading vorbei ist
-    await page.waitForTimeout(2000);
+    // Warte bis Loading vorbei ist - warte auf h1 heading
+    await page.locator('h1').waitFor({ state: 'visible' });
   });
 
   test('displays loading screen initially', async ({ page }) => {
@@ -44,7 +44,8 @@ test.describe('Results Page - UI Components', () => {
   test('loading screen disappears after delay', async ({ page }) => {
     // Reload und warte auf Verschwinden
     await page.reload();
-    await page.waitForTimeout(2000);
+    // Warte darauf dass der Loading-Text verschwindet
+    await page.locator('text=Berechne deine Empfehlung...').waitFor({ state: 'hidden', timeout: 3000 });
     const loadingText = page.locator('text=Berechne deine Empfehlung...');
     await expect(loadingText).not.toBeVisible();
   });
@@ -100,7 +101,8 @@ test.describe('Results Page - Positive Recommendation', () => {
     }]);
     
     await page.goto('/solacheck/results');
-    await page.waitForTimeout(2000);
+    // Wait for the "Sola Happy" image to appear, indicating the results page is loaded
+    await page.waitForSelector('img[alt="Sola Happy"]', { state: 'visible' });
   });
 
   test('displays happy buddy image for positive recommendation', async ({ page }) => {
@@ -187,7 +189,8 @@ test.describe('Results Page - Negative Recommendation', () => {
     }]);
     
     await page.goto('/solacheck/results');
-    await page.waitForTimeout(2000);
+    // Wait for the "Sola Nachdenklich" image to appear, indicating the results page is loaded
+    await page.waitForSelector('img[alt="Sola Nachdenklich"]', { state: 'visible' });
   });
 
   test('displays thinking buddy image for negative recommendation', async ({ page }) => {
@@ -252,7 +255,8 @@ test.describe('Results Page - Responsive Design', () => {
     }]);
     
     await page.goto('/solacheck/results');
-    await page.waitForTimeout(2000);
+    // Wait for the grid container to be visible, indicating loading is complete
+    await page.waitForSelector('[class*="grid"][class*="md:grid-cols-3"]');
   });
 
   test('recommendation cards are in grid layout on desktop', async ({ page }) => {
@@ -290,7 +294,8 @@ test.describe('Results Page - Data Privacy Notice', () => {
     }]);
     
     await page.goto('/solacheck/results');
-    await page.waitForTimeout(2000);
+    // Wait for page to be ready by checking for h1 heading
+    await page.locator('h1').waitFor({ state: 'visible' });
   });
 
   test('displays data privacy notice', async ({ page }) => {
