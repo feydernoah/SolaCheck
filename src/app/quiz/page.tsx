@@ -1,13 +1,16 @@
 "use client";
 
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { OptionTile } from "@/components/ui/OptionTile";
 import { BurgerMenu } from "@/components/BurgerMenu";
+import { InfoButton } from "@/components/InfoButton";
+import { InfoModal } from "@/components/InfoModal";
 import { AddressInput } from "@/components/AddressInput";
 import { useQuizProgress } from "@/hooks/useQuizProgress";
+import { getQuestionInfo } from "@/data/questionInfoData";
 import { 
   MdBalcony, 
   MdDeck, 
@@ -303,6 +306,7 @@ const isQuestionVisible = (question: Question, answers: Record<number, string | 
 
 export default function Home() {
   const router = useRouter();
+  const [isInfoModalOpen, setIsInfoModalOpen] = useState(false);
   const { 
     currentQuestion, 
     answers, 
@@ -353,6 +357,7 @@ export default function Home() {
   const currentMultiSelectAnswers = Array.isArray(currentAnswer) ? currentAnswer : [];
   const currentTextAnswer = typeof currentAnswer === 'string' ? currentAnswer : '';
   const filteredOptions = getFilteredOptions(currentQ, answers);
+  const currentQuestionInfo = getQuestionInfo(currentQ.id);
 
   const isAnswered = () => {
     if (currentQ.type === 'multiselect') {
@@ -363,8 +368,18 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-white relative overflow-hidden p-4">
-      {/* Burger Menu */}
-      <BurgerMenu showHome showQuiz={false} onHomeClick={resetWithConfirmation} />
+      {/* Burger Menu and Info Button */}
+      <div className="fixed top-4 right-4 sm:top-5 sm:right-5 md:top-6 md:right-6 z-40 flex items-center gap-4">
+        <InfoButton onClick={() => setIsInfoModalOpen(true)} />
+        <BurgerMenu showHome showQuiz={false} onHomeClick={resetWithConfirmation} inline />
+      </div>
+
+      {/* Info Modal */}
+      <InfoModal
+        isOpen={isInfoModalOpen}
+        onClose={() => setIsInfoModalOpen(false)}
+        info={currentQuestionInfo}
+      />
 
       {/* Main Content */}
       <div className="flex items-center justify-center min-h-screen">
