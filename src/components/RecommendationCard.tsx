@@ -1,18 +1,20 @@
-import { BalconyPowerPlant } from '@/types/recommendations';
+import { ProductRanking } from '@/types/economic';
 import { Card } from './ui/Card';
 import { Button } from './ui/Button';
 
 interface RecommendationCardProps {
-  plant: BalconyPowerPlant;
+  ranking: ProductRanking;
   badge?: string;
   badgeColor?: 'yellow' | 'green' | 'blue';
 }
 
 export function RecommendationCard({ 
-  plant, 
+  ranking, 
   badge,
   badgeColor = 'yellow'
 }: RecommendationCardProps) {
+  const { product, economics } = ranking;
+  
   const badgeColors = {
     yellow: 'bg-yellow-100 text-yellow-800',
     green: 'bg-green-100 text-green-800',
@@ -31,53 +33,59 @@ export function RecommendationCard({
       )}
 
       {/* Image Placeholder */}
-      <div className="w-full h-40 bg-gradient-to-br from-yellow-50 to-gray-100 rounded-xl mb-4 flex items-center justify-center">
+      <div className="w-full h-40 bg-linear-to-br from-yellow-50 to-gray-100 rounded-xl mb-4 flex items-center justify-center">
         <span className="text-gray-400 text-sm font-semibold">BKW Bild</span>
       </div>
 
       {/* Manufacturer & Name */}
       <h3 className="text-heading-3 font-bold text-gray-800 mb-1">
-        {plant.name}
+        {product.name}
       </h3>
       <p className="text-body-sm text-gray-600 mb-4">
-        {plant.manufacturer}
+        {product.brand}
       </p>
 
       {/* Specs */}
-      <div className="space-y-3 mb-6 flex-grow">
+      <div className="space-y-3 mb-6 grow">
         {/* Power */}
         <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
           <span className="text-body-sm text-gray-600">Leistung</span>
-          <span className="text-body font-semibold text-gray-800">{plant.power} W</span>
+          <span className="text-body font-semibold text-gray-800">{product.wattage} Wp</span>
         </div>
 
         {/* Price */}
         <div className="flex justify-between items-center p-3 bg-yellow-50 rounded-lg">
           <span className="text-body-sm text-gray-600">Preis</span>
-          <span className="text-heading-3 font-bold text-yellow-600">{plant.price} €</span>
+          <span className="text-heading-3 font-bold text-yellow-600">{product.price} €</span>
         </div>
 
-        {/* Price per Watt */}
-        {plant.pricePerWatt && (
-          <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
-            <span className="text-body-sm text-gray-600">€/Watt</span>
-            <span className="text-body font-semibold text-gray-800">
-              {plant.pricePerWatt.toFixed(2)} €
-            </span>
-          </div>
-        )}
+        {/* Amortization */}
+        <div className="flex justify-between items-center p-3 bg-green-50 rounded-lg">
+          <span className="text-body-sm text-gray-600">Amortisation</span>
+          <span className="text-body font-semibold text-green-700">
+            {economics.amortizationYears.toFixed(1)} Jahre
+          </span>
+        </div>
+
+        {/* Annual Savings */}
+        <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
+          <span className="text-body-sm text-gray-600">Ersparnis/Jahr</span>
+          <span className="text-body font-semibold text-gray-800">
+            {Math.round(economics.annualSavingsEuro)} €
+          </span>
+        </div>
 
         {/* Warranty */}
         <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
           <span className="text-body-sm text-gray-600">Garantie</span>
-          <span className="text-body font-semibold text-gray-800">{plant.warranty} Jahre</span>
+          <span className="text-body font-semibold text-gray-800">{product.warrantyYears} Jahre</span>
         </div>
       </div>
 
       {/* Description */}
-      {plant.description && (
+      {product.description && (
         <p className="text-body-sm text-gray-700 mb-6 italic">
-          &quot;{plant.description}&quot;
+          &quot;{product.description}&quot;
         </p>
       )}
 
