@@ -273,7 +273,7 @@ function generateMatchReasons(
   }
   
   // High self-consumption
-  if (economics.selfConsumptionKwh / economics.annualYieldKwh > 0.5) {
+  if (economics.annualYieldKwh > 0 && economics.selfConsumptionKwh / economics.annualYieldKwh > 0.5) {
     reasons.push('Hohe Eigenverbrauchsquote möglich');
   }
   
@@ -378,7 +378,7 @@ function determineRecommendation(
   if (bestProduct.economics.amortizationYears > 15) {
     return {
       isRecommended: false,
-      reason: `Mit einer Amortisationszeit von über ${Math.round(bestProduct.economics.amortizationYears)} Jahren ist ein Balkonkraftwerk für deine Situation aktuell nicht wirtschaftlich sinnvoll.`,
+      reason: `Mit einer Amortisationszeit von über ${Math.round(bestProduct.economics.amortizationYears).toString()} Jahren ist ein Balkonkraftwerk für deine Situation aktuell nicht wirtschaftlich sinnvoll.`,
     };
   }
 

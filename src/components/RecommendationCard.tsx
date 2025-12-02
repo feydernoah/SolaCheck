@@ -33,7 +33,7 @@ export function RecommendationCard({
       )}
 
       {/* Image Placeholder */}
-      <div className="w-full h-40 bg-gradient-to-br from-yellow-50 to-gray-100 rounded-xl mb-4 flex items-center justify-center">
+      <div className="w-full h-40 bg-linear-to-br from-yellow-50 to-gray-100 rounded-xl mb-4 flex items-center justify-center">
         <span className="text-gray-400 text-sm font-semibold">BKW Bild</span>
       </div>
 
@@ -46,7 +46,7 @@ export function RecommendationCard({
       </p>
 
       {/* Specs */}
-      <div className="space-y-3 mb-6 flex-grow">
+      <div className="space-y-3 mb-6 grow">
         {/* Power */}
         <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
           <span className="text-body-sm text-gray-600">Leistung</span>

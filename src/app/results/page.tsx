@@ -59,7 +59,7 @@ export default function ResultsPage() {
     };
 
     void fetchRecommendation();
-  }, [answers, router, isLoaded]);
+  }, [answers, router, isLoaded, hasFetched]);
 
   const handleNewQuiz = () => {
     if (resetWithConfirmation()) {

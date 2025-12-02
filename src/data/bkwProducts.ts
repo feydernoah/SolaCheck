@@ -80,7 +80,7 @@ export const bkwProducts: BKWProduct[] = [
     bifacial: true,
     moduleEfficiency: 21.8,
     warrantyYears: 25,
-    description: 'Bifaziale Module für bis zu 10% mehr Ertrag durch Rückseitennutzung.',
+    description: 'Bifaziale Module für bis zu 8% mehr Ertrag durch Rückseitennutzung.',
   },
   {
     id: 'anker-solix-rs40p',
