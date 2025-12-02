@@ -13,13 +13,16 @@ interface BurgerMenuProps {
     href: string;
     onClick?: () => void;
   }[];
+  /** When true, the menu button won't have fixed positioning (useful when placed in a custom container) */
+  inline?: boolean;
 }
 
 export function BurgerMenu({ 
   showHome = true, 
   showQuiz = true,
   onHomeClick,
-  additionalItems = []
+  additionalItems = [],
+  inline = false,
 }: BurgerMenuProps) {
   const [menuOpen, setMenuOpen] = useState(false);
   const router = useRouter();
@@ -36,8 +39,12 @@ export function BurgerMenu({
     router.push('/');
   };
 
+  const containerClasses = inline 
+    ? "relative z-50"
+    : "fixed top-4 right-4 sm:top-5 sm:right-5 md:top-6 md:right-6 z-50";
+
   return (
-    <div className="fixed top-4 right-4 sm:top-5 sm:right-5 md:top-6 md:right-6 z-50">
+    <div className={containerClasses}>
       <button
         onClick={() => setMenuOpen(!menuOpen)}
         className="bg-white p-3 sm:p-4 md:p-4 lg:p-5 xl:p-5 rounded-lg shadow-lg hover:shadow-xl transition-shadow border border-gray-200"
