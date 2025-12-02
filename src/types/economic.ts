@@ -111,6 +111,8 @@ export interface ProductRanking {
 // Full recommendation response
 export interface RecommendationResponse {
   success: boolean;
+  isRecommended: boolean;
+  recommendationReason: string;
   rankings: ProductRanking[];
   assumptions: CalculationAssumptions;
   quizSummary: {

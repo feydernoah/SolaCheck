@@ -45,6 +45,8 @@ export async function POST(request: NextRequest): Promise<NextResponse<Recommend
       return NextResponse.json(
         {
           success: false,
+          isRecommended: false,
+          recommendationReason: 'Fehlerhafte Anfrage',
           rankings: [],
           assumptions: {
             electricityPriceCentPerKwh: 0,
@@ -84,6 +86,8 @@ export async function POST(request: NextRequest): Promise<NextResponse<Recommend
     return NextResponse.json(
       {
         success: false,
+        isRecommended: false,
+        recommendationReason: 'Interner Serverfehler',
         rankings: [],
         assumptions: {
           electricityPriceCentPerKwh: 0,

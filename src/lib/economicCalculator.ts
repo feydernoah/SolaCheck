@@ -349,6 +349,56 @@ function getMountingLabel(mountingType: string): string {
 }
 
 /**
+ * Determine if a BKW is recommended and provide reasoning
+ */
+function determineRecommendation(
+  rankings: ProductRanking[],
+  orientationFactor: number,
+  shadingFactor: number
+): { isRecommended: boolean; reason: string } {
+  // No products available in budget
+  if (rankings.length === 0) {
+    return {
+      isRecommended: false,
+      reason: 'Leider haben wir in deinem Budget kein passendes Balkonkraftwerk gefunden. Erwäge ein höheres Budget für mehr Optionen.',
+    };
+  }
+
+  // Extremely poor conditions (north + heavy shade = factor < 0.25)
+  const combinedFactor = orientationFactor * shadingFactor;
+  if (combinedFactor < 0.25) {
+    return {
+      isRecommended: false,
+      reason: 'Die Kombination aus Ausrichtung und Verschattung ist leider nicht ideal für ein Balkonkraftwerk. Der Ertrag wäre zu gering, um wirtschaftlich sinnvoll zu sein.',
+    };
+  }
+
+  // Best option has too long amortization (> 15 years)
+  const bestProduct = rankings[0];
+  if (bestProduct.economics.amortizationYears > 15) {
+    return {
+      isRecommended: false,
+      reason: `Mit einer Amortisationszeit von über ${Math.round(bestProduct.economics.amortizationYears)} Jahren ist ein Balkonkraftwerk für deine Situation aktuell nicht wirtschaftlich sinnvoll.`,
+    };
+  }
+
+  // Good conditions - recommend!
+  let reason = 'Basierend auf deinen Angaben sind die Bedingungen für ein Balkonkraftwerk sehr gut! ';
+  
+  if (combinedFactor >= 0.8) {
+    reason += 'Dein Standort bietet optimale Bedingungen für maximale Erträge. ';
+  } else if (combinedFactor >= 0.6) {
+    reason += 'Dein Standort bietet gute Bedingungen für solide Erträge. ';
+  } else {
+    reason += 'Trotz einiger Einschränkungen kann sich ein Balkonkraftwerk für dich lohnen. ';
+  }
+
+  reason += 'Hier sind unsere Top-Empfehlungen für dich:';
+
+  return { isRecommended: true, reason };
+}
+
+/**
  * Main calculation function - generates full recommendations
  */
 export function calculateRecommendations(answers: QuizAnswers): RecommendationResponse {
@@ -412,6 +462,13 @@ export function calculateRecommendations(answers: QuizAnswers): RecommendationRe
     ranking.rank = index + 1;
   });
   
+  // Determine if we should recommend a BKW
+  const { isRecommended, reason: recommendationReason } = determineRecommendation(
+    rankings,
+    orientationFactor,
+    shadingFactor
+  );
+  
   // Build assumptions object
   const assumptions: CalculationAssumptions = {
     electricityPriceCentPerKwh: ELECTRICITY_PRICE_CT_PER_KWH,
@@ -435,6 +492,8 @@ export function calculateRecommendations(answers: QuizAnswers): RecommendationRe
   
   return {
     success: true,
+    isRecommended,
+    recommendationReason,
     rankings,
     assumptions,
     quizSummary,
