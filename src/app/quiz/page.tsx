@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback } from "react";
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { OptionTile } from "@/components/ui/OptionTile";
@@ -308,7 +309,7 @@ export default function Home() {
     updateAnswer, 
     resetProgress 
   } = useQuizProgress();
-
+  const router = useRouter();
   const handleNext = () => {
     let nextQuestion = currentQuestion + 1;
     while (nextQuestion < questions.length && !isQuestionVisible(questions[nextQuestion], answers)) {
@@ -526,7 +527,14 @@ export default function Home() {
 
               {currentQuestion === questions.length - 1 ? (
                 <Button
-                  onClick={() => alert('Fragebogen abgeschlossen! Antworten: ' + JSON.stringify(answers, null, 2))}
+                  onClick={() => {
+                    const budgetAnswer = answers[11] as string | undefined;
+                  if (budgetAnswer) {
+                    router.push(`/ergebnis?budget=${encodeURIComponent(budgetAnswer)}`);
+                  } else {
+                    router.push("/ergebnis");
+                  }  
+                  }}
                   disabled={!isAnswered()}
                   variant="primary"
                   size="lg"
