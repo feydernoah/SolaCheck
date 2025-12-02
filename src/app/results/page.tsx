@@ -50,7 +50,7 @@ export default function ResultsPage() {
   return (
     <div className="min-h-screen bg-white relative overflow-hidden">
       {/* Burger Menu */}
-      <BurgerMenu showHome showQuiz={false} />
+      <BurgerMenu showHome showQuiz={false} onHomeClick={resetWithConfirmation} />
 
       {/* Main Content */}
       <div className="flex flex-col items-center justify-center min-h-screen px-4 py-8 md:py-16">
