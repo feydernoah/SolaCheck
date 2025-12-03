@@ -31,6 +31,15 @@ export const bkwProducts: BKWProduct[] = [
     moduleEfficiency: 20.5,
     warrantyYears: 25,
     description: 'Kompaktes Einsteiger-Set mit einem 400W Modul. Ideal für kleine Balkone.',
+    manufacturingOrigin: 'china',
+    manufacturingCo2Kg: 18.5,
+    manufacturingCo2Breakdown: {
+      resourceExtraction: 11.1,
+      production: 6.5,
+      transport: 0.9,
+    },
+    recyclingPotential: 85,
+    hazardousComponents: [],
   },
   {
     id: 'greensolar-light-380',
@@ -47,6 +56,15 @@ export const bkwProducts: BKWProduct[] = [
     moduleEfficiency: 19.8,
     warrantyYears: 12,
     description: 'Günstiges Einsteigermodell für den kleinen Geldbeutel.',
+    manufacturingOrigin: 'china',
+    manufacturingCo2Kg: 17.6,
+    manufacturingCo2Breakdown: {
+      resourceExtraction: 10.6,
+      production: 6.2,
+      transport: 0.8,
+    },
+    recyclingPotential: 83,
+    hazardousComponents: [],
   },
 
   // === MID-RANGE SEGMENT (400-700€) ===
@@ -65,6 +83,15 @@ export const bkwProducts: BKWProduct[] = [
     moduleEfficiency: 21.3,
     warrantyYears: 25,
     description: 'Bestseller von priwatt. Zwei Module mit 800W Gesamtleistung für optimale Balkonnutzung.',
+    manufacturingOrigin: 'china',
+    manufacturingCo2Kg: 37.2,
+    manufacturingCo2Breakdown: {
+      resourceExtraction: 22.3,
+      production: 13.0,
+      transport: 1.9,
+    },
+    recyclingPotential: 85,
+    hazardousComponents: [],
   },
   {
     id: 'yuma-balcony-800-pro',
@@ -81,6 +108,15 @@ export const bkwProducts: BKWProduct[] = [
     moduleEfficiency: 21.8,
     warrantyYears: 25,
     description: 'Bifaziale Module für bis zu 8% mehr Ertrag durch Rückseitennutzung.',
+    manufacturingOrigin: 'china',
+    manufacturingCo2Kg: 38.6,
+    manufacturingCo2Breakdown: {
+      resourceExtraction: 23.2,
+      production: 13.5,
+      transport: 1.9,
+    },
+    recyclingPotential: 86,
+    hazardousComponents: [],
   },
   {
     id: 'anker-solix-rs40p',
@@ -97,6 +133,15 @@ export const bkwProducts: BKWProduct[] = [
     moduleEfficiency: 22.0,
     warrantyYears: 25,
     description: 'Premium-Set von Anker mit hochwertigen Komponenten und App-Steuerung.',
+    manufacturingOrigin: 'china',
+    manufacturingCo2Kg: 37.0,
+    manufacturingCo2Breakdown: {
+      resourceExtraction: 22.2,
+      production: 13.0,
+      transport: 1.8,
+    },
+    recyclingPotential: 86,
+    hazardousComponents: [],
   },
   {
     id: 'kleines-kraftwerk-classic-800',
@@ -113,6 +158,15 @@ export const bkwProducts: BKWProduct[] = [
     moduleEfficiency: 20.9,
     warrantyYears: 15,
     description: 'Solides Set vom deutschen Anbieter mit gutem Preis-Leistungs-Verhältnis.',
+    manufacturingOrigin: 'europe',
+    manufacturingCo2Kg: 32.5,
+    manufacturingCo2Breakdown: {
+      resourceExtraction: 19.5,
+      production: 11.4,
+      transport: 1.6,
+    },
+    recyclingPotential: 84,
+    hazardousComponents: [],
   },
   {
     id: 'priwatt-priflat-duo',
@@ -129,6 +183,15 @@ export const bkwProducts: BKWProduct[] = [
     moduleEfficiency: 21.3,
     warrantyYears: 25,
     description: 'Optimiert für Flachdach und Terrassen mit anpassbarem Aufstellwinkel.',
+    manufacturingOrigin: 'china',
+    manufacturingCo2Kg: 37.2,
+    manufacturingCo2Breakdown: {
+      resourceExtraction: 22.3,
+      production: 13.0,
+      transport: 1.9,
+    },
+    recyclingPotential: 85,
+    hazardousComponents: [],
   },
   {
     id: 'greensolar-bifacial-830',
@@ -145,6 +208,15 @@ export const bkwProducts: BKWProduct[] = [
     moduleEfficiency: 21.5,
     warrantyYears: 25,
     description: 'Bifaziale Module für Mehrerträge, besonders bei hellem Untergrund.',
+    manufacturingOrigin: 'china',
+    manufacturingCo2Kg: 38.8,
+    manufacturingCo2Breakdown: {
+      resourceExtraction: 23.3,
+      production: 13.6,
+      transport: 1.9,
+    },
+    recyclingPotential: 86,
+    hazardousComponents: [],
   },
 
   // === UPPER MID-RANGE (700-1000€) ===
@@ -163,6 +235,15 @@ export const bkwProducts: BKWProduct[] = [
     moduleEfficiency: 22.4,
     warrantyYears: 10,
     description: 'Smarter Wechselrichter mit App, kompatibel mit EcoFlow Powerstation-Speicher.',
+    manufacturingOrigin: 'china',
+    manufacturingCo2Kg: 38.2,
+    manufacturingCo2Breakdown: {
+      resourceExtraction: 22.9,
+      production: 13.3,
+      transport: 2.0,
+    },
+    recyclingPotential: 82,
+    hazardousComponents: ['Lithium battery cells'],
   },
   {
     id: 'anker-solix-solarbank-e1600',
@@ -180,6 +261,15 @@ export const bkwProducts: BKWProduct[] = [
     moduleEfficiency: 22.0,
     warrantyYears: 10,
     description: 'Komplettset mit 1,6 kWh Speicher für maximalen Eigenverbrauch.',
+    manufacturingOrigin: 'china',
+    manufacturingCo2Kg: 135.4,
+    manufacturingCo2Breakdown: {
+      resourceExtraction: 50.2,
+      production: 73.6,
+      transport: 11.6,
+    },
+    recyclingPotential: 82,
+    hazardousComponents: ['Lithium battery cells', 'rare earth elements'],
   },
   {
     id: 'yuma-flat-800-bifacial',
@@ -196,6 +286,15 @@ export const bkwProducts: BKWProduct[] = [
     moduleEfficiency: 22.2,
     warrantyYears: 30,
     description: 'Premium Flachdach-Set mit bifazialen Modulen und 30 Jahren Garantie.',
+    manufacturingOrigin: 'china',
+    manufacturingCo2Kg: 40.1,
+    manufacturingCo2Breakdown: {
+      resourceExtraction: 24.1,
+      production: 14.0,
+      transport: 2.0,
+    },
+    recyclingPotential: 87,
+    hazardousComponents: [],
   },
   {
     id: 'priwatt-pribalcony-quattro',
@@ -212,6 +311,15 @@ export const bkwProducts: BKWProduct[] = [
     moduleEfficiency: 21.3,
     warrantyYears: 25,
     description: 'Großes Set für maximale Leistung. Ideal für Hauswand oder große Terrassen.',
+    manufacturingOrigin: 'china',
+    manufacturingCo2Kg: 76.5,
+    manufacturingCo2Breakdown: {
+      resourceExtraction: 45.9,
+      production: 26.8,
+      transport: 3.8,
+    },
+    recyclingPotential: 85,
+    hazardousComponents: [],
   },
 
   // === PREMIUM SEGMENT (over 1000€) ===
@@ -231,6 +339,15 @@ export const bkwProducts: BKWProduct[] = [
     moduleEfficiency: 22.4,
     warrantyYears: 10,
     description: 'Premium Bundle mit tragbarem Speicher. Auch als Notstromversorgung nutzbar.',
+    manufacturingOrigin: 'china',
+    manufacturingCo2Kg: 147.5,
+    manufacturingCo2Breakdown: {
+      resourceExtraction: 62.1,
+      production: 72.5,
+      transport: 12.9,
+    },
+    recyclingPotential: 80,
+    hazardousComponents: ['Lithium battery cells', 'Lead in power electronics'],
   },
   {
     id: 'anker-solix-solarbank-2-pro',
@@ -248,6 +365,15 @@ export const bkwProducts: BKWProduct[] = [
     moduleEfficiency: 23.0,
     warrantyYears: 15,
     description: 'Top-Modell mit 2,4 kWh Speicher, bifazialen Modulen und Smart-Home Integration.',
+    manufacturingOrigin: 'china',
+    manufacturingCo2Kg: 198.7,
+    manufacturingCo2Breakdown: {
+      resourceExtraction: 76.3,
+      production: 106.8,
+      transport: 15.6,
+    },
+    recyclingPotential: 84,
+    hazardousComponents: ['Lithium battery cells', 'rare earth elements'],
   },
   {
     id: 'zendure-solarflow-ace',
@@ -265,6 +391,15 @@ export const bkwProducts: BKWProduct[] = [
     moduleEfficiency: 21.5,
     warrantyYears: 10,
     description: 'Modulares System mit erweiterbarem Speicher bis 7,68 kWh.',
+    manufacturingOrigin: 'china',
+    manufacturingCo2Kg: 161.3,
+    manufacturingCo2Breakdown: {
+      resourceExtraction: 68.5,
+      production: 80.2,
+      transport: 12.6,
+    },
+    recyclingPotential: 81,
+    hazardousComponents: ['Lithium battery cells'],
   },
   {
     id: 'priwatt-speicher-bundle-2kwh',
@@ -282,6 +417,15 @@ export const bkwProducts: BKWProduct[] = [
     moduleEfficiency: 21.8,
     warrantyYears: 10,
     description: 'priwatt Komplettlösung mit Speicher für optimalen Eigenverbrauch.',
+    manufacturingOrigin: 'china',
+    manufacturingCo2Kg: 159.8,
+    manufacturingCo2Breakdown: {
+      resourceExtraction: 68.0,
+      production: 79.4,
+      transport: 12.4,
+    },
+    recyclingPotential: 83,
+    hazardousComponents: ['Lithium battery cells'],
   },
 ];
 

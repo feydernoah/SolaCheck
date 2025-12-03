@@ -50,3 +50,6 @@ next-env.d.ts
 /test-results/
 /playwright-report/
 /playwright/.cache/
+
+# Copilot instructions (local developer guidance)
+.github/copilot-instructions.md
