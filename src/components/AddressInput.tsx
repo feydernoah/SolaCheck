@@ -235,11 +235,12 @@ export function AddressInput({ value, onChange }: AddressInputProps) {
   const hasProcessedCoords = useRef(false);
   const lastLookedUpPostalCode = useRef<string>('');
   const isLookingUpCityRef = useRef(false);
+  const lookupRequestIdRef = useRef(0);
   const [isLookingUpCity, setIsLookingUpCity] = useState(false);
   const [validationResult, setValidationResult] = useState<ValidationResult | null>(null);
   const [isValidating, setIsValidating] = useState(false);
-  const validationTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const lastValidatedAddress = useRef<string>('');
+  const validationRequestIdRef = useRef(0);
 
   // When coordinates are received, do reverse geocoding
   useEffect(() => {
@@ -265,7 +266,6 @@ export function AddressInput({ value, onChange }: AddressInputProps) {
     if (postalCode.length < 5 && lastLookedUpPostalCode.current !== '') {
       // PLZ was cleared or is being changed
       lastLookedUpPostalCode.current = '';
-      // Clear the city if it was auto-filled - use queueMicrotask to avoid sync setState
       queueMicrotask(() => {
         setAddressData((prev) => {
           if (prev.city) {
@@ -289,18 +289,21 @@ export function AddressInput({ value, onChange }: AddressInputProps) {
     ) {
       lastLookedUpPostalCode.current = postalCode;
       isLookingUpCityRef.current = true;
-      
-      // Use a microtask to avoid synchronous setState in effect
+      lookupRequestIdRef.current += 1;
+      const currentRequestId = lookupRequestIdRef.current;
       queueMicrotask(() => setIsLookingUpCity(true));
       
       void lookupCityByPostalCode(postalCode).then((city) => {
-        isLookingUpCityRef.current = false;
-        setIsLookingUpCity(false);
-        if (city) {
-          setAddressData((prev) => {
-            // Update the city (replace any previous auto-filled value)
-            return { ...prev, city };
-          });
+        // Only update if this is still the latest request
+        if (currentRequestId === lookupRequestIdRef.current) {
+          isLookingUpCityRef.current = false;
+          setIsLookingUpCity(false);
+          if (city) {
+            setAddressData((prev) => {
+              // Update the city (replace any previous auto-filled value)
+              return { ...prev, city };
+            });
+          }
         }
       });
     }
@@ -319,11 +322,6 @@ export function AddressInput({ value, onChange }: AddressInputProps) {
 
   // Validate address with debounce
   useEffect(() => {
-    // Clear any pending validation
-    if (validationTimeoutRef.current) {
-      clearTimeout(validationTimeoutRef.current);
-    }
-
     const { postalCode, street, houseNumber, city } = addressData;
     
     // Create a key for the current address state
@@ -339,26 +337,28 @@ export function AddressInput({ value, onChange }: AddressInputProps) {
     
     // Need at least a full PLZ to validate
     if (!hasFullPLZ) {
-      // Use microtask to avoid synchronous setState in effect
       queueMicrotask(() => setValidationResult(null));
       return;
     }
 
     // Debounce the validation to avoid too many API calls
-    validationTimeoutRef.current = setTimeout(() => {
+    const timeoutId = setTimeout(() => {
+      validationRequestIdRef.current += 1;
+      const currentRequestId = validationRequestIdRef.current;
       lastValidatedAddress.current = addressKey;
       setIsValidating(true);
       
       void validateAddress(addressData).then((result) => {
-        setIsValidating(false);
-        setValidationResult(result);
+        // Only update state if this is still the latest request
+        if (currentRequestId === validationRequestIdRef.current) {
+          setIsValidating(false);
+          setValidationResult(result);
+        }
       });
     }, 800); // Wait 800ms after user stops typing
 
     return () => {
-      if (validationTimeoutRef.current) {
-        clearTimeout(validationTimeoutRef.current);
-      }
+      clearTimeout(timeoutId);
     };
   }, [addressData]);
 
@@ -505,9 +505,8 @@ export function AddressInput({ value, onChange }: AddressInputProps) {
                 {validationResult.suggestedCity && (
                   <button
                     onClick={() => {
-                      if (validationResult.suggestedCity) {
-                        handleFieldChange('city', validationResult.suggestedCity);
-                      }
+                      const city = validationResult.suggestedCity;
+                      if (city) handleFieldChange('city', city);
                     }}
                     className="px-3 py-1.5 bg-amber-200 hover:bg-amber-300 text-amber-900 rounded-md text-sm font-medium transition-colors"
                   >
@@ -517,9 +516,8 @@ export function AddressInput({ value, onChange }: AddressInputProps) {
                 {validationResult.suggestedPLZ && (
                   <button
                     onClick={() => {
-                      if (validationResult.suggestedPLZ) {
-                        handleFieldChange('postalCode', validationResult.suggestedPLZ);
-                      }
+                      const plz = validationResult.suggestedPLZ;
+                      if (plz) handleFieldChange('postalCode', plz);
                     }}
                     className="px-3 py-1.5 bg-amber-200 hover:bg-amber-300 text-amber-900 rounded-md text-sm font-medium transition-colors"
                   >

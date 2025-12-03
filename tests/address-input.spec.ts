@@ -1,5 +1,25 @@
 import { test, expect, type Page } from '@playwright/test';
 
+/**
+ * Navigate to the location question (question 2) and open the manual address form
+ * Uses web-first assertions for reliable waiting
+ */
+async function openManualAddressForm(page: Page): Promise<boolean> {
+  const ageButton = page.getByRole('button', { name: /Jahre/i }).first();
+  
+  try {
+    await ageButton.click();
+    await expect(page.getByRole('button', { name: 'Weiter' })).toBeEnabled();
+    await page.getByRole('button', { name: 'Weiter' }).click();
+    await expect(page.getByRole('button', { name: /Standort nutzen/i })).toBeVisible();
+    await page.getByRole('button', { name: /manuell eingeben/i }).click();
+    await expect(page.locator('#address-postalcode')).toBeVisible();
+    return true;
+  } catch {
+    return false;
+  }
+}
+
 test.describe('Address Input Component', () => {
   test.beforeEach(async ({ page }) => {
     await page.context().clearCookies();
@@ -130,22 +150,6 @@ test.describe('Address Input - City Auto-fill from PLZ', () => {
     await expect(page.locator('text=/\\d+%/')).toBeVisible();
   });
 
-  async function openManualAddressForm(page: Page): Promise<boolean> {
-    const ageButton = page.getByRole('button', { name: /Jahre/i }).first();
-    
-    try {
-      await ageButton.click();
-      await expect(page.getByRole('button', { name: 'Weiter' })).toBeEnabled();
-      await page.getByRole('button', { name: 'Weiter' }).click();
-      await expect(page.getByRole('button', { name: /Standort nutzen/i })).toBeVisible();
-      await page.getByRole('button', { name: /manuell eingeben/i }).click();
-      await expect(page.locator('#address-postalcode')).toBeVisible();
-      return true;
-    } catch {
-      return false;
-    }
-  }
-
   test('auto-fills city when entering valid 5-digit PLZ', async ({ page }) => {
     const formOpened = await openManualAddressForm(page);
     if (!formOpened) {
@@ -167,12 +171,12 @@ test.describe('Address Input - City Auto-fill from PLZ', () => {
       return;
     }
 
-    // Enter PLZ
+    // Enter PLZ and immediately check for loading spinner
     await page.locator('#address-postalcode').fill('10115');
+    await expect(page.locator('.animate-spin')).toBeVisible({ timeout: 2000 });
 
-    // The loading spinner should appear (might be brief)
-    // We check if city eventually gets filled as proof the lookup worked
-    await expect(page.locator('#address-city')).toHaveValue(/./i, { timeout: 10000 });
+    // Then verify city gets filled
+    await expect(page.locator('#address-city')).toHaveValue(/Berlin/i, { timeout: 10000 });
   });
 
   test('clears city when PLZ is removed', async ({ page }) => {
@@ -235,22 +239,6 @@ test.describe('Address Input - PLZ Validation', () => {
     await expect(page.locator('text=/\\d+%/')).toBeVisible();
   });
 
-  async function openManualAddressForm(page: Page): Promise<boolean> {
-    const ageButton = page.getByRole('button', { name: /Jahre/i }).first();
-    
-    try {
-      await ageButton.click();
-      await expect(page.getByRole('button', { name: 'Weiter' })).toBeEnabled();
-      await page.getByRole('button', { name: 'Weiter' }).click();
-      await expect(page.getByRole('button', { name: /Standort nutzen/i })).toBeVisible();
-      await page.getByRole('button', { name: /manuell eingeben/i }).click();
-      await expect(page.locator('#address-postalcode')).toBeVisible();
-      return true;
-    } catch {
-      return false;
-    }
-  }
-
   test('shows warning for non-existent PLZ', async ({ page }) => {
     const formOpened = await openManualAddressForm(page);
     if (!formOpened) {
@@ -297,10 +285,10 @@ test.describe('Address Input - PLZ Validation', () => {
     await page.locator('#address-housenumber').fill('1');
     await page.locator('#address-postalcode').fill('10115');
     
-    // Wait for city and then validation result
-    await expect(page.locator('#address-city')).toHaveValue(/Berlin/i, { timeout: 10000 });
+    // Check for the blue loading indicator
+    await expect(page.locator('.bg-blue-50')).toBeVisible({ timeout: 2000 });
     
-    // Eventually should show either success or warning (validation completed)
+    // Then verify validation completes
     await expect(page.locator('.bg-green-50, .bg-amber-50')).toBeVisible({ timeout: 15000 });
   });
 });
@@ -311,22 +299,6 @@ test.describe('Address Input - City-PLZ Mismatch Validation', () => {
     await page.goto('/solacheck/quiz');
     await expect(page.locator('text=/\\d+%/')).toBeVisible();
   });
-
-  async function openManualAddressForm(page: Page): Promise<boolean> {
-    const ageButton = page.getByRole('button', { name: /Jahre/i }).first();
-    
-    try {
-      await ageButton.click();
-      await expect(page.getByRole('button', { name: 'Weiter' })).toBeEnabled();
-      await page.getByRole('button', { name: 'Weiter' }).click();
-      await expect(page.getByRole('button', { name: /Standort nutzen/i })).toBeVisible();
-      await page.getByRole('button', { name: /manuell eingeben/i }).click();
-      await expect(page.locator('#address-postalcode')).toBeVisible();
-      return true;
-    } catch {
-      return false;
-    }
-  }
 
   test('shows warning when city does not match PLZ', async ({ page }) => {
     const formOpened = await openManualAddressForm(page);
@@ -403,22 +375,6 @@ test.describe('Address Input - Street-PLZ Mismatch Validation', () => {
     await page.goto('/solacheck/quiz');
     await expect(page.locator('text=/\\d+%/')).toBeVisible();
   });
-
-  async function openManualAddressForm(page: Page): Promise<boolean> {
-    const ageButton = page.getByRole('button', { name: /Jahre/i }).first();
-    
-    try {
-      await ageButton.click();
-      await expect(page.getByRole('button', { name: 'Weiter' })).toBeEnabled();
-      await page.getByRole('button', { name: 'Weiter' }).click();
-      await expect(page.getByRole('button', { name: /Standort nutzen/i })).toBeVisible();
-      await page.getByRole('button', { name: /manuell eingeben/i }).click();
-      await expect(page.locator('#address-postalcode')).toBeVisible();
-      return true;
-    } catch {
-      return false;
-    }
-  }
 
   test('shows warning when street address has different PLZ', async ({ page }) => {
     const formOpened = await openManualAddressForm(page);
