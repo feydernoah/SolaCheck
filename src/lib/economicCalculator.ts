@@ -21,6 +21,7 @@ import type {
   MountingType,
 } from '@/types/economic';
 import { bkwProducts, getBudgetMaxValue } from '@/data/bkwProducts';
+import { calculateProductEcological, generateEcologicalInsights } from '@/lib/ecologicCalculator';
 
 // === CONSTANTS ===
 
@@ -443,14 +444,20 @@ export function calculateRecommendations(answers: QuizAnswers): RecommendationRe
       selfConsumptionRate,
       annualConsumption
     );
+
+    // Calculate ecological impact
+    const ecological = calculateProductEcological(product, economics);
+    const { reasons: ecologicalReasons } = generateEcologicalInsights(product, ecological, economics);
     
     return {
       rank: 0, // Will be set after sorting
       product,
       economics,
+      ecological,
       score: economics.amortizationYears, // Lower is better
       matchReasons: generateMatchReasons(product, economics, answers),
       warnings: generateWarnings(product, economics, answers),
+      ecologicalReasons,
     };
   });
   
@@ -488,6 +495,7 @@ export function calculateRecommendations(answers: QuizAnswers): RecommendationRe
     budget: budget ? getBudgetLabel(budget) : 'Nicht angegeben',
     mountingLocation: mountingLocation ? getMountingLabel(mountingLocation) : 'Nicht angegeben',
     shading: shading ? getShadingLabel(shading) : 'Nicht angegeben',
+    ecoImportance: answers[12] ? getEcoImportanceLabel(answers[12]) : 'Nicht angegeben',
   };
   
   return {
@@ -545,4 +553,13 @@ function getShadingLabel(shading: ShadingLevel): string {
     'ganzen-tag': 'Fast ganztags Schatten',
   };
   return labels[shading];
+}
+
+function getEcoImportanceLabel(ecoImportance: string): string {
+  const labels: Record<string, string> = {
+    'sehr-wichtig': 'Sehr wichtig',
+    'wichtig': 'Wichtig',
+    'nebensaechlich': 'Eher nebensächlich',
+  };
+  return labels[ecoImportance] ?? ecoImportance;
 }
