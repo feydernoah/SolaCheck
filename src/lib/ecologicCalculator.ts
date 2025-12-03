@@ -98,14 +98,7 @@ const PRODUCT_WEIGHT_KG_PER_400W = 30; // kg per 400W system
  */
 const PRODUCT_LIFETIME_YEARS = 25;
 
-/**
- * Recycling recovery rates by component
- * Modern PV modules can recover 85-95% of materials (glass, aluminum, silicon)
- * Inverters/batteries: 80-90%
- */
-const MODULE_RECYCLING_RATE = 0.85;
-const INVERTER_RECYCLING_RATE = 0.80;
-const BATTERY_RECYCLING_RATE = 0.75;
+// Recycling recovery rates removed from tracked inputs (not part of current model)
 
 // === MANUFACTURING CARBON FOOTPRINT CALCULATION ===
 
@@ -250,11 +243,9 @@ function calculateLifecycleCo2(
   const totalOperationalSavingsKg = annualCo2SavingsKg * lifetimeYears;
   
   // End-of-life recycling credit (avoids new production)
-  // Assume recycling saves ~80% of production emissions
-  const recyclingSavingsKg = (manufacturingCo2Kg * 0.80) * 0.3; // Conservative: 30% of recycled content
-  
-  // Net lifecycle emissions
-  lifecycleEmissions = manufacturingCo2Kg - totalOperationalSavingsKg - recyclingSavingsKg;
+  // Note: recycling credits removed from calculation in this version
+  // Net lifecycle emissions = manufacturing CO2 minus operational savings
+  lifecycleEmissions = manufacturingCo2Kg - totalOperationalSavingsKg;
   
   return Math.max(0, lifecycleEmissions); // No negative emissions (save as 0)
 }
@@ -269,9 +260,7 @@ function calculateLifecycleCo2(
  */
 function calculateEcologicalScore(
   manufacturingCo2Kg: number,
-  co2PaybackYears: number,
-  recyclablePercentage: number,
-  hazardousComponentCount: number
+  co2PaybackYears: number
 ): number {
   // Normalize scores to 0-100 range
   
@@ -287,21 +276,11 @@ function calculateEcologicalScore(
   // Normalize to 0-100 based on typical range (50-150 kg CO2)
   const manufacturingScore = Math.max(0, Math.min(100, ((150 - manufacturingCo2Kg) / 100) * 100));
 
-  // Recycling potential score
-  const recyclingScore = recyclablePercentage * 0.8 + 20; // Baseline 20, max 100
+  // New weighted score using only payback and manufacturing intensity
+  // Weights: payback 60%, manufacturing intensity 40%
+  const ecologicalScore = Math.round(paybackScore * 0.6 + manufacturingScore * 0.4);
 
-  // Hazardous components score (fewer is better)
-  // Deduct 10 points per hazardous component (max 40 point deduction)
-  const hazardousScore = Math.max(0, 100 - hazardousComponentCount * 10);
-
-  // Calculate weighted score
-  const ecologicalScore =
-    paybackScore * 0.4 +
-    manufacturingScore * 0.3 +
-    recyclingScore * 0.2 +
-    hazardousScore * 0.1;
-
-  return Math.round(ecologicalScore);
+  return ecologicalScore;
 }
 
 /**
@@ -333,8 +312,8 @@ function generateEcologicalReasons(
   const reasons: string[] = [];
 
   // CO2 payback period
-  if (co2PaybackYears < 3) {
-    reasons.push(`Amortisiert die CO₂-Emissionen der Herstellung in unter 3 Jahren – hervorragende Umweltbilanz`);
+  if (co2PaybackYears < 1) {
+    reasons.push(`Amortisiert die CO₂-Emissionen der Herstellung in unter 1 Jahr – hervorragende Umweltbilanz`);
   } else if (co2PaybackYears < 5) {
     reasons.push(`Gute CO₂-Amortisationszeit von ca. ${Math.round(co2PaybackYears)} Jahren`);
   }
@@ -343,23 +322,14 @@ function generateEcologicalReasons(
   if (product.manufacturingOrigin === 'germany' || product.manufacturingOrigin === 'europe') {
     reasons.push(`Hergestellt in ${getManufacturingOriginLabel(product.manufacturingOrigin)} – geringere Transportemissionen`);
   } else if (product.manufacturingOrigin === 'china') {
-    reasons.push(`Hinweis: Hergestellt in China – erhöhtes Transport-CO₂`);
+    reasons.push(`Hinweis: Hergestellt in China – erhöhte CO₂-Emissionen aufgrund langer Transportwege`);
   }
 
   // Low manufacturing emissions
   if (ecological.manufacturingCo2Kg < 80) {
-    reasons.push(`Niedrige Herstellungs-CO₂ (~${Math.round(ecological.manufacturingCo2Kg)} kg)`);
+    reasons.push(`Niedrige CO₂-Emissionen in der Herstellung: (~${Math.round(ecological.manufacturingCo2Kg)} kg)`);
   }
-
-  // High recycling potential
-  if (ecological.recyclablePercentage >= 85) {
-    reasons.push(`${ecological.recyclablePercentage}% recycelbar – gute Kreislaufwirtschaft`);
-  }
-
-  // No hazardous components
-  if (ecological.hazardousComponents.length === 0) {
-    reasons.push(`Keine gefährlichen Komponenten – umwelt- und benutzerfreundlich`);
-  }
+  // Recycling and hazardous component details are not tracked in this version
 
   // Bifacial bonus (better lifetime yield = faster payback)
   if (product.bifacial) {
@@ -398,18 +368,7 @@ function generateEcologicalWarnings(
   if (product.manufacturingOrigin === 'china' || product.manufacturingOrigin === 'asia') {
     warnings.push(`Herstellung in weit entferntem Standort erhöht Transportemissionen`);
   }
-
-  // Low recycling potential
-  if (ecological.recyclablePercentage < 70) {
-    warnings.push(`Begrenztes Recycling-Potenzial (${ecological.recyclablePercentage}%) – Einfluss am Lebensende beachten`);
-  }
-
-  // Hazardous components
-  if (ecological.hazardousComponents.length > 0) {
-    warnings.push(
-      `Enthält gefährliche Materialien: ${ecological.hazardousComponents.join(', ')}. Fachgerechte Entsorgung erforderlich.`
-    );
-  }
+  // Recycling and hazardous component details are not tracked in this version
 
   // Low warranty (shorter lifetime = worse environmental case)
   if (product.warrantyYears < 10) {
@@ -448,9 +407,7 @@ export function calculateProductEcological(
   // Calculate ecological score
   const ecologicalScore = calculateEcologicalScore(
     manufacturingCo2Kg,
-    co2PaybackYears,
-    product.recyclingPotential,
-    product.hazardousComponents?.length ?? 0
+    co2PaybackYears
   );
 
   return {
@@ -460,8 +417,7 @@ export function calculateProductEcological(
     transportCo2Kg: Math.round(manufacturingCo2Data.breakdown.transport * 100) / 100,
     paybackPeriodYears: Math.round(co2PaybackYears * 10) / 10,
     lifecycleEmissionsKg: Math.round(lifecycleEmissionsKg * 100) / 100,
-    recyclablePercentage: product.recyclingPotential,
-    hazardousComponents: product.hazardousComponents ?? [],
+    // recyclablePercentage and hazardousComponents removed
     ecologicalScore,
   };
 }
@@ -504,13 +460,12 @@ export function generateEcologicalSummary(
   const lifecycleText =
     ecological.lifecycleEmissionsKg < 10
       ? `Mit einer Lebenszyklus-CO₂-Bilanz von nur ${ecological.lifecycleEmissionsKg.toFixed(0)} kg hat dieses Produkt hervorragende Umweltwerte`
-      : `Über seine ${PRODUCT_LIFETIME_YEARS}-jährige Lebensdauer kompensiert es die Herstellungs-Emissionen etwa ${Math.round((ecological.paybackPeriodYears * economics.annualYieldKwh * GRID_CO2_GRAMS_PER_KWH) / (ecological.manufacturingCo2Kg * 1000))}x`;
+      : `Über seine ${PRODUCT_LIFETIME_YEARS}-jährige Lebensdauer kompensiert es die Herstellungs-Emissionen mehrfach`;
 
   return (
     `${product.name} ${paybackText}. ` +
     `Die Herstellung verursacht ${ecological.manufacturingCo2Kg.toFixed(1)} kg CO₂, ` +
     `während die jährliche Erzeugung ca. ${Math.round((economics.annualYieldKwh * GRID_CO2_GRAMS_PER_KWH) / 1000)} kg CO₂ pro Jahr einspart. ` +
-    `${lifecycleText}. ` +
-    `${ecological.recyclablePercentage}% des Produktes können am Lebensende recycelt werden.`
+    `${lifecycleText}. `
   );
 }

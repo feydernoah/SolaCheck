@@ -51,8 +51,7 @@ export interface BKWProduct {
     production: number; // CO2 from factory production (kg)
     transport: number; // CO2 from transportation to market (kg)
   };
-  recyclingPotential: number; // Percentage of product that can be recycled (0-100)
-  hazardousComponents: string[]; // List of hazardous materials in the product
+  // Note: recyclingPotential and hazardousComponents removed (not tracked)
 }
 
 // Mounting types matching quiz options
@@ -113,8 +112,7 @@ export interface ProductEcological {
   transportCo2Kg: number; // CO2 from transportation to market
   paybackPeriodYears: number; // Years until CO2 from manufacturing is offset by savings
   lifecycleEmissionsKg: number; // Total CO2 emissions over 25-year lifecycle
-  recyclablePercentage: number; // % of product that can be recycled
-  hazardousComponents: string[]; // List of hazardous materials
+  // Note: recyclablePercentage and hazardousComponents removed
   ecologicalScore: number; // Composite score (0-100, higher is better)
 }
 
