@@ -137,6 +137,7 @@ export interface ProductRanking {
   matchReasons: string[];
   warnings: string[];
   ecologicalReasons?: string[]; // Reasons based on ecological impact
+  ecologicalWarnings?: string[]; // Warnings from ecological analysis
 }
 
 // Full recommendation response
