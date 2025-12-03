@@ -38,8 +38,7 @@ export const bkwProducts: BKWProduct[] = [
       production: 6.5,
       transport: 0.9,
     },
-    recyclingPotential: 85,
-    hazardousComponents: [],
+    
   },
   {
     id: 'greensolar-light-380',
@@ -63,8 +62,7 @@ export const bkwProducts: BKWProduct[] = [
       production: 6.2,
       transport: 0.8,
     },
-    recyclingPotential: 83,
-    hazardousComponents: [],
+    
   },
 
   // === MID-RANGE SEGMENT (400-700€) ===
@@ -90,8 +88,7 @@ export const bkwProducts: BKWProduct[] = [
       production: 13.0,
       transport: 1.9,
     },
-    recyclingPotential: 85,
-    hazardousComponents: [],
+    
   },
   {
     id: 'yuma-balcony-800-pro',
@@ -115,8 +112,7 @@ export const bkwProducts: BKWProduct[] = [
       production: 13.5,
       transport: 1.9,
     },
-    recyclingPotential: 86,
-    hazardousComponents: [],
+    
   },
   {
     id: 'anker-solix-rs40p',
@@ -140,8 +136,7 @@ export const bkwProducts: BKWProduct[] = [
       production: 13.0,
       transport: 1.8,
     },
-    recyclingPotential: 86,
-    hazardousComponents: [],
+    
   },
   {
     id: 'kleines-kraftwerk-classic-800',
@@ -165,8 +160,7 @@ export const bkwProducts: BKWProduct[] = [
       production: 11.4,
       transport: 1.6,
     },
-    recyclingPotential: 84,
-    hazardousComponents: [],
+    
   },
   {
     id: 'priwatt-priflat-duo',
@@ -190,8 +184,7 @@ export const bkwProducts: BKWProduct[] = [
       production: 13.0,
       transport: 1.9,
     },
-    recyclingPotential: 85,
-    hazardousComponents: [],
+    
   },
   {
     id: 'greensolar-bifacial-830',
@@ -215,8 +208,7 @@ export const bkwProducts: BKWProduct[] = [
       production: 13.6,
       transport: 1.9,
     },
-    recyclingPotential: 86,
-    hazardousComponents: [],
+    
   },
 
   // === UPPER MID-RANGE (700-1000€) ===
@@ -242,8 +234,7 @@ export const bkwProducts: BKWProduct[] = [
       production: 13.3,
       transport: 2.0,
     },
-    recyclingPotential: 82,
-    hazardousComponents: ['Lithium battery cells'],
+    
   },
   {
     id: 'anker-solix-solarbank-e1600',
@@ -268,8 +259,7 @@ export const bkwProducts: BKWProduct[] = [
       production: 73.6,
       transport: 11.6,
     },
-    recyclingPotential: 82,
-    hazardousComponents: ['Lithium battery cells', 'rare earth elements'],
+    
   },
   {
     id: 'yuma-flat-800-bifacial',
@@ -293,8 +283,7 @@ export const bkwProducts: BKWProduct[] = [
       production: 14.0,
       transport: 2.0,
     },
-    recyclingPotential: 87,
-    hazardousComponents: [],
+    
   },
   {
     id: 'priwatt-pribalcony-quattro',
@@ -318,8 +307,7 @@ export const bkwProducts: BKWProduct[] = [
       production: 26.8,
       transport: 3.8,
     },
-    recyclingPotential: 85,
-    hazardousComponents: [],
+    
   },
 
   // === PREMIUM SEGMENT (over 1000€) ===
@@ -346,8 +334,7 @@ export const bkwProducts: BKWProduct[] = [
       production: 72.5,
       transport: 12.9,
     },
-    recyclingPotential: 80,
-    hazardousComponents: ['Lithium battery cells', 'Lead in power electronics'],
+    
   },
   {
     id: 'anker-solix-solarbank-2-pro',
@@ -372,8 +359,7 @@ export const bkwProducts: BKWProduct[] = [
       production: 106.8,
       transport: 15.6,
     },
-    recyclingPotential: 84,
-    hazardousComponents: ['Lithium battery cells', 'rare earth elements'],
+    
   },
   {
     id: 'zendure-solarflow-ace',
@@ -398,8 +384,7 @@ export const bkwProducts: BKWProduct[] = [
       production: 80.2,
       transport: 12.6,
     },
-    recyclingPotential: 81,
-    hazardousComponents: ['Lithium battery cells'],
+    
   },
   {
     id: 'priwatt-speicher-bundle-2kwh',
@@ -424,8 +409,7 @@ export const bkwProducts: BKWProduct[] = [
       production: 79.4,
       transport: 12.4,
     },
-    recyclingPotential: 83,
-    hazardousComponents: ['Lithium battery cells'],
+    
   },
 ];
 
