@@ -5,14 +5,6 @@
  * - Manufacturing CO2 emissions (resource extraction, production, transportation)
  * - CO2 payback period (time until environmental gain exceeds production impact)
  * - Lifecycle environmental assessment
- * - Recycling potential and hazardous components
- * 
- * Sources:
- * - PVGIS (EU) for PV production data
- * - ecoinvent database for manufacturing emissions
- * - Fraunhofer ISE "Environmental Footprint of Photovoltaics"
- * - Umweltbundesamt (UBA) German grid CO2 intensity
- * - ICCT (International Council on Clean Transportation) for transport emissions
  */
 
 import type {
@@ -21,8 +13,6 @@ import type {
   ProductEconomics,
   QuizAnswers,
 } from '@/types/economic';
-
-// === CONSTANTS ===
 
 /**
  * CO2 emissions from German grid electricity (g/kWh)
@@ -33,10 +23,8 @@ const GRID_CO2_GRAMS_PER_KWH = 380;
 /**
  * Manufacturing CO2 emissions per Wp of PV module
  * Includes: silicon processing, cell production, module assembly
- * Source: Fraunhofer ISE "Environmental Footprint of Photovoltaics" (2021)
- * Range: 30-48 g CO2/Wp depending on efficiency and process
  */
-const MODULE_MANUFACTURING_CO2_PER_WP = 40; // g CO2/Wp (average)
+const MODULE_MANUFACTURING_CO2_PER_WP = 800; // g CO2/Wp (average)
 
 /**
  * Resource extraction CO2 per Wp (mining, purification, silicon production)
@@ -97,8 +85,6 @@ const PRODUCT_WEIGHT_KG_PER_400W = 30; // kg per 400W system
  * Expected product lifetime (conservative estimate)
  */
 const PRODUCT_LIFETIME_YEARS = 25;
-
-// Recycling recovery rates removed from tracked inputs (not part of current model)
 
 // === MANUFACTURING CARBON FOOTPRINT CALCULATION ===
 
@@ -166,15 +152,8 @@ function calculateBatteryCo2(storageCapacity: number | undefined): number {
 function calculateTotalManufacturingCo2(
   product: BKWProduct
 ): { total: number; breakdown: { resourceExtraction: number; production: number; transport: number } } {
-  // Use product's manufacturingCo2Kg if available, otherwise calculate
+  // Use product's manufacturingCo2Kg, estimate breakdown using ratios
   if (product.manufacturingCo2Kg > 0) {
-    if (product.manufacturingCo2Breakdown) {
-      return {
-        total: product.manufacturingCo2Kg,
-        breakdown: product.manufacturingCo2Breakdown,
-      };
-    }
-    // Estimate breakdown if not provided
     return {
       total: product.manufacturingCo2Kg,
       breakdown: {
@@ -242,12 +221,11 @@ function calculateLifecycleCo2(
   const annualCo2SavingsKg = (annualYieldKwh * GRID_CO2_GRAMS_PER_KWH) / 1000;
   const totalOperationalSavingsKg = annualCo2SavingsKg * lifetimeYears;
   
-  // End-of-life recycling credit (avoids new production)
-  // Note: recycling credits removed from calculation in this version
   // Net lifecycle emissions = manufacturing CO2 minus operational savings
+  // Negative value = net CO2 savings (environmental benefit)
   lifecycleEmissions = manufacturingCo2Kg - totalOperationalSavingsKg;
   
-  return Math.max(0, lifecycleEmissions); // No negative emissions (save as 0)
+  return lifecycleEmissions;
 }
 
 /**
@@ -321,8 +299,6 @@ function generateEcologicalReasons(
   // Manufacturing origin
   if (product.manufacturingOrigin === 'germany' || product.manufacturingOrigin === 'europe') {
     reasons.push(`Hergestellt in ${getManufacturingOriginLabel(product.manufacturingOrigin)} – geringere Transportemissionen`);
-  } else if (product.manufacturingOrigin === 'china') {
-    reasons.push(`Hinweis: Hergestellt in China – erhöhte CO₂-Emissionen aufgrund langer Transportwege`);
   }
 
   // Low manufacturing emissions
@@ -355,20 +331,19 @@ function generateEcologicalWarnings(
   const warnings: string[] = [];
 
   // Slow payback period
-  if (co2PaybackYears > 8) {
+  if (co2PaybackYears > 2) {
     warnings.push(`Lange CO₂-Amortisationszeit (${Math.round(co2PaybackYears)} Jahre) – Standort und Nutzungsverhalten prüfen`);
   }
 
   // High manufacturing emissions
-  if (ecological.manufacturingCo2Kg > 120) {
-    warnings.push(`Hohe Herstellungs-CO₂ (${Math.round(ecological.manufacturingCo2Kg)} kg CO₂)`);
+  if (ecological.manufacturingCo2Kg > 95) {
+    warnings.push(`Hohe CO₂-Emissionen in der Herstellung: (${Math.round(ecological.manufacturingCo2Kg)} kg CO₂)`);
   }
 
   // Long transport distance
   if (product.manufacturingOrigin === 'china' || product.manufacturingOrigin === 'asia') {
-    warnings.push(`Herstellung in weit entferntem Standort erhöht Transportemissionen`);
+    warnings.push(`Herstellung in ${getManufacturingOriginLabel(product.manufacturingOrigin)} erhöht Transportemissionen`);
   }
-  // Recycling and hazardous component details are not tracked in this version
 
   // Low warranty (shorter lifetime = worse environmental case)
   if (product.warrantyYears < 10) {
@@ -417,7 +392,6 @@ export function calculateProductEcological(
     transportCo2Kg: Math.round(manufacturingCo2Data.breakdown.transport * 100) / 100,
     paybackPeriodYears: Math.round(co2PaybackYears * 10) / 10,
     lifecycleEmissionsKg: Math.round(lifecycleEmissionsKg * 100) / 100,
-    // recyclablePercentage and hazardousComponents removed
     ecologicalScore,
   };
 }
