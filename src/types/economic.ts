@@ -46,12 +46,7 @@ export interface BKWProduct {
   // Ecological metrics
   manufacturingOrigin: ManufacturingOrigin; // Where the product is manufactured
   manufacturingCo2Kg: number; // Total CO2 emissions for manufacturing in kg
-  manufacturingCo2Breakdown?: {
-    resourceExtraction: number; // CO2 from mining/resource extraction (kg)
-    production: number; // CO2 from factory production (kg)
-    transport: number; // CO2 from transportation to market (kg)
-  };
-  // Note: recyclingPotential and hazardousComponents removed (not tracked)
+  // Note: manufacturingCo2Breakdown, recyclingPotential and hazardousComponents removed
 }
 
 // Mounting types matching quiz options
