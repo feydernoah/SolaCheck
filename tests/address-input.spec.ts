@@ -420,3 +420,153 @@ test.describe('Address Input - Street-PLZ Mismatch Validation', () => {
     await expect(plzFixButton.or(successMessage)).toBeVisible({ timeout: 20000 });
   });
 });
+
+test.describe('Address Input - Weiter Button Validation', () => {
+  test.beforeEach(async ({ page }) => {
+    await page.context().clearCookies();
+    await page.goto('/solacheck/quiz');
+    await expect(page.locator('text=/\\d+%/')).toBeVisible();
+  });
+
+  test('Weiter button is disabled when address form is empty', async ({ page }) => {
+    const formOpened = await openManualAddressForm(page);
+    if (!formOpened) {
+      test.skip();
+      return;
+    }
+
+    // Weiter button should be disabled when no address is entered
+    await expect(page.getByRole('button', { name: 'Weiter' })).toBeDisabled();
+  });
+
+  test('Weiter button is disabled when address is incomplete', async ({ page }) => {
+    const formOpened = await openManualAddressForm(page);
+    if (!formOpened) {
+      test.skip();
+      return;
+    }
+
+    // Fill only partial address (missing house number and city)
+    await page.locator('#address-street').fill('Teststraße');
+    await page.locator('#address-postalcode').fill('1011'); // incomplete PLZ
+
+    // Weiter button should still be disabled
+    await expect(page.getByRole('button', { name: 'Weiter' })).toBeDisabled();
+  });
+
+  test('Weiter button is disabled when PLZ is invalid', async ({ page }) => {
+    const formOpened = await openManualAddressForm(page);
+    if (!formOpened) {
+      test.skip();
+      return;
+    }
+
+    // Fill complete address with invalid PLZ
+    await page.locator('#address-street').fill('Teststraße');
+    await page.locator('#address-housenumber').fill('1');
+    await page.locator('#address-postalcode').fill('00000'); // non-existent PLZ
+    await page.locator('#address-city').fill('Berlin');
+
+    // Wait for validation to complete
+    await expect(page.locator('text=/PLZ existiert nicht/i')).toBeVisible({ timeout: 10000 });
+
+    // Weiter button should be disabled when PLZ is invalid
+    await expect(page.getByRole('button', { name: 'Weiter' })).toBeDisabled();
+  });
+
+  test('Weiter button is disabled while validation is in progress', async ({ page }) => {
+    const formOpened = await openManualAddressForm(page);
+    if (!formOpened) {
+      test.skip();
+      return;
+    }
+
+    // Fill complete address to trigger validation
+    await page.locator('#address-street').fill('Unter den Linden');
+    await page.locator('#address-housenumber').fill('1');
+    await page.locator('#address-postalcode').fill('10117');
+    
+    // While validation is in progress, button should be disabled
+    // Check for blue loading indicator
+    const loadingIndicator = page.locator('.bg-blue-50');
+    if (await loadingIndicator.isVisible({ timeout: 2000 }).catch(() => false)) {
+      await expect(page.getByRole('button', { name: 'Weiter' })).toBeDisabled();
+    }
+  });
+
+  test('Weiter button is enabled when address is valid', async ({ page }) => {
+    const formOpened = await openManualAddressForm(page);
+    if (!formOpened) {
+      test.skip();
+      return;
+    }
+
+    // Enter a valid Berlin address
+    await page.locator('#address-street').fill('Unter den Linden');
+    await page.locator('#address-housenumber').fill('1');
+    await page.locator('#address-postalcode').fill('10117');
+    
+    // Wait for city auto-fill
+    await expect(page.locator('#address-city')).toHaveValue(/Berlin/i, { timeout: 10000 });
+
+    // Wait for validation to complete (green success message)
+    await expect(page.locator('.bg-green-50')).toBeVisible({ timeout: 15000 });
+
+    // Weiter button should be enabled when address is valid
+    await expect(page.getByRole('button', { name: 'Weiter' })).toBeEnabled();
+  });
+
+  test('Weiter button becomes disabled when valid address is changed to invalid', async ({ page }) => {
+    const formOpened = await openManualAddressForm(page);
+    if (!formOpened) {
+      test.skip();
+      return;
+    }
+
+    // Enter a valid Berlin address
+    await page.locator('#address-street').fill('Unter den Linden');
+    await page.locator('#address-housenumber').fill('1');
+    await page.locator('#address-postalcode').fill('10117');
+    
+    // Wait for city auto-fill and validation
+    await expect(page.locator('#address-city')).toHaveValue(/Berlin/i, { timeout: 10000 });
+    await expect(page.locator('.bg-green-50')).toBeVisible({ timeout: 15000 });
+    await expect(page.getByRole('button', { name: 'Weiter' })).toBeEnabled();
+
+    // Change PLZ to invalid
+    await page.locator('#address-postalcode').clear();
+    await page.locator('#address-postalcode').fill('00000');
+
+    // Wait for validation error
+    await expect(page.locator('text=/PLZ existiert nicht/i')).toBeVisible({ timeout: 10000 });
+
+    // Weiter button should become disabled
+    await expect(page.getByRole('button', { name: 'Weiter' })).toBeDisabled();
+  });
+
+  test('Weiter button is disabled when city does not match PLZ', async ({ page }) => {
+    const formOpened = await openManualAddressForm(page);
+    if (!formOpened) {
+      test.skip();
+      return;
+    }
+
+    // Enter Berlin PLZ
+    await page.locator('#address-postalcode').fill('10115');
+    await expect(page.locator('#address-city')).toHaveValue(/Berlin/i, { timeout: 10000 });
+
+    // Fill rest of address
+    await page.locator('#address-street').fill('Teststraße');
+    await page.locator('#address-housenumber').fill('1');
+
+    // Change city to wrong value
+    await page.locator('#address-city').clear();
+    await page.locator('#address-city').fill('München');
+
+    // Wait for validation warning
+    await expect(page.locator('text=/gehört zu.*nicht zu/i')).toBeVisible({ timeout: 15000 });
+
+    // Weiter button should be disabled
+    await expect(page.getByRole('button', { name: 'Weiter' })).toBeDisabled();
+  });
+});

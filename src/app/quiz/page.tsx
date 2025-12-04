@@ -307,6 +307,7 @@ const isQuestionVisible = (question: Question, answers: Record<number, string | 
 export default function Home() {
   const router = useRouter();
   const [isInfoModalOpen, setIsInfoModalOpen] = useState(false);
+  const [isAddressValid, setIsAddressValid] = useState(false);
   const { 
     currentQuestion, 
     answers, 
@@ -362,6 +363,10 @@ export default function Home() {
   const isAnswered = () => {
     if (currentQ.type === 'multiselect') {
       return currentMultiSelectAnswers.length > 0;
+    }
+    // For address question (id 2), check validation state
+    if (currentQ.id === 2) {
+      return isAddressValid;
     }
     return !!currentAnswer;
   };
@@ -465,6 +470,7 @@ export default function Home() {
                     <AddressInput
                       value={currentTextAnswer}
                       onChange={handleTextAnswer}
+                      onValidationChange={setIsAddressValid}
                     />
                   ) : (
                     /* Normaler Text/Number Input für andere Fragen */

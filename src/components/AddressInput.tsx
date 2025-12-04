@@ -7,6 +7,7 @@ import { useReverseGeocoding, AddressData } from '@/hooks/useReverseGeocoding';
 interface AddressInputProps {
   value: string;
   onChange: (value: string) => void;
+  onValidationChange?: (isValid: boolean) => void;
 }
 
 const EMPTY_ADDRESS: AddressData = {
@@ -226,7 +227,7 @@ function parseInitialValue(value: string): AddressData {
   return EMPTY_ADDRESS;
 }
 
-export function AddressInput({ value, onChange }: AddressInputProps) {
+export function AddressInput({ value, onChange, onValidationChange }: AddressInputProps) {
   const { isLoading: isLoadingGeo, error: geoError, coordinates, getCurrentLocation } = useGeolocation();
   const { isLoading: isLoadingAddress, error: addressError, getAddressFromCoordinates } = useReverseGeocoding();
   
@@ -361,6 +362,35 @@ export function AddressInput({ value, onChange }: AddressInputProps) {
       clearTimeout(timeoutId);
     };
   }, [addressData]);
+
+  // Notify parent about validation state changes
+  useEffect(() => {
+    if (!onValidationChange) return;
+    
+    const { postalCode, street, houseNumber, city } = addressData;
+    const hasRequiredFields = postalCode.length === 5 && street.length > 0 && houseNumber.length > 0 && city.length > 0;
+    
+    // If we don't have all required fields, it's not valid
+    if (!hasRequiredFields) {
+      onValidationChange(false);
+      return;
+    }
+    
+    // If we're still validating, consider it invalid until validation completes
+    if (isValidating) {
+      onValidationChange(false);
+      return;
+    }
+    
+    // If validation has completed, use the result
+    if (validationResult !== null) {
+      onValidationChange(validationResult.isValid);
+      return;
+    }
+    
+    // If no validation result yet but we have all fields, wait for validation
+    onValidationChange(false);
+  }, [addressData, validationResult, isValidating, onValidationChange]);
 
   const handleFieldChange = useCallback((field: keyof AddressData, fieldValue: string) => {
     const newAddress = { ...addressData, [field]: fieldValue };
