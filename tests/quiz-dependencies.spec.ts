@@ -24,14 +24,16 @@ test.describe('Quiz Dependencies', () => {
     // Click "manuell eingeben" button
     await page.getByRole('button', { name: /manuell eingeben/i }).click();
     
-    // Fill in address fields
-    await page.locator('#address-street').fill('Musterstraße');
-    await page.locator('#address-housenumber').fill('42');
-    await page.locator('#address-postalcode').fill('12345');
-    await page.locator('#address-city').fill('Berlin');
+    // Fill in a real valid Berlin address
+    await page.locator('#address-street').fill('Unter den Linden');
+    await page.locator('#address-housenumber').fill('1');
+    await page.locator('#address-postalcode').fill('10117');
     
-    // Wait for address to be validated
-    await expect(page.locator('text=/Standort:.*Berlin/i')).toBeVisible();
+    // Wait for city auto-fill
+    await expect(page.locator('#address-city')).toHaveValue(/Berlin/i, { timeout: 10000 });
+    
+    // Wait for validation to complete (green success message)
+    await expect(page.locator('.bg-green-50')).toBeVisible({ timeout: 15000 });
     await expect(page.getByRole('button', { name: 'Weiter' })).toBeEnabled();
   }
 
