@@ -108,12 +108,12 @@ export function RecommendationCard({
       <div className="mb-4">
         <button 
           onClick={() => setIsEcoOpen(!isEcoOpen)}
-          className="w-full cursor-pointer p-3 bg-green-50 rounded-lg border border-green-200 hover:bg-green-100 transition-colors"
+          className="w-full cursor-pointer p-3 bg-green-50 rounded-lg border border-green-200 hover:bg-green-100 transition-colors relative"
         >
-          <div className="flex justify-between items-center">
-            <span className="text-body font-semibold text-green-800">🌱 Umwelt & Nachhaltigkeit</span>
-            <span className={`text-green-600 transition-transform duration-300 ${isEcoOpen ? 'rotate-180' : ''}`}>▼</span>
+          <div className="flex justify-center items-center">
+            <span className="text-body font-semibold text-green-800 text-center">Umwelt & <br /> Nachhaltigkeit</span>
           </div>
+          <span className={`text-green-600 transition-transform duration-300 ${isEcoOpen ? 'rotate-180' : ''} absolute right-3 top-1/2 transform -translate-y-1/2`}>▼</span>
         </button>
         
         <div 
