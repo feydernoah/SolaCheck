@@ -11,7 +11,6 @@ import type {
   BKWProduct,
   ProductEcological,
   ProductEconomics,
-  QuizAnswers,
 } from '@/types/economic';
 
 /**
@@ -293,7 +292,7 @@ function generateEcologicalReasons(
   if (co2PaybackYears < 1) {
     reasons.push(`Amortisiert die CO₂-Emissionen der Herstellung in unter 1 Jahr – hervorragende Umweltbilanz`);
   } else if (co2PaybackYears < 5) {
-    reasons.push(`Gute CO₂-Amortisationszeit von ca. ${Math.round(co2PaybackYears)} Jahren`);
+    reasons.push(`Gute CO₂-Amortisationszeit von ca. ${co2PaybackYears.toFixed(1)} Jahren`);
   }
 
   // Manufacturing origin
@@ -303,7 +302,7 @@ function generateEcologicalReasons(
 
   // Low manufacturing emissions
   if (ecological.manufacturingCo2Kg < 80) {
-    reasons.push(`Niedrige CO₂-Emissionen in der Herstellung: (~${Math.round(ecological.manufacturingCo2Kg)} kg)`);
+    reasons.push(`Niedrige CO₂-Emissionen in der Herstellung: (~${Math.round(ecological.manufacturingCo2Kg).toString()} kg)`);
   }
   // Recycling and hazardous component details are not tracked in this version
 
@@ -332,12 +331,12 @@ function generateEcologicalWarnings(
 
   // Slow payback period
   if (co2PaybackYears > 2) {
-    warnings.push(`Lange CO₂-Amortisationszeit (${Math.round(co2PaybackYears)} Jahre) – Standort und Nutzungsverhalten prüfen`);
+    warnings.push(`Lange CO₂-Amortisationszeit (${Math.round(co2PaybackYears).toString()} Jahre) – Standort und Nutzungsverhalten prüfen`);
   }
 
   // High manufacturing emissions
   if (ecological.manufacturingCo2Kg > 95) {
-    warnings.push(`Hohe CO₂-Emissionen in der Herstellung: (${Math.round(ecological.manufacturingCo2Kg)} kg CO₂)`);
+    warnings.push(`Hohe CO₂-Emissionen in der Herstellung: (${Math.round(ecological.manufacturingCo2Kg).toString()} kg CO₂)`);
   }
 
   // Long transport distance
@@ -347,7 +346,7 @@ function generateEcologicalWarnings(
 
   // Low warranty (shorter lifetime = worse environmental case)
   if (product.warrantyYears < 10) {
-    warnings.push(`Kurze Garantie (${product.warrantyYears} Jahre) – potentiell geringere Lebensdauer.`);
+    warnings.push(`Kurze Garantie (${product.warrantyYears.toString()} Jahre) – potentiell geringere Lebensdauer.`);
   }
 
   return warnings;
@@ -402,7 +401,6 @@ export function calculateProductEcological(
 export function generateEcologicalInsights(
   product: BKWProduct,
   ecological: ProductEcological,
-  economics: ProductEconomics
 ): { reasons: string[]; warnings: string[] } {
   const reasons = generateEcologicalReasons(
     product,
@@ -434,12 +432,12 @@ export function generateEcologicalSummary(
   const lifecycleText =
     ecological.lifecycleEmissionsKg < 10
       ? `Mit einer Lebenszyklus-CO₂-Bilanz von nur ${ecological.lifecycleEmissionsKg.toFixed(0)} kg hat dieses Produkt hervorragende Umweltwerte`
-      : `Über seine ${PRODUCT_LIFETIME_YEARS}-jährige Lebensdauer kompensiert es die Herstellungs-Emissionen mehrfach`;
+      : `Über seine ${PRODUCT_LIFETIME_YEARS.toString()}-jährige Lebensdauer kompensiert es die Herstellungs-Emissionen mehrfach`;
 
   return (
     `${product.name} ${paybackText}. ` +
     `Die Herstellung verursacht ${ecological.manufacturingCo2Kg.toFixed(1)} kg CO₂, ` +
-    `während die jährliche Erzeugung ca. ${Math.round((economics.annualYieldKwh * GRID_CO2_GRAMS_PER_KWH) / 1000)} kg CO₂ pro Jahr einspart. ` +
+    `während die jährliche Erzeugung ca. ${Math.round((economics.annualYieldKwh * GRID_CO2_GRAMS_PER_KWH) / 1000).toString()} kg CO₂ pro Jahr einspart. ` +
     `${lifecycleText}. `
   );
 }

@@ -447,7 +447,7 @@ export function calculateRecommendations(answers: QuizAnswers): RecommendationRe
 
     // Calculate ecological impact
     const ecological = calculateProductEcological(product, economics);
-    const { reasons: ecologicalReasons, warnings: ecologicalWarnings } = generateEcologicalInsights(product, ecological, economics);
+    const { reasons: ecologicalReasons, warnings: ecologicalWarnings } = generateEcologicalInsights(product, ecological);
     
     return {
       rank: 0, // Will be set after sorting
