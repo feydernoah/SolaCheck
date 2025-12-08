@@ -123,30 +123,26 @@ export function RecommendationCard({
         >
           <div className="space-y-3">
           {/* CO2 Payback Period */}
-          {ecological && (
-            <div className={`flex justify-between items-center p-3 rounded-lg ${getPaybackColor(ecological.paybackPeriodYears)}`}>
-              <span className="text-body-sm text-gray-700 font-medium">CO₂-Amortisation</span>
-              <span className="text-body font-semibold">
-                {ecological.paybackPeriodYears < 1 
-                  ? `${Math.round(ecological.paybackPeriodYears * 12)} Monate`
-                  : `${ecological.paybackPeriodYears.toFixed(1)} Jahre`
-                }
-              </span>
-            </div>
-          )}
+          <div className={`flex justify-between items-center p-3 rounded-lg ${getPaybackColor(ecological.paybackPeriodYears)}`}>
+            <span className="text-body-sm text-gray-700 font-medium">CO₂-Amortisation</span>
+            <span className="text-body font-semibold">
+              {ecological.paybackPeriodYears < 1 
+                ? `${Math.round(ecological.paybackPeriodYears * 12).toString()} Monate`
+                : `${ecological.paybackPeriodYears.toFixed(1)} Jahre`
+              }
+            </span>
+          </div>
 
           {/* CO2 Lifecycle */}
-          {ecological && (
-            <div className={`flex flex-col p-3 rounded-lg ${getPaybackColor(ecological.paybackPeriodYears)}`}>
-              <span className="text-body-sm text-gray-700 font-medium mb-2">CO₂-Bilanz (25 Jahre) :</span>
-              <span className="text-body font-semibold">
-                {ecological.lifecycleEmissionsKg < 0
-                  ? `${Math.round(-ecological.lifecycleEmissionsKg)} kg CO₂ über die Lebensdauer eingespart!`
-                  : `${Math.round(ecological.lifecycleEmissionsKg)} kg CO₂ produziert. :(` 
-                }
-              </span>
-            </div>
-          )}
+          <div className={`flex flex-col p-3 rounded-lg ${getPaybackColor(ecological.paybackPeriodYears)}`}>
+            <span className="text-body-sm text-gray-700 font-medium mb-2">CO₂-Bilanz (25 Jahre) :</span>
+            <span className="text-body font-semibold">
+              {ecological.lifecycleEmissionsKg < 0
+                ? `${Math.round(-ecological.lifecycleEmissionsKg).toString()} kg CO₂ über die Lebensdauer eingespart!`
+                : `${Math.round(ecological.lifecycleEmissionsKg).toString()} kg CO₂ produziert. :(` 
+              }
+            </span>
+          </div>
 
           {/* Umweltvorteile */}
           {ecologicalReasons && ecologicalReasons.length > 0 && (
