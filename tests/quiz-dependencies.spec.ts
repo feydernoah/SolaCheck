@@ -18,22 +18,20 @@ test.describe('Quiz Dependencies', () => {
   }
 
   /**
-   * Helper: Fill in address manually (Question 2)
+   * Helper: Fill in address using autocomplete search (Question 2)
    */
   async function fillInAddress(page: Page) {
-    // Click "manuell eingeben" button
-    await page.getByRole('button', { name: /manuell eingeben/i }).click();
+    // Type in the search box and select a suggestion
+    const searchInput = page.getByPlaceholder(/Stadt, Adresse oder PLZ/i);
+    await searchInput.fill('Berlin');
     
-    // Fill in a real valid Berlin address
-    await page.locator('#address-street').fill('Unter den Linden');
-    await page.locator('#address-housenumber').fill('1');
-    await page.locator('#address-postalcode').fill('10117');
+    // Wait for suggestions and click the first one
+    const suggestion = page.locator('button').filter({ hasText: /Berlin/i }).first();
+    await expect(suggestion).toBeVisible({ timeout: 10000 });
+    await suggestion.click();
     
-    // Wait for city auto-fill
-    await expect(page.locator('#address-city')).toHaveValue(/Berlin/i, { timeout: 10000 });
-    
-    // Wait for validation to complete (green success message)
-    await expect(page.locator('.bg-green-50')).toBeVisible({ timeout: 15000 });
+    // Wait for location to be selected (green success card)
+    await expect(page.locator('.bg-green-50')).toBeVisible({ timeout: 5000 });
     await expect(page.getByRole('button', { name: 'Weiter' })).toBeEnabled();
   }
 
