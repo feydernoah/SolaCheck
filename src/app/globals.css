@@ -55,13 +55,24 @@
   border-radius: 6px;
 }
 
-/* Make interactive controls show pointer (clicking finger) */
-button,
-[role="button"],
-a[href],
-input[type="button"],
-input[type="submit"] {
+/* Make interactive controls show pointer (clicking finger) when enabled */
+button:not([disabled]),
+a[href]:not([aria-disabled="true"]),
+input[type="button"]:not([disabled]),
+input[type="submit"]:not([disabled]) {
   cursor: pointer;
+}
+
+/* Elements using role=button may use aria-disabled to indicate disabled state */
+[role="button"]:not([aria-disabled="true"]) {
+  cursor: pointer;
+}
+
+/* Disabled interactive elements should show not-allowed */
+button[disabled],
+[role="button"][aria-disabled="true"],
+input[disabled] {
+  cursor: not-allowed;
 }
 
 /* Ensure range thumb shows pointer as well */

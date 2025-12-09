@@ -7,18 +7,22 @@ test.describe('Cursor behaviour', () => {
     await expect(page.locator('text=/\\d+%/')).toBeVisible();
   });
 
-  test('buttons use pointer cursor', async ({ page }) => {
+  test('disabled Weiter shows not-allowed cursor', async ({ page }) => {
     const next = page.getByRole('button', { name: 'Weiter' });
     await expect(next).toBeVisible();
+    // Button should be disabled on first question
+    await expect(next).toBeDisabled();
     const cursor = await next.evaluate((el) => window.getComputedStyle(el as Element).cursor);
-    expect(cursor).toBe('pointer');
+    expect(cursor).toBe('not-allowed');
   });
 
-  test('elements with role=button use pointer cursor', async ({ page }) => {
-    // Use Playwright role query which covers native buttons and elements with role=button
-    const roleBtn = page.getByRole('button').first();
-    await expect(roleBtn).toBeVisible();
-    const cursor = await roleBtn.evaluate((el) => window.getComputedStyle(el as Element).cursor);
+  test('answering enables Weiter and shows pointer cursor', async ({ page }) => {
+    const next = page.getByRole('button', { name: 'Weiter' });
+    const ageButton = page.getByRole('button', { name: /Jahre/i }).first();
+    await expect(ageButton).toBeVisible();
+    await ageButton.click();
+    await expect(next).toBeEnabled();
+    const cursor = await next.evaluate((el) => window.getComputedStyle(el as Element).cursor);
     expect(cursor).toBe('pointer');
   });
 });
