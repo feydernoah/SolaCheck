@@ -54,3 +54,18 @@
   height: 12px;
   border-radius: 6px;
 }
+
+/* Make interactive controls show pointer (clicking finger) */
+button,
+[role="button"],
+a[href],
+input[type="button"],
+input[type="submit"] {
+  cursor: pointer;
+}
+
+/* Ensure range thumb shows pointer as well */
+.slider-yellow::-webkit-slider-thumb,
+.slider-yellow::-moz-range-thumb {
+  cursor: pointer;
+}
