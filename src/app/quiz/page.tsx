@@ -29,11 +29,17 @@ interface Question {
   id: number;
   category: string;
   question: string;
-  type: 'tile' | 'button' | 'text' | 'multiselect';
+  type: 'tile' | 'button' | 'text' | 'multiselect' | 'slider';
   options?: QuestionOption[];
   infoHint?: string;
   placeholder?: string;
   unit?: string;
+  sliderConfig?: {
+    min: number;
+    max: number;
+    step: number;
+    unit: string;
+  };
   dependencies?: {
     questionId: number;
     answerValue: string | string[];
@@ -219,14 +225,14 @@ const questions: Question[] = [
     id: 11,
     category: 'Budget & Investitionsbereitschaft',
     question: 'Wie viel würdest du ungefähr in ein Balkonkraftwerk investieren wollen?',
-    type: 'button',
-    options: [
-      { value: 'bis-400', label: 'Bis 400 €' },
-      { value: '400-700', label: '400–700 €' },
-      { value: '700-1000', label: '700–1.000 €' },
-      { value: '>1000', label: 'Mehr als 1.000 €' },
-      { value: 'weiss-nicht', label: 'Weiß ich noch nicht' },
-    ],
+    type: 'slider',
+    sliderConfig: {
+      min: 0,
+      max: 2000,
+      step: 10,
+      unit: '€',
+    },
+    infoHint: 'Stelle den Regler auf dein maximales Budget. Bei 0€ zeigen wir dir alle Produkte unabhängig vom Preis.',
   },
   {
     id: 12,
@@ -357,6 +363,7 @@ export default function Home() {
   const currentAnswer = answers[currentQ.id];
   const currentMultiSelectAnswers = Array.isArray(currentAnswer) ? currentAnswer : [];
   const currentTextAnswer = typeof currentAnswer === 'string' ? currentAnswer : '';
+  const sliderValue = typeof currentAnswer === 'string' ? currentAnswer : '';
   const filteredOptions = getFilteredOptions(currentQ, answers);
   const currentQuestionInfo = getQuestionInfo(currentQ.id);
 
@@ -367,6 +374,10 @@ export default function Home() {
     // For address question (id 2), check validation state
     if (currentQ.id === 2) {
       return isAddressValid;
+    }
+    // For slider type, any string value (including '0') is valid
+    if (currentQ.type === 'slider') {
+      return sliderValue !== '';
     }
     return !!currentAnswer;
   };
@@ -523,6 +534,32 @@ export default function Home() {
                       </div>
                     </button>
                   ))}
+                </div>
+              )}
+
+              {/* Slider Type */}
+              {currentQ.type === 'slider' && currentQ.sliderConfig && (
+                <div className="max-w-xl mx-auto">
+                  <div className="mb-10">
+                    <div className="text-center mb-10">
+                      <span className="text-2xl font-bold text-gray-800">
+                        {sliderValue === '0' || sliderValue === '' ? 'Kein Limit' : `${sliderValue} ${currentQ.sliderConfig.unit}`}
+                      </span>
+                    </div>
+                    <input
+                      type="range"
+                      min={currentQ.sliderConfig.min}
+                      max={currentQ.sliderConfig.max}
+                      step={currentQ.sliderConfig.step}
+                      value={sliderValue || '0'}
+                      onChange={(e) => handleAnswer(e.target.value)}
+                      className="w-full h-3 bg-gray-200 rounded-lg appearance-none cursor-pointer slider-yellow"
+                    />
+                    <div className="flex justify-between text-sm text-gray-500 mt-2">
+                      <span>Kein Limit</span>
+                      <span>{currentQ.sliderConfig.max} {currentQ.sliderConfig.unit}</span>
+                    </div>
+                  </div>
                 </div>
               )}
             </div>

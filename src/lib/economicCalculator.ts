@@ -291,10 +291,15 @@ function generateMatchReasons(
   
   // Budget friendly
   const budget = answers[11];
-  if (budget === 'bis-400' && product.price <= 400) {
-    reasons.push('Passt ins Budget unter 400€');
-  } else if (budget === '400-700' && product.price <= 700) {
-    reasons.push('Passt ins Budget 400-700€');
+  if (budget) {
+    const budgetNum = parseInt(budget, 10);
+    if (!isNaN(budgetNum) && budgetNum > 0 && product.price <= budgetNum) {
+      reasons.push(`Passt ins Budget (unter ${String(budgetNum)}€)`);
+    } else if (budget === 'bis-400' && product.price <= 400) {
+      reasons.push('Passt ins Budget unter 400€');
+    } else if (budget === '400-700' && product.price <= 700) {
+      reasons.push('Passt ins Budget 400-700€');
+    }
   }
   
   return reasons;
