@@ -5,11 +5,12 @@ import { useGeolocation } from '@/hooks/useGeolocation';
 import { useReverseGeocoding, AddressData } from '@/hooks/useReverseGeocoding';
 
 interface AddressInputProps {
-  value: string;
+  value: string; // Now stores only coordinates as JSON: {"lat": number, "lon": number}
   onChange: (value: string) => void;
   onValidationChange?: (isValid: boolean) => void;
 }
 
+// Internal address data for the form UI
 const EMPTY_ADDRESS: AddressData = {
   street: '',
   houseNumber: '',
@@ -50,6 +51,7 @@ interface ValidationResult {
   message?: string;
   suggestedCity?: string; // City that belongs to the PLZ
   suggestedPLZ?: string; // Correct PLZ for the address
+  coordinates?: { lat: number; lon: number }; // Coordinates from validation
 }
 
 // Function to validate the full address using Nominatim
@@ -120,12 +122,15 @@ async function validateAddress(address: AddressData): Promise<ValidationResult> 
         
         if (addressData && addressData.length > 0) {
           // Address found - check if the postal code matches
-          const foundResult = addressData.find((result: { address?: { road?: string; postcode?: string } }) => {
+          const foundResult = addressData.find((result: { address?: { road?: string; postcode?: string }; lat?: string; lon?: string }) => {
             return result.address?.road !== undefined;
-          }) as { address?: { road?: string; postcode?: string } } | undefined;
+          }) as { address?: { road?: string; postcode?: string }; lat?: string; lon?: string } | undefined;
           
           if (foundResult?.address) {
             const actualPLZ = foundResult.address.postcode;
+            const resultCoords = foundResult.lat && foundResult.lon 
+              ? { lat: parseFloat(foundResult.lat), lon: parseFloat(foundResult.lon) }
+              : undefined;
             
             // Check if the entered PLZ matches the actual PLZ for this address
             if (actualPLZ && actualPLZ !== postalCode) {
@@ -141,7 +146,7 @@ async function validateAddress(address: AddressData): Promise<ValidationResult> 
             }
             
             // Everything matches!
-            return { isValid: true, postalCodeValid: true, cityMatchesPLZ: true, streetValid: true, plzMatchesAddress: true };
+            return { isValid: true, postalCodeValid: true, cityMatchesPLZ: true, streetValid: true, plzMatchesAddress: true, coordinates: resultCoords };
           }
         }
         
@@ -163,12 +168,15 @@ async function validateAddress(address: AddressData): Promise<ValidationResult> 
           const streetData = await streetSearchResponse.json();
           if (streetData && streetData.length > 0) {
             // Street found - check postal codes
-            const streetResult = streetData.find((result: { address?: { road?: string; postcode?: string } }) => {
+            const streetResult = streetData.find((result: { address?: { road?: string; postcode?: string }; lat?: string; lon?: string }) => {
               return result.address?.road !== undefined;
-            }) as { address?: { road?: string; postcode?: string } } | undefined;
+            }) as { address?: { road?: string; postcode?: string }; lat?: string; lon?: string } | undefined;
             
             if (streetResult?.address) {
               const actualPLZ = streetResult.address.postcode;
+              const resultCoords = streetResult.lat && streetResult.lon 
+                ? { lat: parseFloat(streetResult.lat), lon: parseFloat(streetResult.lon) }
+                : undefined;
               
               // Check if the entered PLZ is in the same area
               if (actualPLZ && actualPLZ !== postalCode) {
@@ -185,7 +193,7 @@ async function validateAddress(address: AddressData): Promise<ValidationResult> 
               }
               
               // Street found and PLZ matches (or no PLZ returned)
-              return { isValid: true, postalCodeValid: true, cityMatchesPLZ: true, streetValid: true, plzMatchesAddress: true };
+              return { isValid: true, postalCodeValid: true, cityMatchesPLZ: true, streetValid: true, plzMatchesAddress: true, coordinates: resultCoords };
             }
           }
         }
@@ -216,9 +224,16 @@ async function validateAddress(address: AddressData): Promise<ValidationResult> 
 function parseInitialValue(value: string): AddressData {
   if (value) {
     try {
-      const parsed = JSON.parse(value) as AddressData;
-      if (parsed.city || parsed.postalCode) {
-        return parsed;
+      const parsed = JSON.parse(value) as { lat?: number; lon?: number } | AddressData;
+      // Check if it's the new format (just coordinates)
+      if ('lat' in parsed && 'lon' in parsed && typeof parsed.lat === 'number' && typeof parsed.lon === 'number') {
+        // New format: just coordinates - return empty address but with coordinates
+        return { ...EMPTY_ADDRESS, coordinates: { lat: parsed.lat, lon: parsed.lon } };
+      }
+      // Old format: full address data (for backwards compatibility)
+      const oldFormat = parsed as AddressData;
+      if (oldFormat.city || oldFormat.postalCode) {
+        return oldFormat;
       }
     } catch {
       // Not JSON, might be old format - ignore
@@ -310,16 +325,19 @@ export function AddressInput({ value, onChange, onValidationChange }: AddressInp
     }
   }, [addressData.postalCode]);
 
-  // Sync addressData changes to parent - this is the only place we call onChange
-  const addressDataJson = JSON.stringify(addressData);
-  const prevAddressDataJson = useRef(addressDataJson);
+  // Sync coordinates to parent - ONLY store coordinates, not the full address
+  // This is called when addressData.coordinates changes
+  const coordinatesJson = addressData.coordinates 
+    ? JSON.stringify({ lat: addressData.coordinates.lat, lon: addressData.coordinates.lon })
+    : '';
+  const prevCoordinatesJson = useRef(coordinatesJson);
   
   useEffect(() => {
-    if (prevAddressDataJson.current !== addressDataJson) {
-      prevAddressDataJson.current = addressDataJson;
-      onChange(addressDataJson);
+    if (prevCoordinatesJson.current !== coordinatesJson) {
+      prevCoordinatesJson.current = coordinatesJson;
+      onChange(coordinatesJson);
     }
-  }, [addressDataJson, onChange]);
+  }, [coordinatesJson, onChange]);
 
   // Validate address with debounce
   useEffect(() => {
@@ -354,6 +372,18 @@ export function AddressInput({ value, onChange, onValidationChange }: AddressInp
         if (currentRequestId === validationRequestIdRef.current) {
           setIsValidating(false);
           setValidationResult(result);
+          
+          // If validation succeeded and we got coordinates, store them in addressData
+          if (result.isValid && result.coordinates) {
+            setAddressData((prev) => {
+              // Only update if coordinates changed
+              if (prev.coordinates?.lat !== result.coordinates?.lat || 
+                  prev.coordinates?.lon !== result.coordinates?.lon) {
+                return { ...prev, coordinates: result.coordinates };
+              }
+              return prev;
+            });
+          }
         }
       });
     }, 800); // Wait 800ms after user stops typing
