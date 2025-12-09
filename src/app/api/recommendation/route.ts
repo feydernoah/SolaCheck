@@ -2,7 +2,15 @@
  * API Route: /api/recommendation
  * 
  * Receives quiz answers and returns BKW product recommendations
- * sorted by shortest amortization time.
+ * sorted by shortest amortization time, including economic and ecological analysis.
+ * 
+ * POST endpoint:
+ * - Analyzes quiz answers to calculate economic viability and environmental impact
+ * - Returns ranked products with detailed breakdowns
+ * - Includes CO2 payback periods and lifecycle assessments
+ * 
+ * GET endpoint:
+ * - Returns sample recommendations for testing
  */
 
 import { NextRequest, NextResponse } from 'next/server';
@@ -22,18 +30,16 @@ import type { QuizAnswers, RecommendationResponse } from '@/types/economic';
  *     "7": "sueden",
  *     "9": "keine",
  *     "11": "400-700",
+ *     "12": "wichtig",
  *     ...
  *   }
  * }
  * 
- * Response:
- * {
- *   "success": true,
- *   "rankings": [...],
- *   "assumptions": {...},
- *   "quizSummary": {...},
- *   "filteredOutCount": 5
- * }
+ * Response includes:
+ * - Economic analysis: amortization times, annual savings, 10/20-year returns
+ * - Ecological analysis: manufacturing CO2, payback period, lifecycle assessment
+ * - Detailed product rankings with match reasons and warnings
+ * - User quiz summary and calculation assumptions
  */
 export async function POST(request: NextRequest): Promise<NextResponse<RecommendationResponse>> {
   try {
@@ -64,6 +70,7 @@ export async function POST(request: NextRequest): Promise<NextResponse<Recommend
             budget: '',
             mountingLocation: '',
             shading: '',
+            ecoImportance: '',
           },
           filteredOutCount: 0,
           error: 'Missing or invalid answers object in request body',
@@ -105,6 +112,7 @@ export async function POST(request: NextRequest): Promise<NextResponse<Recommend
           budget: '',
           mountingLocation: '',
           shading: '',
+          ecoImportance: '',
         },
         filteredOutCount: 0,
         error: error instanceof Error ? error.message : 'Internal server error',

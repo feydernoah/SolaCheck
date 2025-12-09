@@ -31,6 +31,9 @@ export const bkwProducts: BKWProduct[] = [
     moduleEfficiency: 20.5,
     warrantyYears: 25,
     description: 'Kompaktes Einsteiger-Set mit einem 400W Modul. Ideal für kleine Balkone.',
+    manufacturingOrigin: 'china',
+    manufacturingCo2Kg: 85,
+    
   },
   {
     id: 'greensolar-light-380',
@@ -47,6 +50,9 @@ export const bkwProducts: BKWProduct[] = [
     moduleEfficiency: 19.8,
     warrantyYears: 12,
     description: 'Günstiges Einsteigermodell für den kleinen Geldbeutel.',
+    manufacturingOrigin: 'china',
+    manufacturingCo2Kg: 84,
+    
   },
 
   // === MID-RANGE SEGMENT (400-700€) ===
@@ -65,6 +71,9 @@ export const bkwProducts: BKWProduct[] = [
     moduleEfficiency: 21.3,
     warrantyYears: 25,
     description: 'Bestseller von priwatt. Zwei Module mit 800W Gesamtleistung für optimale Balkonnutzung.',
+    manufacturingOrigin: 'china',
+    manufacturingCo2Kg: 95,
+    
   },
   {
     id: 'yuma-balcony-800-pro',
@@ -81,6 +90,8 @@ export const bkwProducts: BKWProduct[] = [
     moduleEfficiency: 21.8,
     warrantyYears: 25,
     description: 'Bifaziale Module für bis zu 8% mehr Ertrag durch Rückseitennutzung.',
+    manufacturingOrigin: 'china',
+    manufacturingCo2Kg: 97,
   },
   {
     id: 'anker-solix-rs40p',
@@ -97,6 +108,8 @@ export const bkwProducts: BKWProduct[] = [
     moduleEfficiency: 22.0,
     warrantyYears: 25,
     description: 'Premium-Set von Anker mit hochwertigen Komponenten und App-Steuerung.',
+    manufacturingOrigin: 'china',
+    manufacturingCo2Kg: 94,
   },
   {
     id: 'kleines-kraftwerk-classic-800',
@@ -113,6 +126,8 @@ export const bkwProducts: BKWProduct[] = [
     moduleEfficiency: 20.9,
     warrantyYears: 15,
     description: 'Solides Set vom deutschen Anbieter mit gutem Preis-Leistungs-Verhältnis.',
+    manufacturingOrigin: 'europe',
+    manufacturingCo2Kg: 88,
   },
   {
     id: 'priwatt-priflat-duo',
@@ -129,6 +144,8 @@ export const bkwProducts: BKWProduct[] = [
     moduleEfficiency: 21.3,
     warrantyYears: 25,
     description: 'Optimiert für Flachdach und Terrassen mit anpassbarem Aufstellwinkel.',
+    manufacturingOrigin: 'china',
+    manufacturingCo2Kg: 95,
   },
   {
     id: 'greensolar-bifacial-830',
@@ -145,6 +162,8 @@ export const bkwProducts: BKWProduct[] = [
     moduleEfficiency: 21.5,
     warrantyYears: 25,
     description: 'Bifaziale Module für Mehrerträge, besonders bei hellem Untergrund.',
+    manufacturingOrigin: 'china',
+    manufacturingCo2Kg: 96,
   },
 
   // === UPPER MID-RANGE (700-1000€) ===
@@ -163,6 +182,8 @@ export const bkwProducts: BKWProduct[] = [
     moduleEfficiency: 22.4,
     warrantyYears: 10,
     description: 'Smarter Wechselrichter mit App, kompatibel mit EcoFlow Powerstation-Speicher.',
+    manufacturingOrigin: 'china',
+    manufacturingCo2Kg: 96,
   },
   {
     id: 'anker-solix-solarbank-e1600',
@@ -180,6 +201,8 @@ export const bkwProducts: BKWProduct[] = [
     moduleEfficiency: 22.0,
     warrantyYears: 10,
     description: 'Komplettset mit 1,6 kWh Speicher für maximalen Eigenverbrauch.',
+    manufacturingOrigin: 'china',
+    manufacturingCo2Kg: 128,
   },
   {
     id: 'yuma-flat-800-bifacial',
@@ -196,6 +219,8 @@ export const bkwProducts: BKWProduct[] = [
     moduleEfficiency: 22.2,
     warrantyYears: 30,
     description: 'Premium Flachdach-Set mit bifazialen Modulen und 30 Jahren Garantie.',
+    manufacturingOrigin: 'china',
+    manufacturingCo2Kg: 98,
   },
   {
     id: 'priwatt-pribalcony-quattro',
@@ -212,6 +237,8 @@ export const bkwProducts: BKWProduct[] = [
     moduleEfficiency: 21.3,
     warrantyYears: 25,
     description: 'Großes Set für maximale Leistung. Ideal für Hauswand oder große Terrassen.',
+    manufacturingOrigin: 'china',
+    manufacturingCo2Kg: 115,
   },
 
   // === PREMIUM SEGMENT (over 1000€) ===
@@ -231,6 +258,8 @@ export const bkwProducts: BKWProduct[] = [
     moduleEfficiency: 22.4,
     warrantyYears: 10,
     description: 'Premium Bundle mit tragbarem Speicher. Auch als Notstromversorgung nutzbar.',
+    manufacturingOrigin: 'china',
+    manufacturingCo2Kg: 125,
   },
   {
     id: 'anker-solix-solarbank-2-pro',
@@ -248,6 +277,8 @@ export const bkwProducts: BKWProduct[] = [
     moduleEfficiency: 23.0,
     warrantyYears: 15,
     description: 'Top-Modell mit 2,4 kWh Speicher, bifazialen Modulen und Smart-Home Integration.',
+    manufacturingOrigin: 'china',
+    manufacturingCo2Kg: 130,
   },
   {
     id: 'zendure-solarflow-ace',
@@ -265,6 +296,8 @@ export const bkwProducts: BKWProduct[] = [
     moduleEfficiency: 21.5,
     warrantyYears: 10,
     description: 'Modulares System mit erweiterbarem Speicher bis 7,68 kWh.',
+    manufacturingOrigin: 'china',
+    manufacturingCo2Kg: 127,
   },
   {
     id: 'priwatt-speicher-bundle-2kwh',
@@ -282,6 +315,8 @@ export const bkwProducts: BKWProduct[] = [
     moduleEfficiency: 21.8,
     warrantyYears: 10,
     description: 'priwatt Komplettlösung mit Speicher für optimalen Eigenverbrauch.',
+    manufacturingOrigin: 'china',
+    manufacturingCo2Kg: 126,
   },
 ];
 

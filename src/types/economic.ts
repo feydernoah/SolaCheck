@@ -18,6 +18,14 @@ export interface QuizAnswers {
   12?: string; // CO2 importance
 }
 
+// Manufacturing origin/location
+export type ManufacturingOrigin = 
+  | 'germany'
+  | 'europe'
+  | 'asia'
+  | 'china'
+  | 'unknown';
+
 // BKW Product definition
 export interface BKWProduct {
   id: string;
@@ -35,6 +43,10 @@ export interface BKWProduct {
   moduleEfficiency: number; // Percentage (e.g., 21.5)
   warrantyYears: number;
   description: string;
+  // Ecological metrics
+  manufacturingOrigin: ManufacturingOrigin; // Where the product is manufactured
+  manufacturingCo2Kg: number; // Total CO2 emissions for manufacturing in kg
+  // Note: manufacturingCo2Breakdown, recyclingPotential and hazardousComponents removed
 }
 
 // Mounting types matching quiz options
@@ -87,6 +99,18 @@ export interface ProductEconomics {
   co2SavingsKgPerYear: number; // CO2 saved per year in kg
 }
 
+// Ecological impact calculation for a product
+export interface ProductEcological {
+  manufacturingCo2Kg: number; // Total CO2 emissions for manufacturing
+  resourceExtractionCo2Kg: number; // CO2 from mining/resource extraction
+  productionCo2Kg: number; // CO2 from factory production
+  transportCo2Kg: number; // CO2 from transportation to market
+  paybackPeriodYears: number; // Years until CO2 from manufacturing is offset by savings
+  lifecycleEmissionsKg: number; // Total CO2 emissions over 25-year lifecycle
+  // Note: recyclablePercentage and hazardousComponents removed
+  ecologicalScore: number; // Composite score (0-100, higher is better)
+}
+
 // Calculation assumptions/factors
 export interface CalculationAssumptions {
   electricityPriceCentPerKwh: number; // Current electricity price
@@ -103,9 +127,12 @@ export interface ProductRanking {
   rank: number;
   product: BKWProduct;
   economics: ProductEconomics;
+  ecological: ProductEcological;
   score: number; // Composite score (lower amortization = better)
   matchReasons: string[];
   warnings: string[];
+  ecologicalReasons?: string[]; // Reasons based on ecological impact
+  ecologicalWarnings?: string[]; // Warnings from ecological analysis
 }
 
 // Full recommendation response
@@ -122,6 +149,7 @@ export interface RecommendationResponse {
     budget: string;
     mountingLocation: string;
     shading: string;
+    ecoImportance: string; // User's environmental importance rating
   };
   filteredOutCount: number; // Number of products filtered due to budget
   error?: string;
