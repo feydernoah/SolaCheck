@@ -375,9 +375,9 @@ export default function Home() {
     if (currentQ.id === 2) {
       return isAddressValid;
     }
-    // For slider type, any string value (including '0') is valid
+    // For slider type (budget), default state (no limit) should be considered answered
     if (currentQ.type === 'slider') {
-      return sliderValue !== '';
+      return true;
     }
     return !!currentAnswer;
   };
