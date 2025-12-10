@@ -1,1 +1,82 @@
 @import "tailwindcss";
+
+/* Custom slider styling */
+.slider-yellow {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 12px;
+  background: #e5e7eb;
+  border-radius: 6px;
+  outline: none;
+}
+
+.slider-yellow::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 28px;
+  height: 28px;
+  background: #facc15;
+  border-radius: 50%;
+  cursor: pointer;
+  border: 4px solid white;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.slider-yellow::-webkit-slider-thumb:hover {
+  transform: scale(1.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.slider-yellow::-webkit-slider-thumb:active {
+  transform: scale(1.05);
+}
+
+.slider-yellow::-moz-range-thumb {
+  width: 28px;
+  height: 28px;
+  background: #facc15;
+  border-radius: 50%;
+  cursor: pointer;
+  border: 4px solid white;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.slider-yellow::-moz-range-thumb:hover {
+  transform: scale(1.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.slider-yellow::-moz-range-track {
+  background: #e5e7eb;
+  height: 12px;
+  border-radius: 6px;
+}
+
+/* Make interactive controls show pointer (clicking finger) when enabled */
+button:not([disabled]),
+a[href]:not([aria-disabled="true"]),
+input[type="button"]:not([disabled]),
+input[type="submit"]:not([disabled]) {
+  cursor: pointer;
+}
+
+/* Elements using role=button may use aria-disabled to indicate disabled state */
+[role="button"]:not([aria-disabled="true"]) {
+  cursor: pointer;
+}
+
+/* Disabled interactive elements should show not-allowed */
+button[disabled],
+[role="button"][aria-disabled="true"],
+input[disabled] {
+  cursor: not-allowed;
+}
+
+/* Ensure range thumb shows pointer as well */
+.slider-yellow::-webkit-slider-thumb,
+.slider-yellow::-moz-range-thumb {
+  cursor: pointer;
+}
