@@ -232,7 +232,7 @@ const questions: Question[] = [
       step: 10,
       unit: '€',
     },
-    infoHint: 'Stelle den Regler auf dein maximales Budget. Bei 0€ zeigen wir dir alle Produkte unabhängig vom Preis.',
+    infoHint: 'Stelle den Regler auf dein maximales Budget. Bei "Kein Limit" zeigen wir dir alle Produkte unabhängig vom Preis.',
   },
   {
     id: 12,
