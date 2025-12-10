@@ -2,6 +2,33 @@
  * Types for economic calculations and BKW product recommendations
  */
 
+// Coordinates for location-based calculations
+export interface Coordinates {
+  lat: number;
+  lon: number;
+}
+
+// Solar radiation data from PVGIS API
+export interface SolarData {
+  annualYieldKwhPerKwp: number; // kWh/kWp/year - main yield metric
+  averageDailyYieldKwh: number;
+  averageMonthlyYieldKwh: number;
+  yearlyIrradiationKwhPerM2: number;
+  monthlyYields: number[]; // 12 values for Jan-Dec
+  totalLossPercent: number;
+  location: {
+    lat: number;
+    lon: number;
+    elevation: number;
+  };
+  systemParams: {
+    angle: number; // Tilt angle used
+    aspect: number; // Azimuth used
+    peakPower: number;
+    loss: number;
+  };
+}
+
 // Quiz answer types (mirrors the quiz structure)
 export interface QuizAnswers {
   1?: string; // Age
@@ -16,6 +43,8 @@ export interface QuizAnswers {
   10?: string[]; // Appliances (multiselect)
   11?: string; // Budget
   12?: string; // CO2 importance
+  // Location coordinates for PVGIS API
+  coordinates?: Coordinates;
 }
 
 // Manufacturing origin/location
@@ -115,11 +144,14 @@ export interface ProductEcological {
 export interface CalculationAssumptions {
   electricityPriceCentPerKwh: number; // Current electricity price
   feedInTariffCentPerKwh: number; // Feed-in tariff
-  orientationFactor: number; // Yield factor based on orientation
+  orientationFactor: number; // Yield factor based on orientation (only used for fallback)
   shadingFactor: number; // Yield reduction due to shading
   selfConsumptionRate: number; // Percentage of self-consumption
   estimatedAnnualConsumptionKwh: number; // Estimated household consumption
   co2PerKwhGrams: number; // CO2 emissions per kWh from grid
+  // PVGIS-based yield data
+  pvgisYieldKwhPerKwp?: number; // Yield from PVGIS API (if available)
+  usedPvgisData: boolean; // Whether PVGIS data was used or fallback
 }
 
 // Product ranking result

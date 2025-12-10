@@ -10,11 +10,39 @@ import { Card } from '@/components/ui/Card';
 import { LoadingScreen } from '@/components/LoadingScreen';
 import { RecommendationCard } from '@/components/RecommendationCard';
 import { useQuizProgress } from '@/hooks/useQuizProgress';
-import { RecommendationResponse } from '@/types/economic';
+import { useSolarData } from '@/hooks/useSolarData';
+import { RecommendationResponse, QuizAnswers, Coordinates } from '@/types/economic';
+
+/**
+ * Extract coordinates from the address answer (stored as JSON string)
+ */
+function extractCoordinatesFromAnswers(answers: Record<number, string | string[]>): Coordinates | undefined {
+  const addressAnswer = answers[2];
+  if (typeof addressAnswer !== 'string') return undefined;
+  
+  try {
+    const parsed = JSON.parse(addressAnswer) as { lat?: number; lon?: number; coordinates?: Coordinates };
+    
+    // New format: direct coordinates { lat, lon }
+    if (typeof parsed.lat === 'number' && typeof parsed.lon === 'number') {
+      return { lat: parsed.lat, lon: parsed.lon };
+    }
+    
+    // Old format: nested coordinates { coordinates: { lat, lon } }
+    const coords = parsed.coordinates;
+    if (coords && typeof coords.lat === 'number' && typeof coords.lon === 'number') {
+      return coords;
+    }
+  } catch {
+    // Not JSON or no coordinates
+  }
+  return undefined;
+}
 
 export default function ResultsPage() {
   const router = useRouter();
   const { answers, resetWithConfirmation, isLoaded } = useQuizProgress();
+  const { fetchSolarData, getSolarDataFromCookie } = useSolarData();
   const [recommendation, setRecommendation] = useState<RecommendationResponse | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -36,12 +64,34 @@ export default function ResultsPage() {
       setHasFetched(true);
 
       try {
+        // Extract coordinates from address answer
+        const coordinates = extractCoordinatesFromAnswers(answers);
+        
+        // Build quiz answers with coordinates for the API
+        const quizAnswers: QuizAnswers = {
+          ...answers as unknown as QuizAnswers,
+          coordinates,
+        };
+        
+        // Try to get cached solar data from cookie first
+        let cachedSolarData = getSolarDataFromCookie();
+        
+        // If we have coordinates but no cached data, fetch PVGIS data
+        if (coordinates && !cachedSolarData) {
+          const orientation = answers[7] as string | undefined;
+          const mounting = answers[6] as string | undefined;
+          cachedSolarData = await fetchSolarData(coordinates, orientation, mounting);
+        }
+        
         const response = await fetch('/solacheck/api/recommendation', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ answers }),
+          body: JSON.stringify({ 
+            answers: quizAnswers,
+            solarData: cachedSolarData, // Pass cached data to avoid double fetch
+          }),
         });
 
         if (!response.ok) {
@@ -59,7 +109,7 @@ export default function ResultsPage() {
     };
 
     void fetchRecommendation();
-  }, [answers, router, isLoaded, hasFetched]);
+  }, [answers, router, isLoaded, hasFetched, fetchSolarData, getSolarDataFromCookie]);
 
   const handleNewQuiz = () => {
     if (resetWithConfirmation()) {

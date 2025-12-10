@@ -6,6 +6,7 @@
  * - Self-consumption vs feed-in
  * - Orientation and shading factors
  * - Household consumption estimates
+ * - PVGIS-based location-specific yield (when available)
  */
 
 import type {
@@ -19,6 +20,7 @@ import type {
   ShadingLevel,
   HouseholdSize,
   MountingType,
+  SolarData,
 } from '@/types/economic';
 import { bkwProducts, getBudgetMaxValue } from '@/data/bkwProducts';
 import { calculateProductEcological, generateEcologicalInsights } from '@/lib/ecologicCalculator';
@@ -47,8 +49,17 @@ const CO2_GRAMS_PER_KWH = 380;
  * Base annual yield per Wp in Germany (kWh/Wp)
  * This is for optimal conditions (south, no shading)
  * Source: PVGIS for central Germany
+ * FALLBACK VALUE - used when PVGIS API is unavailable
  */
 const BASE_YIELD_KWH_PER_WP = 0.95;
+
+/**
+ * Convert PVGIS yield (kWh/kWp) to per-Wp value
+ * PVGIS returns kWh per kWp (1000 Wp), we need per Wp
+ */
+function pvgisToPerWp(pvgisYield: number): number {
+  return pvgisYield / 1000;
+}
 
 /**
  * Bifacial gain factor (additional yield from rear side)
@@ -167,21 +178,37 @@ function getAnnualConsumption(householdSize: string | undefined): number {
 
 /**
  * Calculate annual yield for a product
+ * 
+ * When PVGIS data is available:
+ * - Uses location-specific yield from PVGIS (already accounts for orientation/tilt)
+ * - Still applies shading factor (PVGIS can't know about local obstructions)
+ * - Still applies bifacial bonus
+ * 
+ * Fallback (no PVGIS):
+ * - Uses hardcoded BASE_YIELD_KWH_PER_WP
+ * - Applies orientation and shading factors
  */
 function calculateAnnualYield(
   product: BKWProduct,
   orientationFactor: number,
-  shadingFactor: number
+  shadingFactor: number,
+  pvgisYieldKwhPerKwp?: number
 ): number {
-  let yield_kwh = product.wattage * BASE_YIELD_KWH_PER_WP;
+  let yield_kwh: number;
   
-  // Apply orientation factor
-  yield_kwh *= orientationFactor;
+  if (pvgisYieldKwhPerKwp !== undefined) {
+    // PVGIS-based calculation
+    // PVGIS yield already includes orientation/tilt losses
+    // We only apply shading factor (user-reported local obstructions)
+    yield_kwh = product.wattage * pvgisToPerWp(pvgisYieldKwhPerKwp) * shadingFactor;
+  } else {
+    // Fallback calculation with hardcoded values
+    yield_kwh = product.wattage * BASE_YIELD_KWH_PER_WP;
+    yield_kwh *= orientationFactor;
+    yield_kwh *= shadingFactor;
+  }
   
-  // Apply shading factor
-  yield_kwh *= shadingFactor;
-  
-  // Add bifacial bonus
+  // Add bifacial bonus (applies to both methods)
   if (product.bifacial) {
     yield_kwh *= (1 + BIFACIAL_GAIN);
   }
@@ -197,10 +224,16 @@ function calculateProductEconomics(
   orientationFactor: number,
   shadingFactor: number,
   selfConsumptionRate: number,
-  annualConsumption: number
+  annualConsumption: number,
+  pvgisYieldKwhPerKwp?: number
 ): ProductEconomics {
   // Calculate annual yield
-  const annualYieldKwh = calculateAnnualYield(product, orientationFactor, shadingFactor);
+  const annualYieldKwh = calculateAnnualYield(
+    product,
+    orientationFactor,
+    shadingFactor,
+    pvgisYieldKwhPerKwp
+  );
   
   // Calculate self-consumption (limited by actual consumption)
   // If production exceeds what can be self-consumed, excess goes to grid
@@ -406,8 +439,14 @@ function determineRecommendation(
 
 /**
  * Main calculation function - generates full recommendations
+ * 
+ * @param answers - Quiz answers from user
+ * @param solarData - Optional PVGIS solar data for location-specific yield
  */
-export function calculateRecommendations(answers: QuizAnswers): RecommendationResponse {
+export function calculateRecommendations(
+  answers: QuizAnswers,
+  solarData?: SolarData
+): RecommendationResponse {
   // Extract relevant answers
   const householdSize = answers[3] as HouseholdSize | undefined;
   const mountingLocation = answers[6] as MountingType | undefined;
@@ -419,6 +458,17 @@ export function calculateRecommendations(answers: QuizAnswers): RecommendationRe
   const orientationFactor = getOrientationFactor(orientation);
   const shadingFactor = getShadingFactor(shading);
   const annualConsumption = getAnnualConsumption(householdSize);
+  
+  // Get PVGIS yield if available
+  const pvgisYieldKwhPerKwp = solarData?.annualYieldKwhPerKwp;
+  const usedPvgisData = pvgisYieldKwhPerKwp !== undefined;
+  
+  // Log for dev purposes
+  if (usedPvgisData) {
+    console.log(`[Calculator] Using PVGIS yield: ${String(pvgisYieldKwhPerKwp)} kWh/kWp/year`);
+  } else {
+    console.log(`[Calculator] Using fallback yield: ${String(BASE_YIELD_KWH_PER_WP * 1000)} kWh/kWp/year`);
+  }
   
   // Get budget max
   const maxBudget = getBudgetMaxValue(budget ?? 'weiss-nicht');
@@ -447,7 +497,8 @@ export function calculateRecommendations(answers: QuizAnswers): RecommendationRe
       orientationFactor,
       shadingFactor,
       selfConsumptionRate,
-      annualConsumption
+      annualConsumption,
+      pvgisYieldKwhPerKwp
     );
 
     // Calculate ecological impact
@@ -491,11 +542,35 @@ export function calculateRecommendations(answers: QuizAnswers): RecommendationRe
     selfConsumptionRate: getSelfConsumptionRate(householdSize, false, orientation),
     estimatedAnnualConsumptionKwh: annualConsumption,
     co2PerKwhGrams: CO2_GRAMS_PER_KWH,
+    pvgisYieldKwhPerKwp,
+    usedPvgisData,
   };
   
   // Build quiz summary
+  // Check if we have coordinates (new format stores only coordinates)
+  let locationDisplay = 'Nicht angegeben';
+  const addressAnswer = answers[2];
+  if (addressAnswer) {
+    try {
+      const parsed = JSON.parse(addressAnswer) as { lat?: number; lon?: number; city?: string; postalCode?: string };
+      
+      // New format: just coordinates
+      if (typeof parsed.lat === 'number' && typeof parsed.lon === 'number') {
+        locationDisplay = 'Standort erfasst';
+      } else if (parsed.city) {
+        // Old format: full address (backwards compatibility)
+        locationDisplay = parsed.postalCode 
+          ? `${parsed.postalCode} ${parsed.city}`
+          : parsed.city;
+      }
+    } catch {
+      // Not JSON, use as-is
+      locationDisplay = addressAnswer;
+    }
+  }
+  
   const quizSummary = {
-    location: answers[2] ?? 'Nicht angegeben',
+    location: locationDisplay,
     orientation: orientation ? getOrientationLabel(orientation) : 'Nicht angegeben',
     householdSize: householdSize ? getHouseholdLabel(householdSize) : 'Nicht angegeben',
     budget: budget ? getBudgetLabel(budget) : 'Nicht angegeben',
