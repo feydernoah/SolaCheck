@@ -190,22 +190,27 @@ function calculateTotalManufacturingCo2(
 
 /**
  * Calculate CO2 payback period (time until production offsets manufacturing emissions)
+ *
+ * IMPORTANT: The annual yield (and thus CO₂ savings) must be the AC-limited value
+ * as determined by the economic calculator, in compliance with the legal 800 W AC cap.
  */
 function calculateCo2PaybackPeriod(
   manufacturingCo2Kg: number,
   annualYieldKwh: number
 ): number {
   // Annual CO2 savings from produced electricity (using grid CO2 intensity)
+  // This must use the AC-limited annual yield (see LEGAL_AC_LIMIT_W)
   const annualCo2SavingsKg = (annualYieldKwh * GRID_CO2_GRAMS_PER_KWH) / 1000;
-  
   if (annualCo2SavingsKg <= 0) return Infinity;
-  
   // Years until manufacturing CO2 is offset
   return manufacturingCo2Kg / annualCo2SavingsKg;
 }
 
 /**
  * Calculate lifecycle CO2 emissions
+ *
+ * IMPORTANT: The annual yield (and thus CO₂ savings) must be the AC-limited value
+ * as determined by the economic calculator, in compliance with the legal 800 W AC cap.
  */
 function calculateLifecycleCo2(
   manufacturingCo2Kg: number,
@@ -214,16 +219,14 @@ function calculateLifecycleCo2(
 ): number {
   // Manufacturing emissions (one-time)
   let lifecycleEmissions = manufacturingCo2Kg;
-  
   // Operational CO2 (avoided through production)
   // Negative impact = CO2 saved
+  // This must use the AC-limited annual yield (see LEGAL_AC_LIMIT_W)
   const annualCo2SavingsKg = (annualYieldKwh * GRID_CO2_GRAMS_PER_KWH) / 1000;
   const totalOperationalSavingsKg = annualCo2SavingsKg * lifetimeYears;
-  
   // Net lifecycle emissions = manufacturing CO2 minus operational savings
   // Negative value = net CO2 savings (environmental benefit)
   lifecycleEmissions = manufacturingCo2Kg - totalOperationalSavingsKg;
-  
   return lifecycleEmissions;
 }
 

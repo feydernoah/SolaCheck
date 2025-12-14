@@ -25,6 +25,7 @@ export const bkwProducts: BKWProduct[] = [
     price: 299,
     includesInverter: true,
     inverterBrand: 'Hoymiles',
+    inverterACPower: 400,
     includesStorage: false,
     mountingTypes: ['balkonbruestung', 'balkonboden', 'hauswand', 'flachdach'],
     bifacial: false,
@@ -44,6 +45,7 @@ export const bkwProducts: BKWProduct[] = [
     price: 279,
     includesInverter: true,
     inverterBrand: 'Deye',
+    inverterACPower: 380,
     includesStorage: false,
     mountingTypes: ['balkonbruestung', 'balkonboden', 'hauswand'],
     bifacial: false,
@@ -65,6 +67,7 @@ export const bkwProducts: BKWProduct[] = [
     price: 499,
     includesInverter: true,
     inverterBrand: 'Hoymiles HMS-800',
+    inverterACPower: 800,
     includesStorage: false,
     mountingTypes: ['balkonbruestung', 'balkonboden'],
     bifacial: false,
@@ -84,6 +87,7 @@ export const bkwProducts: BKWProduct[] = [
     price: 549,
     includesInverter: true,
     inverterBrand: 'Hoymiles HMS-800W-2T',
+    inverterACPower: 800,
     includesStorage: false,
     mountingTypes: ['balkonbruestung', 'balkonboden', 'hauswand'],
     bifacial: true,
@@ -102,6 +106,7 @@ export const bkwProducts: BKWProduct[] = [
     price: 599,
     includesInverter: true,
     inverterBrand: 'Anker MI80',
+    inverterACPower: 800,
     includesStorage: false,
     mountingTypes: ['balkonbruestung', 'balkonboden', 'flachdach'],
     bifacial: false,
@@ -120,6 +125,7 @@ export const bkwProducts: BKWProduct[] = [
     price: 479,
     includesInverter: true,
     inverterBrand: 'TSUN TSOL-MS800',
+    inverterACPower: 800,
     includesStorage: false,
     mountingTypes: ['balkonbruestung', 'balkonboden', 'hauswand', 'flachdach'],
     bifacial: false,
@@ -138,6 +144,7 @@ export const bkwProducts: BKWProduct[] = [
     price: 549,
     includesInverter: true,
     inverterBrand: 'Hoymiles HMS-800',
+    inverterACPower: 800,
     includesStorage: false,
     mountingTypes: ['flachdach', 'balkonboden'],
     bifacial: false,
@@ -156,6 +163,7 @@ export const bkwProducts: BKWProduct[] = [
     price: 519,
     includesInverter: true,
     inverterBrand: 'Hoymiles HMS-800W-2T',
+    inverterACPower: 800,
     includesStorage: false,
     mountingTypes: ['balkonbruestung', 'balkonboden', 'hauswand', 'flachdach'],
     bifacial: true,
@@ -176,6 +184,7 @@ export const bkwProducts: BKWProduct[] = [
     price: 899,
     includesInverter: true,
     inverterBrand: 'EcoFlow PowerStream',
+    inverterACPower: 800,
     includesStorage: false,
     mountingTypes: ['balkonbruestung', 'balkonboden', 'flachdach'],
     bifacial: false,
@@ -194,6 +203,7 @@ export const bkwProducts: BKWProduct[] = [
     price: 999,
     includesInverter: true,
     inverterBrand: 'Anker',
+    inverterACPower: 800,
     includesStorage: true,
     storageCapacity: 1.6,
     mountingTypes: ['balkonbruestung', 'balkonboden', 'flachdach'],
@@ -213,6 +223,7 @@ export const bkwProducts: BKWProduct[] = [
     price: 749,
     includesInverter: true,
     inverterBrand: 'Hoymiles HMS-800W-2T',
+    inverterACPower: 800,
     includesStorage: false,
     mountingTypes: ['flachdach', 'balkonboden'],
     bifacial: true,
@@ -231,6 +242,7 @@ export const bkwProducts: BKWProduct[] = [
     price: 949,
     includesInverter: true,
     inverterBrand: 'Hoymiles HMS-1600-4T',
+    inverterACPower: 1600,
     includesStorage: false,
     mountingTypes: ['hauswand', 'flachdach'],
     bifacial: false,
@@ -251,6 +263,7 @@ export const bkwProducts: BKWProduct[] = [
     price: 1499,
     includesInverter: true,
     inverterBrand: 'EcoFlow PowerStream',
+    inverterACPower: 800,
     includesStorage: true,
     storageCapacity: 1.0,
     mountingTypes: ['balkonbruestung', 'balkonboden', 'flachdach'],
@@ -270,6 +283,7 @@ export const bkwProducts: BKWProduct[] = [
     price: 1699,
     includesInverter: true,
     inverterBrand: 'Anker',
+    inverterACPower: 800,
     includesStorage: true,
     storageCapacity: 2.4,
     mountingTypes: ['balkonbruestung', 'balkonboden', 'flachdach', 'hauswand'],
@@ -289,6 +303,7 @@ export const bkwProducts: BKWProduct[] = [
     price: 1299,
     includesInverter: true,
     inverterBrand: 'Zendure Hub 2000',
+    inverterACPower: 800,
     includesStorage: true,
     storageCapacity: 1.92,
     mountingTypes: ['balkonbruestung', 'balkonboden', 'flachdach'],
@@ -336,28 +351,13 @@ export function getProductsByBudget(budgetRange: string): BKWProduct[] {
  * Supports both legacy range strings and numeric slider values
  */
 export function getBudgetMaxValue(budgetRange: string): number {
-  // Handle numeric slider values (e.g., "500", "1200")
+  // Only handle numeric slider values (e.g., "500", "1200")
   const numericValue = parseInt(budgetRange, 10);
-  if (!isNaN(numericValue)) {
-    // 0 means no budget limit
-    return numericValue === 0 ? Infinity : numericValue;
+  // 0 or NaN means no budget limit
+  if (isNaN(numericValue) || numericValue === 0) {
+    return Infinity;
   }
-  
-  // Handle legacy range strings
-  switch (budgetRange) {
-    case 'bis-400':
-      return 400;
-    case '400-700':
-      return 700;
-    case '700-1000':
-      return 1000;
-    case '>1000':
-      return Infinity;
-    case 'weiss-nicht':
-      return Infinity;
-    default:
-      return Infinity;
-  }
+  return numericValue;
 }
 
 /**
