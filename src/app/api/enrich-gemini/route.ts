@@ -12,6 +12,7 @@ interface GeminiEnrichment {
   moduleEfficiency: number;
   moduleCount: number;
   includesInverter: boolean;
+  inverterACPower: number;
   description: string;
 }
 
@@ -74,7 +75,14 @@ Products:
 ${productList}
 
 Return data for each product with mounting options, manufacturing origin, whether panels are bifacial,
-module efficiency, module count, whether inverter is included, and a short German description.`;
+module efficiency, module count, whether inverter is included, the inverter AC output power in watts,
+and a short German description.
+
+IMPORTANT for inverterACPower:
+- Most Balkonkraftwerke have 800W inverters (legal limit in Germany)
+- Some budget models have 600W or lower inverters  
+- Research each product to find the actual inverter AC output power
+- If unknown, default to 800 (the legal maximum)`;
 
   // Define JSON schema for structured output (guaranteed valid JSON)
   const responseSchema = {
@@ -96,6 +104,10 @@ module efficiency, module count, whether inverter is included, and a short Germa
         moduleEfficiency: { type: "NUMBER", description: "Panel efficiency percentage (18-23)" },
         moduleCount: { type: "INTEGER", description: "Number of solar panels" },
         includesInverter: { type: "BOOLEAN", description: "Whether inverter is included" },
+        inverterACPower: { 
+          type: "INTEGER", 
+          description: "Inverter AC output power in watts (W). Usually 800 for legal compliance, some have 600 or lower." 
+        },
         description: { type: "STRING", description: "Short German description" },
       },
       required: [
@@ -106,6 +118,7 @@ module efficiency, module count, whether inverter is included, and a short Germa
         "moduleEfficiency",
         "moduleCount",
         "includesInverter",
+        "inverterACPower",
         "description",
       ],
     },

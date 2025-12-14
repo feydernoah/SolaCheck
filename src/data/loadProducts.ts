@@ -24,6 +24,7 @@ interface GeminiEnrichment {
   moduleEfficiency: number;
   moduleCount: number;
   includesInverter: boolean;
+  inverterACPower?: number;
   description: string;
 }
 
@@ -132,6 +133,7 @@ export function loadScrapedProducts(): BKWProduct[] {
     const moduleCount = gemini?.moduleCount ?? p.specs.moduleCount ?? 2;
     const bifacial = gemini?.bifacial ?? p.specs.bifacial ?? false;
     const includesInverter = gemini?.includesInverter ?? p.specs.includesInverter ?? true;
+    const inverterACPower = gemini?.inverterACPower ?? 800; // Default to legal max
     const description = gemini?.description ?? p.specs.description ?? "";
     const warrantyYears = p.specs.warranty ?? 10;
     const storageCapacity = p.specs.storageCapacity;
@@ -144,6 +146,7 @@ export function loadScrapedProducts(): BKWProduct[] {
       moduleCount,
       price: p.price ?? 0,
       includesInverter,
+      inverterACPower,
       includesStorage: storageCapacity !== undefined && storageCapacity > 0,
       storageCapacity,
       mountingTypes,

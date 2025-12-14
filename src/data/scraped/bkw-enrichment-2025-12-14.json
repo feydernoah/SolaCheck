@@ -9,11 +9,12 @@
         "flachdach"
       ],
       "manufacturingOrigin": "china",
-      "bifacial": false,
-      "moduleEfficiency": 22,
-      "moduleCount": 4,
-      "includesInverter": true,
-      "description": "Hochleistungs-Balkonkraftwerk mit intelligentem Speichersystem für maximale Energieausbeute und Flexibilität."
+      "bifacial": true,
+      "moduleEfficiency": 21.5,
+      "moduleCount": 2,
+      "includesInverter": false,
+      "inverterACPower": 800,
+      "description": "Intelligentes Speichersystem für Balkonkraftwerke mit 2.68kWh Kapazität zur Optimierung des Eigenverbrauchs."
     },
     {
       "name": "EcoFlow Stream Ultra",
@@ -24,11 +25,12 @@
         "flachdach"
       ],
       "manufacturingOrigin": "china",
-      "bifacial": false,
-      "moduleEfficiency": 22,
-      "moduleCount": 3,
-      "includesInverter": true,
-      "description": "Intelligentes Balkonkraftwerk-System mit integriertem Stromspeicher und hoher Effizienz."
+      "bifacial": true,
+      "moduleEfficiency": 21.5,
+      "moduleCount": 2,
+      "includesInverter": false,
+      "inverterACPower": 800,
+      "description": "Ein Balkonkraftwerk-Hub mit 1.92kWh Speicher für effizientes Energiemanagement und hohe Kompatibilität."
     },
     {
       "name": "EcoFlow Stream Balkonkraftwerk – Basic Kit",
@@ -39,11 +41,12 @@
         "flachdach"
       ],
       "manufacturingOrigin": "china",
-      "bifacial": false,
+      "bifacial": true,
       "moduleEfficiency": 21.5,
       "moduleCount": 2,
       "includesInverter": true,
-      "description": "Einsteiger-Balkonkraftwerk-Kit von EcoFlow mit allen nötigen Komponenten für die Grundversorgung."
+      "inverterACPower": 800,
+      "description": "Einsteiger-Balkonkraftwerk-Komplettset ohne Speicher, ideal für den sofortigen Start mit Solarstrom."
     },
     {
       "name": "Zendure Hyper 2000",
@@ -54,11 +57,12 @@
         "flachdach"
       ],
       "manufacturingOrigin": "china",
-      "bifacial": false,
+      "bifacial": true,
       "moduleEfficiency": 21.5,
       "moduleCount": 2,
-      "includesInverter": true,
-      "description": "Leistungsstarkes Balkonkraftwerk-System von Zendure ohne Speicher, ideal für direkte Stromeinspeisung."
+      "includesInverter": false,
+      "inverterACPower": 800,
+      "description": "Eine leistungsstarke Powerstation von Zendure, die als zentrale Speichereinheit für Balkonkraftwerke dienen kann."
     },
     {
       "name": "Anker Solix Solarbank 2 Pro",
@@ -69,11 +73,12 @@
         "flachdach"
       ],
       "manufacturingOrigin": "china",
-      "bifacial": false,
-      "moduleEfficiency": 22,
-      "moduleCount": 3,
-      "includesInverter": true,
-      "description": "Intelligenter Stromspeicher für Balkonkraftwerke von Anker Solix mit optimierter Energieverwaltung."
+      "bifacial": true,
+      "moduleEfficiency": 21.5,
+      "moduleCount": 2,
+      "includesInverter": false,
+      "inverterACPower": 800,
+      "description": "Die Anker Solix Solarbank 2 Pro ist ein Speichersystem mit 1.6kWh Kapazität zur Ergänzung von Balkonkraftwerken."
     },
     {
       "name": "Zendure Solarflow 800 Pro",
@@ -84,11 +89,12 @@
         "flachdach"
       ],
       "manufacturingOrigin": "china",
-      "bifacial": false,
-      "moduleEfficiency": 22,
-      "moduleCount": 3,
+      "bifacial": true,
+      "moduleEfficiency": 21.5,
+      "moduleCount": 2,
       "includesInverter": true,
-      "description": "Erweitertes Balkonkraftwerk-System von Zendure mit Speicher und intelligentem Energiemanagement."
+      "inverterACPower": 800,
+      "description": "Intelligentes Speichersystem für Balkonkraftwerke mit 1.92kWh Kapazität und integrierter Energiesteuerung."
     },
     {
       "name": "Jackery HomePower 2000 Ultra",
@@ -99,11 +105,12 @@
         "flachdach"
       ],
       "manufacturingOrigin": "china",
-      "bifacial": false,
-      "moduleEfficiency": 21.8,
-      "moduleCount": 3,
-      "includesInverter": true,
-      "description": "Leistungsstarkes Balkonkraftwerk-Speichersystem von Jackery mit hoher Kapazität für unabhängige Stromversorgung."
+      "bifacial": true,
+      "moduleEfficiency": 21.5,
+      "moduleCount": 2,
+      "includesInverter": false,
+      "inverterACPower": 800,
+      "description": "Eine leistungsstarke Powerstation von Jackery mit 2.048kWh Speicher, nutzbar als flexible Energiequelle für das Zuhause."
     },
     {
       "name": "Solakon OnBasic",
@@ -114,11 +121,12 @@
         "flachdach"
       ],
       "manufacturingOrigin": "asia",
-      "bifacial": false,
-      "moduleEfficiency": 21.5,
+      "bifacial": true,
+      "moduleEfficiency": 21,
       "moduleCount": 2,
       "includesInverter": true,
-      "description": "Einfaches Balkonkraftwerk-System von Solakon ohne Speicher, ideal für den direkten Stromeinspeisung."
+      "inverterACPower": 800,
+      "description": "Ein günstiges Balkonkraftwerk-Basisset von Solakon ohne Speicher für den direkten Einstieg in die Solarenergie."
     },
     {
       "name": "Solakon OnPower",
@@ -129,11 +137,12 @@
         "flachdach"
       ],
       "manufacturingOrigin": "asia",
-      "bifacial": false,
-      "moduleEfficiency": 22,
-      "moduleCount": 3,
+      "bifacial": true,
+      "moduleEfficiency": 21.5,
+      "moduleCount": 2,
       "includesInverter": true,
-      "description": "Erweitertes Balkonkraftwerk-System von Solakon mit integriertem Stromspeicher für erhöhte Unabhängigkeit."
+      "inverterACPower": 800,
+      "description": "Komplettes Balkonkraftwerk-Set von Solakon mit 2.048kWh Speicher und 800W Wechselrichter für maximale Autarkie."
     },
     {
       "name": "Kleines Kraftwerk Duo",
@@ -144,14 +153,15 @@
         "flachdach"
       ],
       "manufacturingOrigin": "unknown",
-      "bifacial": false,
-      "moduleEfficiency": 21,
+      "bifacial": true,
+      "moduleEfficiency": 20.5,
       "moduleCount": 2,
       "includesInverter": true,
-      "description": "Kompaktes Balkonkraftwerk-System 'Duo' ohne Speicher, ideal für kleine Flächen und einfache Installation."
+      "inverterACPower": 800,
+      "description": "Ein kompaktes Balkonkraftwerk-Set mit zwei Solarmodulen, ideal für kleinere Haushalte ohne Speicher."
     }
   ],
-  "enrichedAt": "2025-12-14T12:39:07.624Z",
+  "enrichedAt": "2025-12-14T19:07:19.433Z",
   "source": "Gemini 2.5 Flash",
   "totalProducts": 10
 }
