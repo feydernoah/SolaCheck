@@ -65,6 +65,11 @@ export interface BKWProduct {
   price: number; // Total price in €
   includesInverter: boolean;
   inverterBrand?: string;
+  /**
+   * Inverter AC output power in watts (W). This is the maximum AC power the inverter can feed into the grid.
+   * For legal compliance, this should be 800 for most German BKWs, but some products may have lower values.
+   */
+  inverterACPower?: number;
   includesStorage: boolean;
   storageCapacity?: number; // kWh
   mountingTypes: MountingType[];

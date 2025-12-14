@@ -192,9 +192,17 @@ export default function ResultsPage() {
             </p>
           </div>
 
-          {/* Recommendation Cards Section */}
+          {/* AC Limit Disclaimer */}
           {recommendation.isRecommended && topRankings.length > 0 && (
             <div className="mb-12 animate-slide-up">
+              <Card padding="md" className="mb-6 bg-yellow-50 border-yellow-200">
+                <div className="flex gap-3 items-center">
+                  <div className="text-xl">⚖️</div>
+                  <div className="text-body text-gray-800">
+                    <strong>Hinweis:</strong> Alle ökonomischen und ökologischen Berechnungen basieren auf der maximal zulässigen AC-Einspeiseleistung von 800 W, unabhängig von der installierten Modulleistung.
+                  </div>
+                </div>
+              </Card>
               <h2 className="text-heading-2 font-bold text-gray-800 mb-8 text-center">
                 Unsere Top-Empfehlungen für dich
               </h2>
