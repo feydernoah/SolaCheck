@@ -113,11 +113,7 @@ export type HouseholdSize = '1' | '2' | '3-4' | '5+';
 
 // Budget ranges from quiz
 export type BudgetRange = 
-  | 'bis-400' 
-  | '400-700' 
-  | '700-1000' 
-  | '>1000' 
-  | 'weiss-nicht';
+  string; // Only numeric string values are valid now
 
 // Economic calculation result for a product
 export interface ProductEconomics {

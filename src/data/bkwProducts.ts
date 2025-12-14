@@ -351,28 +351,13 @@ export function getProductsByBudget(budgetRange: string): BKWProduct[] {
  * Supports both legacy range strings and numeric slider values
  */
 export function getBudgetMaxValue(budgetRange: string): number {
-  // Handle numeric slider values (e.g., "500", "1200")
+  // Only handle numeric slider values (e.g., "500", "1200")
   const numericValue = parseInt(budgetRange, 10);
-  if (!isNaN(numericValue)) {
-    // 0 means no budget limit
-    return numericValue === 0 ? Infinity : numericValue;
+  // 0 or NaN means no budget limit
+  if (isNaN(numericValue) || numericValue === 0) {
+    return Infinity;
   }
-  
-  // Handle legacy range strings
-  switch (budgetRange) {
-    case 'bis-400':
-      return 400;
-    case '400-700':
-      return 700;
-    case '700-1000':
-      return 1000;
-    case '>1000':
-      return Infinity;
-    case 'weiss-nicht':
-      return Infinity;
-    default:
-      return Infinity;
-  }
+  return numericValue;
 }
 
 /**
