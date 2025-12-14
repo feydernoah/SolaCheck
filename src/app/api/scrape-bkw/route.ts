@@ -26,44 +26,37 @@ async function searchGoogleShopping(
     const response = await fetch(url);
 
     if (!response.ok) {
-      console.error(`SerpAPI error: ${response.status} ${response.statusText}`);
+      console.error(`SerpAPI error: ${String(response.status)} ${response.statusText}`);
       return { price: null, currency: "EUR", source: "", link: "" };
     }
 
     const data = await response.json();
 
-    // Get the first shopping result
-    const results = data.shopping_results || [];
+    // Get shopping results
+    const results: Record<string, unknown>[] = (data.shopping_results as Record<string, unknown>[] | undefined) ?? [];
     if (results.length === 0) {
       console.log(`No shopping results for: ${productName}`);
       return { price: null, currency: "EUR", source: "", link: "" };
     }
 
-    // Find the lowest priced result
-    let lowestPrice: number | null = null;
-    let lowestResult = results[0];
-
-    for (const result of results) {
-      const priceStr = result.extracted_price || result.price;
-      if (typeof priceStr === "number") {
-        if (lowestPrice === null || priceStr < lowestPrice) {
-          lowestPrice = priceStr;
-          lowestResult = result;
-        }
-      } else if (typeof priceStr === "string") {
-        const parsed = parseFloat(priceStr.replace(/[^\d.,]/g, "").replace(",", "."));
-        if (!isNaN(parsed) && (lowestPrice === null || parsed < lowestPrice)) {
-          lowestPrice = parsed;
-          lowestResult = result;
-        }
-      }
+    // Use the first result (most relevant) instead of lowest price
+    const firstResult = results[0];
+    
+    // Extract price from first result
+    let price: number | null = null;
+    const priceValue = firstResult.extracted_price ?? firstResult.price;
+    if (typeof priceValue === "number") {
+      price = priceValue;
+    } else if (typeof priceValue === "string") {
+      const parsed = parseFloat(priceValue.replace(/[^\d.,]/g, "").replace(",", "."));
+      if (!isNaN(parsed)) price = parsed;
     }
 
     return {
-      price: lowestResult.extracted_price || lowestPrice,
+      price,
       currency: "EUR",
-      source: lowestResult.source || "",
-      link: lowestResult.link || "",
+      source: typeof firstResult.source === "string" ? firstResult.source : "",
+      link: typeof firstResult.link === "string" ? firstResult.link : "",
     };
   } catch (error) {
     console.error(`SerpAPI lookup failed for ${productName}:`, error);
@@ -87,7 +80,7 @@ async function scrapeFAZProducts(): Promise<{
   });
 
   if (!response.ok) {
-    throw new Error(`FAZ fetch failed: ${response.status}`);
+    throw new Error(`FAZ fetch failed: ${String(response.status)}`);
   }
 
   const html = await response.text();
@@ -105,7 +98,7 @@ async function scrapeFAZProducts(): Promise<{
     
     track.find(".ab-comparison--spec").each((_, specEl) => {
       const $spec = $(specEl);
-      const label = $spec.attr("data-label") || "";
+      const label = $spec.attr("data-label") ?? "";
       const value = $spec.text().trim();
       
       if (!value || value === "–") return;
@@ -113,21 +106,21 @@ async function scrapeFAZProducts(): Promise<{
       // Parse and map to our specific fields
       if (label === "Maximale PV-Eingangsleistung") {
         // Extract number like "3.600 Watt" or "2000 Watt"
-        const match = value.match(/([\d.]+)/);
+        const match = /([\d.]+)/.exec(value);
         if (match) {
           // Remove dots used as thousands separator and parse
           specs.wattage = parseInt(match[1].replace(/\./g, ""));
         }
       } else if (label === "Interner Speicher") {
-        const match = value.match(/(\d+(?:[.,]\d+)?)/);
+        const match = /(\d+(?:[.,]\d+)?)/.exec(value);
         if (match) specs.storageCapacity = parseFloat(match[1].replace(",", "."));
       } else if (label === "Abmessungen") {
         specs.dimensions = value;
       } else if (label === "Gewicht") {
-        const match = value.match(/(\d+(?:[.,]\d+)?)/);
+        const match = /(\d+(?:[.,]\d+)?)/.exec(value);
         if (match) specs.weight = parseFloat(match[1].replace(",", "."));
       } else if (label === "Garantie") {
-        const match = value.match(/(\d+)/);
+        const match = /(\d+)/.exec(value);
         if (match) specs.warranty = parseInt(match[1]);
       }
     });
@@ -135,7 +128,7 @@ async function scrapeFAZProducts(): Promise<{
     specsMap.set(boxId, specs);
   });
   
-  console.log(`Found specs for ${specsMap.size} products`);
+  console.log(`Found specs for ${String(specsMap.size)} products`);
   
   // Now extract products from the header section with product names
   const products: Partial<ScrapedBKWProduct>[] = [];
@@ -144,7 +137,7 @@ async function scrapeFAZProducts(): Promise<{
   // Find product tracks that have the model name
   $(".ab-comparison--track[data-id]").each((_, element) => {
     const track = $(element);
-    const dataId = track.attr("data-id") || "";
+    const dataId = track.attr("data-id") ?? "";
     // Convert "box-1" to "1" for matching with specs
     const boxId = dataId.replace("box-", "");
     
@@ -158,13 +151,13 @@ async function scrapeFAZProducts(): Promise<{
     
     // Extract image
     const imgElement = track.find(".ab-comparison--image img").first();
-    const imageUrl = imgElement.attr("src") || "";
+    const imageUrl = imgElement.attr("src") ?? "";
     
     // Get specs for this product
-    const specs = specsMap.get(boxId) || {};
+    const specs = specsMap.get(boxId) ?? {};
     
     products.push({
-      id: `faz-${products.length + 1}`,
+      id: `faz-${String(products.length + 1)}`,
       name,
       category: category || undefined,
       imageUrl: imageUrl || undefined,
@@ -173,7 +166,7 @@ async function scrapeFAZProducts(): Promise<{
     });
   });
 
-  console.log(`Found ${products.length} products on FAZ`);
+  console.log(`Found ${String(products.length)} products on FAZ`);
   return { products, fazUrl: FAZ_URL };
 }
 
@@ -194,16 +187,20 @@ async function enrichWithPrices(
     // Add a small delay to avoid rate limiting
     await new Promise((resolve) => setTimeout(resolve, 500));
 
+    // Extract brand from first word of product name
+    const brand = product.name.split(/\s+/)[0].replace(/[^a-zA-Z]/g, "");
+
     enrichedProducts.push({
-      id: product.id || `bkw-${enrichedProducts.length + 1}`,
+      id: product.id ?? `bkw-${String(enrichedProducts.length + 1)}`,
       name: product.name,
+      brand,
       category: product.category,
       price: priceData.price ?? undefined,
       priceCurrency: priceData.currency,
       priceSource: priceData.source || undefined,
       priceLink: priceData.link || undefined,
       imageUrl: product.imageUrl,
-      specs: product.specs || {},
+      specs: product.specs ?? {},
       scrapedAt: new Date().toISOString(),
     });
   }
@@ -236,7 +233,7 @@ export async function GET() {
     // Step 1: Scrape FAZ for product info
     console.log("Scraping FAZ for product info...");
     const { products: fazProducts, fazUrl } = await scrapeFAZProducts();
-    console.log(`Found ${fazProducts.length} products on FAZ`);
+    console.log(`Found ${String(fazProducts.length)} products on FAZ`);
 
     if (fazProducts.length === 0) {
       return NextResponse.json(
@@ -270,7 +267,7 @@ export async function GET() {
 
     return NextResponse.json({
       success: true,
-      message: `Scraped ${enrichedProducts.length} products with prices`,
+      message: `Scraped ${String(enrichedProducts.length)} products with prices`,
       savedTo: savedPath,
       data: result,
     });

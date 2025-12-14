@@ -3,6 +3,7 @@
     {
       "id": "faz-1",
       "name": "Anker Solix  Solarbank 3 Pro",
+      "brand": "Anker",
       "category": "Testsieger",
       "price": 799,
       "priceCurrency": "EUR",
@@ -13,149 +14,258 @@
         "storageCapacity": 2.68,
         "dimensions": "460 × 254 × 279 mm",
         "weight": 29.2,
-        "warranty": 10
+        "warranty": 10,
+        "bifacial": false,
+        "moduleEfficiency": 21,
+        "manufacturingOrigin": "china",
+        "moduleCount": 2,
+        "includesInverter": true,
+        "description": "",
+        "mountingTypes": [
+          "balkonbruestung",
+          "balkonboden"
+        ]
       },
-      "scrapedAt": "2025-12-14T11:33:02.414Z"
+      "scrapedAt": "2025-12-14T12:18:58.291Z"
     },
     {
       "id": "faz-2",
       "name": "EcoFlow Stream Ultra",
+      "brand": "EcoFlow",
       "category": "Fürs Wohnzimmer",
-      "price": 499,
+      "price": 587.39,
       "priceCurrency": "EUR",
-      "priceSource": "powerness.de",
+      "priceSource": "Kopp Verlag",
       "imageUrl": "https://www.faz.net/kaufkompass/wp-content/uploads/2025/07/EcoFlow-Stream-Ultra-e1754039808580-300x244.jpg",
       "specs": {
         "wattage": 2000,
         "storageCapacity": 1.92,
         "dimensions": "284 x 255 x 458 mm",
         "weight": 23.1,
-        "warranty": 10
+        "warranty": 10,
+        "bifacial": false,
+        "moduleEfficiency": 21,
+        "manufacturingOrigin": "china",
+        "moduleCount": 2,
+        "includesInverter": true,
+        "description": "",
+        "mountingTypes": [
+          "balkonbruestung",
+          "balkonboden"
+        ]
       },
-      "scrapedAt": "2025-12-14T11:33:02.964Z"
+      "scrapedAt": "2025-12-14T12:18:58.291Z"
     },
     {
       "id": "faz-3",
       "name": "EcoFlow Stream Balkonkraftwerk – Basic Kit",
+      "brand": "EcoFlow",
       "category": "Ohne Speicher",
-      "price": 219,
+      "price": 449,
       "priceCurrency": "EUR",
-      "priceSource": "powerness.de",
+      "priceSource": "EcoFlow Germany",
       "imageUrl": "https://www.faz.net/kaufkompass/wp-content/uploads/2025/07/EcoFlow-Stream-Balkonkraftwerk-e1754039830231-300x232.jpg",
       "specs": {
         "wattage": 1200,
         "dimensions": "252 × 180 × 35 mm",
         "weight": 3.2,
-        "warranty": 10
+        "warranty": 10,
+        "bifacial": false,
+        "moduleEfficiency": 21,
+        "manufacturingOrigin": "china",
+        "moduleCount": 2,
+        "includesInverter": true,
+        "description": "",
+        "mountingTypes": [
+          "balkonbruestung",
+          "balkonboden"
+        ]
       },
-      "scrapedAt": "2025-12-14T11:33:03.522Z"
+      "scrapedAt": "2025-12-14T12:18:58.291Z"
     },
     {
       "id": "faz-4",
       "name": "Zendure Hyper 2000",
+      "brand": "Zendure",
       "category": "Flexibel nutzbar",
-      "price": 149,
+      "price": 1399,
       "priceCurrency": "EUR",
-      "priceSource": "Balkonkraftwerk-Express",
+      "priceSource": "Zendure DE",
       "imageUrl": "https://www.faz.net/kaufkompass/wp-content/uploads/2025/07/Zendure-SolarFlow-800-e1754039851525-300x214.jpg",
       "specs": {
         "wattage": 1200,
         "dimensions": "350 × 202 × 78 mm",
         "weight": 8.5,
-        "warranty": 10
+        "warranty": 10,
+        "bifacial": false,
+        "moduleEfficiency": 21,
+        "manufacturingOrigin": "china",
+        "moduleCount": 2,
+        "includesInverter": true,
+        "description": "",
+        "mountingTypes": [
+          "balkonbruestung",
+          "balkonboden"
+        ]
       },
-      "scrapedAt": "2025-12-14T11:33:04.057Z"
+      "scrapedAt": "2025-12-14T12:18:58.291Z"
     },
     {
       "id": "faz-5",
       "name": "Anker Solix  Solarbank 2 Pro",
-      "price": 427,
+      "brand": "Anker",
+      "price": 1099,
       "priceCurrency": "EUR",
-      "priceSource": "Amazon.de - Amazon.de-Seller",
+      "priceSource": "OBI.de",
       "imageUrl": "https://www.faz.net/kaufkompass/wp-content/uploads/2025/07/Anker-Solix-Solarbank-2-Pro-e1754039873770-255x300.jpg",
       "specs": {
         "wattage": 2400,
         "storageCapacity": 1.6,
         "dimensions": "460 × 249 × 254 mm",
         "weight": 21.8,
-        "warranty": 10
+        "warranty": 10,
+        "bifacial": false,
+        "moduleEfficiency": 21,
+        "manufacturingOrigin": "china",
+        "moduleCount": 2,
+        "includesInverter": true,
+        "description": "",
+        "mountingTypes": [
+          "balkonbruestung",
+          "balkonboden"
+        ]
       },
-      "scrapedAt": "2025-12-14T11:33:04.597Z"
+      "scrapedAt": "2025-12-14T12:18:58.291Z"
     },
     {
       "id": "faz-6",
       "name": "Zendure Solarflow 800 Pro",
-      "price": 249,
+      "brand": "Zendure",
+      "price": 1198,
       "priceCurrency": "EUR",
-      "priceSource": "Lidl.de",
+      "priceSource": "Zendure DE",
       "imageUrl": "https://www.faz.net/kaufkompass/wp-content/uploads/2025/07/Zendure-Hyper-e1754039964255-300x280.jpg",
       "specs": {
         "wattage": 2400,
         "storageCapacity": 1.92,
-        "warranty": 10
+        "warranty": 10,
+        "bifacial": false,
+        "moduleEfficiency": 21,
+        "manufacturingOrigin": "china",
+        "moduleCount": 2,
+        "includesInverter": true,
+        "description": "",
+        "mountingTypes": [
+          "balkonbruestung",
+          "balkonboden"
+        ]
       },
-      "scrapedAt": "2025-12-14T11:33:05.128Z"
+      "scrapedAt": "2025-12-14T12:18:58.291Z"
     },
     {
       "id": "faz-7",
       "name": "Jackery HomePower 2000 Ultra",
-      "price": 459,
+      "brand": "Jackery",
+      "price": 550,
       "priceCurrency": "EUR",
-      "priceSource": "solakon.de",
+      "priceSource": "Jackery DE",
       "imageUrl": "https://www.faz.net/kaufkompass/wp-content/uploads/2025/07/Jackery-HomePower-2000-Ultra-e1754039893548-300x180.jpg",
       "specs": {
         "wattage": 2000,
         "storageCapacity": 2.048,
         "dimensions": "270 × 445 × 270 mm",
         "weight": 26.4,
-        "warranty": 10
+        "warranty": 10,
+        "bifacial": false,
+        "moduleEfficiency": 21,
+        "manufacturingOrigin": "china",
+        "moduleCount": 2,
+        "includesInverter": true,
+        "description": "",
+        "mountingTypes": [
+          "balkonbruestung",
+          "balkonboden"
+        ]
       },
-      "scrapedAt": "2025-12-14T11:33:05.668Z"
+      "scrapedAt": "2025-12-14T12:18:58.291Z"
     },
     {
       "id": "faz-8",
       "name": "Solakon OnBasic",
-      "price": 279,
+      "brand": "Solakon",
+      "price": 329,
       "priceCurrency": "EUR",
       "priceSource": "solakon.de",
       "imageUrl": "https://www.faz.net/kaufkompass/wp-content/uploads/2025/07/Solakon-SK-01113-e1754039915349-300x283.jpg",
       "specs": {
         "wattage": 2000,
-        "warranty": 12
+        "warranty": 12,
+        "bifacial": false,
+        "moduleEfficiency": 21,
+        "manufacturingOrigin": "china",
+        "moduleCount": 2,
+        "includesInverter": true,
+        "description": "",
+        "mountingTypes": [
+          "balkonbruestung",
+          "balkonboden"
+        ]
       },
-      "scrapedAt": "2025-12-14T11:33:06.207Z"
+      "scrapedAt": "2025-12-14T12:18:58.291Z"
     },
     {
       "id": "faz-9",
       "name": "Solakon OnPower",
-      "price": 279,
+      "brand": "Solakon",
+      "price": 679,
       "priceCurrency": "EUR",
       "priceSource": "solakon.de",
       "imageUrl": "https://www.faz.net/kaufkompass/wp-content/uploads/2025/07/Solakon-Balkonkraftwerk-2000-W-mit-Speicher.jpg",
       "specs": {
         "wattage": 2000,
         "storageCapacity": 2.048,
-        "warranty": 12
+        "warranty": 12,
+        "bifacial": false,
+        "moduleEfficiency": 21,
+        "manufacturingOrigin": "china",
+        "moduleCount": 2,
+        "includesInverter": true,
+        "description": "",
+        "mountingTypes": [
+          "balkonbruestung",
+          "balkonboden"
+        ]
       },
-      "scrapedAt": "2025-12-14T11:33:06.747Z"
+      "scrapedAt": "2025-12-14T12:18:58.291Z"
     },
     {
       "id": "faz-10",
       "name": "Kleines Kraftwerk Duo",
-      "price": 199,
+      "brand": "Kleines",
+      "price": 279.99,
       "priceCurrency": "EUR",
-      "priceSource": "Kesenci",
+      "priceSource": "Lidl.de",
       "imageUrl": "https://www.faz.net/kaufkompass/wp-content/uploads/2025/08/kleines-kraftwerk-duo-ohne-halte-e1754404882506-267x300.png",
       "specs": {
         "wattage": 1080,
         "dimensions": "261 × 180 × 35,1 mm",
         "weight": 3.2,
-        "warranty": 25
+        "warranty": 25,
+        "bifacial": false,
+        "moduleEfficiency": 21,
+        "manufacturingOrigin": "china",
+        "moduleCount": 2,
+        "includesInverter": true,
+        "description": "",
+        "mountingTypes": [
+          "balkonbruestung",
+          "balkonboden"
+        ]
       },
-      "scrapedAt": "2025-12-14T11:33:07.286Z"
+      "scrapedAt": "2025-12-14T12:18:58.291Z"
     }
   ],
-  "scrapedAt": "2025-12-14T11:33:07.287Z",
+  "scrapedAt": "2025-12-14T12:18:58.291Z",
   "sources": {
     "productInfo": "https://www.faz.net/kaufkompass/test/das-beste-balkonkraftwerk/",
     "pricing": "Google Shopping via SerpAPI"
