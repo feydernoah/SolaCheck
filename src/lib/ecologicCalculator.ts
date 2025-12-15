@@ -357,6 +357,9 @@ function generateEcologicalWarnings(
 
 /**
  * Calculate complete ecological impact for a BKW product
+ * 
+ * IMPORTANT: CO2 amortisation and lifecycle calculations are based on warranty years,
+ * not the default 25-year product lifetime.
  */
 export function calculateProductEcological(
   product: BKWProduct,
@@ -366,6 +369,9 @@ export function calculateProductEcological(
   const manufacturingCo2Data = calculateTotalManufacturingCo2(product);
   const manufacturingCo2Kg = manufacturingCo2Data.total;
 
+  // Use warranty years for CO2 calculations (not fixed 25 years)
+  const lifespan = product.warrantyYears;
+
   // Calculate CO2 payback period
   const co2PaybackYears = calculateCo2PaybackPeriod(
     manufacturingCo2Kg,
@@ -373,10 +379,11 @@ export function calculateProductEcological(
   );
 
   // Calculate lifecycle CO2 (operational savings minus manufacturing)
+  // Uses warranty years as the lifespan for calculation
   const lifecycleEmissionsKg = calculateLifecycleCo2(
     manufacturingCo2Kg,
     economics.annualYieldKwh,
-    PRODUCT_LIFETIME_YEARS
+    lifespan
   );
 
   // Calculate ecological score
