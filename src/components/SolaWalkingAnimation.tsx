@@ -14,7 +14,7 @@ interface SolaWalkingAnimationProps {
 // By default, we assume 130ms per frame and all frames are named frame0.svg, frame1.svg, ...
 const SolaWalkingAnimation: React.FC<SolaWalkingAnimationProps> = ({
   frameCount = 9, // Display 9 frames: Sola_walk_1.svg ... Sola_walk_9.svg
-  frameRateMs = 130,
+  frameRateMs = 120,
   width = 120,
   height = 120,
   onAnimationEnd,
@@ -22,7 +22,7 @@ const SolaWalkingAnimation: React.FC<SolaWalkingAnimationProps> = ({
   fileNamePattern = 'Sola_walk_{index}.svg',
   startIndex = 1,
 }) => {
-  const preloadCount = 10; // Preload 10 frames for smoothness
+  const preloadCount = 8; // Preload 8 frames for smoothness
   const [frame, setFrame] = useState(0);
   const [imagesLoaded, setImagesLoaded] = useState(false);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
@@ -33,7 +33,7 @@ const SolaWalkingAnimation: React.FC<SolaWalkingAnimationProps> = ({
     for (let i = 0; i < preloadCount; i++) {
       const img = new window.Image();
       const frameNumber = (i + startIndex).toString();
-      img.src = `/solacheck/${fileNamePattern.replace('{index}', frameNumber)}`;
+      img.src = `/solacheck/solaWalking/${fileNamePattern.replace('{index}', frameNumber)}`;
       img.onload = () => {
         loaded++;
         if (loaded === preloadCount) setImagesLoaded(true);
@@ -50,6 +50,7 @@ const SolaWalkingAnimation: React.FC<SolaWalkingAnimationProps> = ({
     intervalRef.current = setInterval(() => {
       setFrame((prev) => {
         if (loop) {
+          // Advance frame smoothly, looping with modulo
           return (prev + 1) % frameCount;
         } else {
           if (prev + 1 >= frameCount) {
@@ -66,9 +67,10 @@ const SolaWalkingAnimation: React.FC<SolaWalkingAnimationProps> = ({
   }, [frameCount, frameRateMs, loop, onAnimationEnd, imagesLoaded]);
 
 
-  // Frame files are named Sola_walk_1.svg, Sola_walk_2.svg, ... in the root public folder
-  const frameNumber = (frame + startIndex).toString();
-  const frameSrc = `/solacheck/${fileNamePattern.replace('{index}', frameNumber)}`;
+  // Frame files are named Sola_walk_1.svg, Sola_walk_2.svg, ... in public/solacheck
+  // Use frameCount and startIndex for correct cycling
+  const frameNumber = ((frame % frameCount) + startIndex).toString();
+  const frameSrc = `/solacheck/solaWalking/${fileNamePattern.replace('{index}', frameNumber)}`;
 
   if (!imagesLoaded) {
     return (

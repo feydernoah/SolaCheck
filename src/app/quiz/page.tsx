@@ -338,7 +338,7 @@ export default function Home() {
       setTimeout(() => {
         setCurrentQuestion(nextQuestion);
         setShowLoading(false);
-      }, 1200);
+      }, 1500);
     }
   };
 
@@ -352,7 +352,7 @@ export default function Home() {
       setTimeout(() => {
         setCurrentQuestion(previousQuestion);
         setShowLoading(false);
-      }, 1200);
+      }, 1500);
     }
   };
 
