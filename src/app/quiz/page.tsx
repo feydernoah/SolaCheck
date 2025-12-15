@@ -1,8 +1,6 @@
 "use client";
 
 import { useCallback, useState } from "react";
-import dynamic from "next/dynamic";
-const QuizLoadingScreen = dynamic(() => import("@/components/QuizLoadingScreen"), { ssr: false });
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
@@ -325,20 +323,14 @@ export default function Home() {
     resetWithConfirmation
   } = useQuizProgress();
 
-  const [showLoading, setShowLoading] = useState(false);
-
-
+  // Instantly go to next/previous question, but keep the animation component for optional use
   const handleNext = () => {
     let nextQuestion = currentQuestion + 1;
     while (nextQuestion < questions.length && !isQuestionVisible(questions[nextQuestion], answers)) {
       nextQuestion++;
     }
     if (nextQuestion < questions.length) {
-      setShowLoading(true);
-      setTimeout(() => {
-        setCurrentQuestion(nextQuestion);
-        setShowLoading(false);
-      }, 1500);
+      setCurrentQuestion(nextQuestion);
     }
   };
 
@@ -348,11 +340,7 @@ export default function Home() {
       previousQuestion--;
     }
     if (previousQuestion >= 0) {
-      setShowLoading(true);
-      setTimeout(() => {
-        setCurrentQuestion(previousQuestion);
-        setShowLoading(false);
-      }, 1500);
+      setCurrentQuestion(previousQuestion);
     }
   };
 
@@ -398,7 +386,7 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-white relative overflow-hidden p-4">
-      {showLoading && <QuizLoadingScreen />}
+      {/* Optionally show the animation here if desired: <QuizLoadingScreen /> */}
       {/* Burger Menu and Info Button */}
       <div className="fixed top-4 right-4 sm:top-5 sm:right-5 md:top-6 md:right-6 z-40 flex items-center gap-4">
         <InfoButton onClick={() => setIsInfoModalOpen(true)} />
@@ -413,7 +401,7 @@ export default function Home() {
       />
 
       {/* Main Content */}
-      <div className="flex items-center justify-center min-h-screen" style={{ filter: showLoading ? 'blur(2px)' : 'none', pointerEvents: showLoading ? 'none' : 'auto' }}>
+      <div className="flex items-center justify-center min-h-screen">
         <div className="w-full max-w-4xl px-4">
           {/* Question Card */}
           <Card padding="lg" className="animate-fade-in">
