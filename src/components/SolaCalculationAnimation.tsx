@@ -12,12 +12,12 @@ interface SolaCalculationAnimationProps {
 }
 
 const SolaCalculationAnimation: React.FC<SolaCalculationAnimationProps> = ({
-  frameCount = 9, // Sola_rechnet_1.svg ... Sola_rechnet_9.svg
+  frameCount = 11, // Sola_rechnet_1.png ... Sola_rechnet_11.png
   frameRateMs = 120,
   width = 160,
   height = 160,
   loop = true,
-  fileNamePattern = 'Sola_rechnet_{index}.svg',
+  fileNamePattern = 'Sola_rechnet_{index}.png',
   startIndex = 1,
 }) => {
   const [frame, setFrame] = useState(0);
