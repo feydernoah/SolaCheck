@@ -1,6 +1,7 @@
 "use client";
 
-import Link from "next/link";
+import { useRouter } from "next/navigation";
+import WalkingTransition from "@/components/transitions/WalkingTransition";
 import Image from "next/image";
 import { useState, useEffect } from "react";
 import { BurgerMenu } from "@/components/BurgerMenu";
@@ -13,9 +14,12 @@ const chatMessages = [
   "Lass uns gemeinsam durchstarten! 💪",
 ];
 
+
 export default function LandingPage() {
   const [currentMessageIndex, setCurrentMessageIndex] = useState(0);
   const [speechBubbleVisible, setSpeechBubbleVisible] = useState(true);
+  const [showTransition, setShowTransition] = useState(false);
+  const router = useRouter();
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -25,8 +29,17 @@ export default function LandingPage() {
     return () => clearInterval(interval);
   }, []);
 
+  const handleStart = () => {
+    setShowTransition(true);
+  };
+
+  const handleTransitionComplete = () => {
+    router.push("/quiz");
+  };
+
   return (
-    <div className="min-h-screen bg-white relative overflow-hidden">
+    <>
+      <div className="min-h-screen bg-white relative overflow-hidden">
       {/* Burger Menu - Top Right */}
       <BurgerMenu showHome={false} showQuiz />
 
@@ -53,11 +66,13 @@ export default function LandingPage() {
         </div>
 
         {/* Start Button */}
-        <Link href="/quiz">
-          <Button size="lg" className="mb-24 sm:mb-32 md:mb-32 lg:mb-32 xl:mb-0 px-10 py-4 sm:px-12 sm:py-4 md:px-12 md:py-4 lg:px-16 lg:py-6 xl:px-16 xl:py-6 text-lg sm:text-xl md:text-xl lg:text-2xl xl:text-2xl">
-            Start
-          </Button>
-        </Link>
+        <Button
+          size="lg"
+          className="mb-24 sm:mb-32 md:mb-32 lg:mb-32 xl:mb-0 px-10 py-4 sm:px-12 sm:py-4 md:px-12 md:py-4 lg:px-16 lg:py-6 xl:px-16 xl:py-6 text-lg sm:text-xl md:text-xl lg:text-2xl xl:text-2xl"
+          onClick={handleStart}
+        >
+          Start
+        </Button>
       </div>
 
       {/* Chat Buddy - Bottom Left */}
@@ -91,6 +106,12 @@ export default function LandingPage() {
           )}
         </div>
       </div>
-    </div>
+      </div>
+      {showTransition && (
+        <WalkingTransition show={showTransition} onComplete={handleTransitionComplete}>
+          <div style={{ width: '100vw', height: '100vh', background: 'white' }} />
+        </WalkingTransition>
+      )}
+    </>
   );
 }

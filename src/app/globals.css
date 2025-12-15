@@ -63,6 +63,70 @@ input[type="submit"]:not([disabled]) {
   cursor: pointer;
 }
 
+/* WalkingTransition Animation Styles */
+.walking-transition {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 1000;
+  pointer-events: none;
+  display: flex;
+  overflow: hidden;
+  background: white;
+}
+.walking-transition__old,
+.walking-transition__new {
+  flex: 1 0 100vw;
+  height: 100vh;
+  transition: transform 3.5s cubic-bezier(0.77,0,0.175,1);
+  will-change: transform;
+  position: relative;
+}
+.walking-transition__old {
+  z-index: 1;
+  background: inherit;
+  transform: translateX(0);
+}
+.walking-transition-active .walking-transition__old {
+  transform: translateX(-100vw);
+}
+.walking-transition__new {
+  z-index: 1;
+  background: inherit;
+  transform: translateX(100vw);
+  transition: transform 3.5s cubic-bezier(0.77,0,0.175,1);
+}
+.walking-transition-active .walking-transition__new {
+  transform: translateX(0);
+}
+.walking-transition__sola {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  z-index: 2;
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-start;
+  pointer-events: none;
+  width: 160px; /* match SolaWalkingAnimation width */
+  height: 160px; /* match SolaWalkingAnimation height */
+  animation: sola-walk 3.5s linear forwards;
+}
+.walking-transition-active .walking-transition__sola {
+  animation: sola-walk 3.5s linear forwards;
+}
+@keyframes sola-walk {
+  0% {
+    left: 0;
+    bottom: 0;
+  }
+  100% {
+    left: calc(100vw - 160px); /* 160px = buddy width, should reach right edge */
+    bottom: 0;
+  }
+}
+
 /* Elements using role=button may use aria-disabled to indicate disabled state */
 [role="button"]:not([aria-disabled="true"]) {
   cursor: pointer;

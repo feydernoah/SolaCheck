@@ -54,7 +54,8 @@ const SolaWalkingAnimation: React.FC<SolaWalkingAnimationProps> = ({
           return (prev + 1) % frameCount;
         } else {
           if (prev + 1 >= frameCount) {
-            if (onAnimationEnd) onAnimationEnd();
+            // Only call onAnimationEnd in a microtask after render
+            if (onAnimationEnd) setTimeout(onAnimationEnd, 0);
             return prev; // Stop at last frame
           }
           return prev + 1;

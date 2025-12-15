@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useState } from "react";
+import { useCallback, useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
@@ -314,6 +314,13 @@ export default function Home() {
   const router = useRouter();
   const [isInfoModalOpen, setIsInfoModalOpen] = useState(false);
   const [isAddressValid, setIsAddressValid] = useState(false);
+  const [showContent, setShowContent] = useState(false);
+
+  // Show content after mount (simulate entry animation)
+  useEffect(() => {
+    const timeout = setTimeout(() => setShowContent(true), 100);
+    return () => clearTimeout(timeout);
+  }, []);
 
   const {
     currentQuestion,
@@ -384,8 +391,11 @@ export default function Home() {
     return !!currentAnswer;
   };
 
-  return (
-    <div className="min-h-screen bg-white relative overflow-hidden p-4">
+    if (!showContent) {
+      return null;
+    }
+    return (
+      <div className="min-h-screen bg-white relative overflow-hidden p-4">
       {/* Optionally show the animation here if desired: <QuizLoadingScreen /> */}
       {/* Burger Menu and Info Button */}
       <div className="fixed top-4 right-4 sm:top-5 sm:right-5 md:top-6 md:right-6 z-40 flex items-center gap-4">
