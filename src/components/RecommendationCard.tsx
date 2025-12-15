@@ -12,7 +12,11 @@
 
 import { useState } from 'react';
 import Image from 'next/image';
+<<<<<<< HEAD
 import Link from 'next/link';
+=======
+import { useRouter } from 'next/navigation';
+>>>>>>> 9ab42ad (removed collapsible ecological section and updated button to navigate to CO2-Bilanz page)
 import { ProductRanking } from '@/types/economic';
 import { Card } from './ui/Card';
 import { Button } from './ui/Button';
@@ -28,7 +32,13 @@ export function RecommendationCard({
   badge,
   badgeColor = 'yellow'
 }: RecommendationCardProps) {
+<<<<<<< HEAD
   const { product, economics } = ranking;
+=======
+  const router = useRouter();
+  const { product, economics, ecological, ecologicalReasons, ecologicalWarnings } = ranking;
+  const [isEcoOpen, setIsEcoOpen] = useState(false);
+>>>>>>> 9ab42ad (removed collapsible ecological section and updated button to navigate to CO2-Bilanz page)
   const [imageError, setImageError] = useState(false);
   
   const badgeColors = {
@@ -121,6 +131,7 @@ export function RecommendationCard({
       <div className="grow"></div>
 
       {/* CTA Button */}
+<<<<<<< HEAD
       <Link href="/carbon-footprint" className="w-full">
         <Button 
           variant="primary" 
@@ -136,6 +147,22 @@ export function RecommendationCard({
           CO₂-Bilanz anzeigen
         </Button>
       </Link>
+=======
+      <Button 
+        variant="primary" 
+        size="lg" 
+        fullWidth
+        onClick={() => {
+          // Store ranking data in sessionStorage to avoid long URLs
+          if (typeof window !== 'undefined') {
+            sessionStorage.setItem('carbon-footprint-data', JSON.stringify(ranking));
+          }
+          router.push('/carbon-footprint');
+        }}
+      >
+        CO₂ Bilanz anzeigen →
+      </Button>
+>>>>>>> 9ab42ad (removed collapsible ecological section and updated button to navigate to CO2-Bilanz page)
     </Card>
   );
 }
