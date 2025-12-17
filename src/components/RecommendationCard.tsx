@@ -12,6 +12,7 @@
 
 import { useState } from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { ProductRanking } from '@/types/economic';
 import { Card } from './ui/Card';
@@ -122,20 +123,21 @@ export function RecommendationCard({
       <div className="grow"></div>
 
       {/* CTA Button */}
-      <Button 
-        variant="primary" 
-        size="lg" 
-        fullWidth
-        onClick={() => {
-          // Store ranking data in sessionStorage to avoid long URLs
-          if (typeof window !== 'undefined') {
-            sessionStorage.setItem('carbon-footprint-data', JSON.stringify(ranking));
-          }
-          router.push('/carbon-footprint');
-        }}
-      >
-        CO₂-Bilanz anzeigen
-      </Button>
+      <Link href="/carbon-footprint" className="w-full">
+        <Button 
+          variant="primary" 
+          size="lg" 
+          fullWidth
+          onClick={() => {
+            // Store ranking data in sessionStorage to avoid long URLs
+            if (typeof window !== 'undefined') {
+              sessionStorage.setItem('carbon-footprint-data', JSON.stringify(ranking));
+            }
+          }}
+        >
+          CO₂-Bilanz anzeigen
+        </Button>
+      </Link>
     </Card>
   );
 }
