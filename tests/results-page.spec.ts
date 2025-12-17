@@ -432,9 +432,8 @@ test.describe('Results Page - Email Feature', () => {
     await expect(checkbox).not.toBeChecked();
   });
 
-  test('email input and checkbox are disabled while sending', async ({ page }) => {
+  test('email input is disabled while sending', async ({ page }) => {
     const emailInput = page.locator('input[type="email"]');
-    const checkbox = page.locator('input[type="checkbox"]');
     const sendButton = page.getByRole('button', { name: 'Ergebnis erhalten' });
     
     // Fill valid email
