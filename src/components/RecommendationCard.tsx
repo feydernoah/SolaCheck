@@ -15,12 +15,15 @@ import Image from 'next/image';
 <<<<<<< HEAD
 <<<<<<< HEAD
 import Link from 'next/link';
+<<<<<<< HEAD
 =======
 =======
 import Link from 'next/link';
 >>>>>>> f99efa0 (refactored RecommendationCard to use Link for navigation to CO₂-Bilanz page)
 import { useRouter } from 'next/navigation';
 >>>>>>> 9ab42ad (removed collapsible ecological section and updated button to navigate to CO2-Bilanz page)
+=======
+>>>>>>> 051c02e (fixed lint error)
 import { ProductRanking } from '@/types/economic';
 import { Card } from './ui/Card';
 import { Button } from './ui/Button';
