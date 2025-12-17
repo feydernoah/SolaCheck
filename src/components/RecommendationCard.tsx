@@ -163,7 +163,7 @@ export function RecommendationCard({
           router.push('/carbon-footprint');
         }}
       >
-        CO₂ Bilanz anzeigen →
+        CO₂-Bilanz anzeigen
       </Button>
 >>>>>>> 9ab42ad (removed collapsible ecological section and updated button to navigate to CO2-Bilanz page)
     </Card>
