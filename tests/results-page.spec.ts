@@ -149,18 +149,13 @@ test.describe('Results Page - Positive Recommendation', () => {
     await expect(infoText).toBeVisible();
   });
 
-  test('displays CO2-Bilanz CTA button', async ({ page }) => {
-    const co2Button = page.locator('text=CO₂-Bilanz berechnen');
-    await expect(co2Button).toBeVisible();
-  });
-
   test('displays "Neues Quiz starten" button', async ({ page }) => {
     const newQuizButton = page.locator('text=Neues Quiz starten');
     await expect(newQuizButton).toBeVisible();
   });
 
   test('CO2-Bilanz button links to /carbon-footprint', async ({ page }) => {
-    const co2Button = page.locator('text=CO₂-Bilanz berechnen');
+    const co2Button = page.locator('text=CO₂-Bilanz anzeigen');
     const href = await co2Button.locator('..').getAttribute('href');
     expect(href).toBe('/solacheck/carbon-footprint');
   });
