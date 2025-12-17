@@ -13,20 +13,23 @@ export default function CarbonFootprintPage() {
 
   useEffect(() => {
     // Ranking data is stored in sessionStorage
-    if (typeof window !== 'undefined') {
-      const storedData = sessionStorage.getItem('carbon-footprint-data');
-      
-      if (storedData) {
-        try {
-          const decodedRanking = JSON.parse(storedData) as ProductRanking;
-          setRanking(decodedRanking);
-        } catch (error) {
-          console.error('Fehler beim Dekodieren der Produktdaten:', error);
+    const loadData = () => {
+      if (typeof window !== 'undefined') {
+        const storedData = sessionStorage.getItem('carbon-footprint-data');
+
+        if (storedData) {
+          try {
+            const decodedRanking = JSON.parse(storedData) as ProductRanking;
+            setRanking(decodedRanking);
+          } catch (error) {
+            console.error('Fehler beim Dekodieren der Produktdaten:', error);
+          }
         }
       }
-    }
-    
-    setIsLoading(false);
+      setIsLoading(false);
+    };
+
+    loadData();
   }, []);
 
   if (isLoading) {
@@ -67,8 +70,13 @@ export default function CarbonFootprintPage() {
     return 'text-orange-700 bg-orange-50';
   };
 
+<<<<<<< HEAD
   // Kleiner Wald (100 Bäume) absorbiert pro Jahr ca. 2400 kg CO₂
   const forestAbsorptionPerYearKg = 100 * 24;
+=======
+  // Kleiner Wald (100 Bäume) absorbiert pro Jahr ca. 1.500 kg CO₂
+  const forestAbsorptionPerYearKg = 100 * 15;
+>>>>>>> 10a058b (refactored CarbonFootprintPage layout and improved data loading logic, implemented tree comparison and added picture for visualization)
   const forestYearsToOffset = (ecological.lifecycleEmissionsKg / forestAbsorptionPerYearKg)*-1;
 
   return (
