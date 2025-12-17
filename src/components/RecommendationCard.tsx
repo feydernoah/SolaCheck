@@ -134,7 +134,7 @@ export function RecommendationCard({
           router.push('/carbon-footprint');
         }}
       >
-        CO₂ Bilanz anzeigen →
+        CO₂-Bilanz anzeigen
       </Button>
     </Card>
   );
