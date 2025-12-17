@@ -3,6 +3,10 @@ import { useState, useEffect, useCallback } from 'react';
 const COOKIE_NAME = 'solacheck_quiz_progress';
 const COOKIE_MAX_AGE = 60 * 60 * 24 * 7; // 7 days
 
+const TOTAL_QUESTIONS = 12;
+
+const VALID_QUESTION_IDS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
+
 interface QuizProgress {
   currentQuestion: number;
   answers: Record<number, string | string[]>;
@@ -36,11 +40,42 @@ function deleteCookie(name: string): void {
   document.cookie = `${name}=; path=/; max-age=0`;
 }
 
+/**
+ * Validates that the saved progress is compatible with the current quiz structure.
+ * Returns true if valid, false if the cookie should be reset.
+ */
+function isProgressValid(progress: QuizProgress): boolean {
+  if (
+    typeof progress.currentQuestion !== 'number' ||
+    progress.currentQuestion < 0 ||
+    progress.currentQuestion >= TOTAL_QUESTIONS
+  ) {
+    console.warn('Quiz progress reset: currentQuestion out of bounds', progress.currentQuestion);
+    return false;
+  }
+
+  const answerKeys = Object.keys(progress.answers).map(Number);
+  for (const key of answerKeys) {
+    if (!VALID_QUESTION_IDS.includes(key)) {
+      console.warn('Quiz progress reset: invalid question ID in answers', key);
+      return false;
+    }
+  }
+
+  return true;
+}
+
 function getProgressFromCookie(): QuizProgress {
   const savedProgress = getCookie(COOKIE_NAME);
   if (savedProgress) {
     try {
-      return JSON.parse(savedProgress) as QuizProgress;
+      const parsed = JSON.parse(savedProgress) as QuizProgress;
+      
+      if (isProgressValid(parsed)) {
+        return parsed;
+      }
+      
+      deleteCookie(COOKIE_NAME);
     } catch {
       deleteCookie(COOKIE_NAME);
     }

@@ -319,11 +319,17 @@ export default function Home() {
     answers, 
     setCurrentQuestion, 
     updateAnswer, 
-    resetWithConfirmation 
+    resetWithConfirmation,
   } = useQuizProgress();
 
+  // Safety fallback: ensure currentQuestion is always within valid bounds
+  // The hook already validates cookies, but this guards against any edge cases
+  const safeCurrentQuestion = currentQuestion >= 0 && currentQuestion < questions.length 
+    ? currentQuestion 
+    : 0;
+
   const handleNext = () => {
-    let nextQuestion = currentQuestion + 1;
+    let nextQuestion = safeCurrentQuestion + 1;
     while (nextQuestion < questions.length && !isQuestionVisible(questions[nextQuestion], answers)) {
       nextQuestion++;
     }
@@ -333,7 +339,7 @@ export default function Home() {
   };
 
   const handlePrevious = () => {
-    let previousQuestion = currentQuestion - 1;
+    let previousQuestion = safeCurrentQuestion - 1;
     while (previousQuestion >= 0 && !isQuestionVisible(questions[previousQuestion], answers)) {
       previousQuestion--;
     }
@@ -343,23 +349,23 @@ export default function Home() {
   };
 
   const handleAnswer = (value: string) => {
-    updateAnswer(questions[currentQuestion].id, value);
+    updateAnswer(questions[safeCurrentQuestion].id, value);
   };
 
   const handleMultiSelectAnswer = (value: string) => {
-    const currentValue = answers[questions[currentQuestion].id];
+    const currentValue = answers[questions[safeCurrentQuestion].id];
     const currentAnswers = Array.isArray(currentValue) ? currentValue : [];
     const newAnswers = currentAnswers.includes(value)
       ? currentAnswers.filter((v) => v !== value)
       : [...currentAnswers, value];
-    updateAnswer(questions[currentQuestion].id, newAnswers);
+    updateAnswer(questions[safeCurrentQuestion].id, newAnswers);
   };
 
   const handleTextAnswer = useCallback((value: string) => {
-    updateAnswer(questions[currentQuestion].id, value);
-  }, [currentQuestion, updateAnswer]);
+    updateAnswer(questions[safeCurrentQuestion].id, value);
+  }, [safeCurrentQuestion, updateAnswer]);
 
-  const currentQ = questions[currentQuestion];
+  const currentQ = questions[safeCurrentQuestion];
   const currentAnswer = answers[currentQ.id];
   const currentMultiSelectAnswers = Array.isArray(currentAnswer) ? currentAnswer : [];
   const currentTextAnswer = typeof currentAnswer === 'string' ? currentAnswer : '';
@@ -412,12 +418,12 @@ export default function Home() {
             {/* Progress Indicator */}
             <div className="mb-8">
               <div className="flex justify-end text-sm text-gray-600 mb-2">
-                <span>{Math.round(((currentQuestion + 1) / questions.length) * 100)}%</span>
+                <span>{Math.round(((safeCurrentQuestion + 1) / questions.length) * 100)}%</span>
               </div>
               <div className="w-full bg-gray-200 rounded-full h-2">
                 <div
                   className="bg-yellow-400 h-2 rounded-full transition-all duration-300"
-                  style={{ width: `${(((currentQuestion + 1) / questions.length) * 100).toString()}%` }}
+                  style={{ width: `${(((safeCurrentQuestion + 1) / questions.length) * 100).toString()}%` }}
                 ></div>
               </div>
             </div>
@@ -568,14 +574,14 @@ export default function Home() {
             <div className="flex justify-between items-center">
               <Button
                 onClick={handlePrevious}
-                disabled={currentQuestion === 0}
+                disabled={safeCurrentQuestion === 0}
                 variant="primary"
                 size="lg"
               >
                 ← Zurück
               </Button>
 
-              {currentQuestion === questions.length - 1 ? (
+              {safeCurrentQuestion === questions.length - 1 ? (
                 <Button
                   onClick={() => router.push('/results')}
                   disabled={!isAnswered()}

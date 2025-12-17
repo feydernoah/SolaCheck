@@ -1,7 +1,56 @@
 import { test, expect, type Page } from '@playwright/test';
 
+/**
+ * Mock Photon API responses for fast, reliable testing
+ */
+async function setupPhotonMock(page: Page): Promise<void> {
+  await page.route('**/photon.komoot.io/api/**', async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({
+        features: [
+          {
+            geometry: { coordinates: [13.405, 52.52] },
+            properties: {
+              osm_id: 62422,
+              osm_type: 'relation',
+              name: 'Berlin',
+              city: 'Berlin',
+              state: 'Berlin',
+              countrycode: 'DE',
+              type: 'city',
+            },
+          },
+        ],
+      }),
+    });
+  });
+  
+  await page.route('**/photon.komoot.io/reverse**', async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({
+        features: [
+          {
+            geometry: { coordinates: [13.405, 52.52] },
+            properties: {
+              name: 'Berlin',
+              city: 'Berlin',
+              countrycode: 'DE',
+              type: 'city',
+            },
+          },
+        ],
+      }),
+    });
+  });
+}
+
 test.describe('Quiz Dependencies', () => {
   test.beforeEach(async ({ page }) => {
+    await setupPhotonMock(page);
     await page.context().clearCookies();
     await page.goto('/solacheck/quiz');
     // Wait for quiz to be ready
@@ -27,7 +76,7 @@ test.describe('Quiz Dependencies', () => {
     
     // Wait for suggestions and click the first one
     const suggestion = page.locator('button').filter({ hasText: /Berlin/i }).first();
-    await expect(suggestion).toBeVisible({ timeout: 10000 });
+    await expect(suggestion).toBeVisible({ timeout: 3000 });
     await suggestion.click();
     
     // Wait for location to be selected (green success card)
