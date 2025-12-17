@@ -49,10 +49,13 @@ function formatRecommendationsHTML(
     return '<p>Leider konnten keine passenden Balkonkraftwerke für Sie gefunden werden.</p>';
   }
 
+  // Only show top 3 recommendations
+  const topRecommendations = recommendations.slice(0, 3);
+
   let html = '<div style="font-family: Arial, sans-serif;">';
   html += '<h2 style="color: #2563eb;">Ihre personalisierten Balkonkraftwerk-Empfehlungen</h2>';
 
-  recommendations.forEach((ranking, index) => {
+  topRecommendations.forEach((ranking, index) => {
     const { product, economics, ecological } = ranking;
     
     // Product header with ranking
@@ -82,12 +85,15 @@ function formatRecommendationsHTML(
 
     // Carbon footprint (if requested)
     if (includeCarbonFootprint && ecological) {
+      // Calculate forest comparison (100 trees absorb ~1,500 kg CO2 per year)
+      const forestAbsorptionPerYearKg = 100 * 24;
+      const forestYearsToOffset = (ecological.lifecycleEmissionsKg / forestAbsorptionPerYearKg) * -1;
+      
       html += `<div style="margin: 15px 0; padding: 10px; background-color: #f0fdf4; border-radius: 4px;">`;
       html += `<h4 style="margin-top: 0; color: #065f46;">Ökologischer Fußabdruck</h4>`;
       html += `<p style="margin: 5px 0;"><strong>CO₂ Herstellung:</strong> ${ecological.manufacturingCo2Kg.toFixed(0)} kg</p>`;
       html += `<p style="margin: 5px 0;"><strong>CO₂ Amortisation:</strong> ${ecological.paybackPeriodYears.toFixed(1)} Jahre</p>`;
-      html += `<p style="margin: 5px 0;"><strong>Lebenszyklusemissionen (25 Jahre):</strong> ${ecological.lifecycleEmissionsKg.toFixed(0)} kg</p>`;
-      html += `<p style="margin: 5px 0;"><strong>Ökologischer Score:</strong> ${ecological.ecologicalScore.toFixed(0)}/100</p>`;
+      html += `<p style="margin: 5px 0;"><strong>Lebenszyklusemissionen (25 Jahre):</strong> ${Math.abs(ecological.lifecycleEmissionsKg).toFixed(0)} kg CO₂ Gesamteinsparung</p>`;
       
       // Breakdown of manufacturing CO2
       html += `<p style="margin: 10px 0 5px 0; font-size: 0.9em;"><strong>Herstellungs-CO₂ Aufschlüsselung:</strong></p>`;
@@ -96,6 +102,11 @@ function formatRecommendationsHTML(
       html += `<li>Produktion: ${ecological.productionCo2Kg.toFixed(0)} kg</li>`;
       html += `<li>Transport: ${ecological.transportCo2Kg.toFixed(0)} kg</li>`;
       html += `</ul>`;
+      
+      // Forest comparison
+      html += `<div style="margin: 10px 0; padding: 8px; background-color: #ecfdf5; border-left: 4px solid #10b981;">`;
+      html += `<p style="margin: 0;"><strong>🌳 Vergleich:</strong> Ein kleiner Wald mit 100 Bäumen bräuchte etwa <strong>${forestYearsToOffset.toFixed(1)} Jahre</strong>, um diese Menge an CO₂ aufzunehmen.</p>`;
+      html += `</div>`;
       html += `</div>`;
     }
 
@@ -145,10 +156,13 @@ function formatRecommendationsText(
     return 'Leider konnten keine passenden Balkonkraftwerke für Sie gefunden werden.';
   }
 
+  // Only show top 3 recommendations
+  const topRecommendations = recommendations.slice(0, 3);
+
   let text = 'IHRE PERSONALISIERTEN BALKONKRAFTWERK-EMPFEHLUNGEN\n\n';
   text += '='.repeat(60) + '\n\n';
 
-  recommendations.forEach((ranking, index) => {
+  topRecommendations.forEach((ranking, index) => {
     const { product, economics, ecological } = ranking;
     
     text += `${index + 1}. ${product.brand} ${product.name}\n`;
@@ -171,15 +185,20 @@ function formatRecommendationsText(
 
     // Carbon footprint (if requested)
     if (includeCarbonFootprint && ecological) {
+      // Calculate forest comparison (100 trees absorb ~1,500 kg CO2 per year)
+      const forestAbsorptionPerYearKg = 100 * 15;
+      const forestYearsToOffset = (ecological.lifecycleEmissionsKg / forestAbsorptionPerYearKg) * -1;
+      
       text += `ÖKOLOGISCHER FUSSABDRUCK:\n`;
       text += `  • CO₂ Herstellung: ${ecological.manufacturingCo2Kg.toFixed(0)} kg\n`;
       text += `  • CO₂ Amortisation: ${ecological.paybackPeriodYears.toFixed(1)} Jahre\n`;
-      text += `  • Lebenszyklusemissionen (25 Jahre): ${ecological.lifecycleEmissionsKg.toFixed(0)} kg\n`;
-      text += `  • Ökologischer Score: ${ecological.ecologicalScore.toFixed(0)}/100\n`;
+      text += `  • Lebenszyklusemissionen (25 Jahre): ${Math.abs(ecological.lifecycleEmissionsKg).toFixed(0)} kg CO₂ Gesamteinsparung\n`;
       text += `  • Herstellungs-CO₂ Aufschlüsselung:\n`;
       text += `    - Rohstoffgewinnung: ${ecological.resourceExtractionCo2Kg.toFixed(0)} kg\n`;
       text += `    - Produktion: ${ecological.productionCo2Kg.toFixed(0)} kg\n`;
-      text += `    - Transport: ${ecological.transportCo2Kg.toFixed(0)} kg\n\n`;
+      text += `    - Transport: ${ecological.transportCo2Kg.toFixed(0)} kg\n`;
+      text += `  🌳 Vergleich: Ein kleiner Wald mit 100 Bäumen bräuchte etwa ${forestYearsToOffset.toFixed(1)} Jahre,\n`;
+      text += `    um diese Menge an CO₂ aufzunehmen.\n\n`;
     }
 
     // Match reasons
