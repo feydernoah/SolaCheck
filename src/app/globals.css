@@ -80,3 +80,20 @@ input[disabled] {
 .slider-yellow::-moz-range-thumb {
   cursor: pointer;
 }
+
+.sola-secondary-button {
+  background-color: #9CA3AF;
+  color: white;
+  border-radius: 9999px;
+  padding: 0.5rem 1.5rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  white-space: nowrap;
+  transition: background-color 0.15s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+}
+
+.sola-secondary-button:hover,
+.sola-secondary-button:active {
+  background-color: #facc15;
+}
