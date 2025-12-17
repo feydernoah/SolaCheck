@@ -156,12 +156,17 @@ test.describe('Results Page - Positive Recommendation', () => {
   });
 
 <<<<<<< HEAD
+<<<<<<< HEAD
   test('CO2-Bilanz button links to /solacheck/carbon-footprint', async ({ page }) => {
     const co2Button = page.locator('text=CO₂-Bilanz anzeigen').first();
 =======
   test('CO2-Bilanz button links to /carbon-footprint', async ({ page }) => {
     const co2Button = page.locator('text=CO₂-Bilanz anzeigen');
 >>>>>>> d6db1a7 ( updated CO2-Bilanz button text and remove redundant test)
+=======
+  test('CO2-Bilanz button links to /solacheck/carbon-footprint', async ({ page }) => {
+    const co2Button = page.locator('text=CO₂-Bilanz anzeigen').first();
+>>>>>>> aa6ce54 (updated CO2-Bilanz button test to link to the correct path and removed redundant mobile layout test due to deleted button)
     const href = await co2Button.locator('..').getAttribute('href');
     expect(href).toBe('/solacheck/carbon-footprint');
   });
