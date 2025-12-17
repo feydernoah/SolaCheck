@@ -80,7 +80,11 @@ export interface BKWProduct {
   // Ecological metrics
   manufacturingOrigin: ManufacturingOrigin; // Where the product is manufactured
   manufacturingCo2Kg: number; // Total CO2 emissions for manufacturing in kg
-  // Note: manufacturingCo2Breakdown, recyclingPotential and hazardousComponents removed
+  // Scraped data fields (optional for backward compatibility)
+  imageUrl?: string; // Product image from FAZ
+  priceSource?: string; // Shop name from Google Shopping
+  priceLink?: string; // Link to buy the product
+  category?: string; // FAZ category (e.g., "Testsieger")
 }
 
 // Mounting types matching quiz options

@@ -11,6 +11,7 @@
 'use client';
 
 import { useState } from 'react';
+import Image from 'next/image';
 import { ProductRanking } from '@/types/economic';
 import { Card } from './ui/Card';
 import { Button } from './ui/Button';
@@ -28,6 +29,7 @@ export function RecommendationCard({
 }: RecommendationCardProps) {
   const { product, economics, ecological, ecologicalReasons, ecologicalWarnings } = ranking;
   const [isEcoOpen, setIsEcoOpen] = useState(false);
+  const [imageError, setImageError] = useState(false);
   
   const badgeColors = {
     yellow: 'bg-yellow-100 text-yellow-800',
@@ -53,9 +55,20 @@ export function RecommendationCard({
         </div>
       )}
 
-      {/* Image Placeholder */}
-      <div className="w-full h-40 bg-linear-to-br from-yellow-50 to-gray-100 rounded-xl mb-4 flex items-center justify-center">
-        <span className="text-gray-400 text-sm font-semibold">BKW Bild</span>
+      {/* Product Image */}
+      <div className="w-full h-40 bg-linear-to-br from-yellow-50 to-gray-100 rounded-xl mb-4 flex items-center justify-center overflow-hidden relative">
+        {product.imageUrl && !imageError ? (
+          <Image 
+            src={product.imageUrl} 
+            alt={product.name}
+            fill
+            className="object-contain p-2"
+            onError={() => setImageError(true)}
+            unoptimized // External images from FAZ
+          />
+        ) : (
+          <span className="text-gray-400 text-sm font-semibold">BKW Bild</span>
+        )}
       </div>
 
       {/* Manufacturer & Name */}
@@ -193,7 +206,7 @@ export function RecommendationCard({
       )}
 
       {/* Spacer to push button to bottom */}
-      <div className="flex-grow"></div>
+      <div className="grow"></div>
 
       {/* CTA Button */}
       <Button variant="primary" size="lg" fullWidth>

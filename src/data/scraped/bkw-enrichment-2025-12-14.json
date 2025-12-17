@@ -1,0 +1,167 @@
+{
+  "enrichments": [
+    {
+      "name": "Anker Solix Solarbank 3 Pro",
+      "mountingTypes": [
+        "balkonbruestung",
+        "balkonboden",
+        "hauswand",
+        "flachdach"
+      ],
+      "manufacturingOrigin": "china",
+      "bifacial": true,
+      "moduleEfficiency": 21.5,
+      "moduleCount": 2,
+      "includesInverter": false,
+      "inverterACPower": 800,
+      "description": "Intelligentes Speichersystem für Balkonkraftwerke mit 2.68kWh Kapazität zur Optimierung des Eigenverbrauchs."
+    },
+    {
+      "name": "EcoFlow Stream Ultra",
+      "mountingTypes": [
+        "balkonbruestung",
+        "balkonboden",
+        "hauswand",
+        "flachdach"
+      ],
+      "manufacturingOrigin": "china",
+      "bifacial": true,
+      "moduleEfficiency": 21.5,
+      "moduleCount": 2,
+      "includesInverter": false,
+      "inverterACPower": 800,
+      "description": "Ein Balkonkraftwerk-Hub mit 1.92kWh Speicher für effizientes Energiemanagement und hohe Kompatibilität."
+    },
+    {
+      "name": "EcoFlow Stream Balkonkraftwerk – Basic Kit",
+      "mountingTypes": [
+        "balkonbruestung",
+        "balkonboden",
+        "hauswand",
+        "flachdach"
+      ],
+      "manufacturingOrigin": "china",
+      "bifacial": true,
+      "moduleEfficiency": 21.5,
+      "moduleCount": 2,
+      "includesInverter": true,
+      "inverterACPower": 800,
+      "description": "Einsteiger-Balkonkraftwerk-Komplettset ohne Speicher, ideal für den sofortigen Start mit Solarstrom."
+    },
+    {
+      "name": "Zendure Hyper 2000",
+      "mountingTypes": [
+        "balkonbruestung",
+        "balkonboden",
+        "hauswand",
+        "flachdach"
+      ],
+      "manufacturingOrigin": "china",
+      "bifacial": true,
+      "moduleEfficiency": 21.5,
+      "moduleCount": 2,
+      "includesInverter": false,
+      "inverterACPower": 800,
+      "description": "Eine leistungsstarke Powerstation von Zendure, die als zentrale Speichereinheit für Balkonkraftwerke dienen kann."
+    },
+    {
+      "name": "Anker Solix Solarbank 2 Pro",
+      "mountingTypes": [
+        "balkonbruestung",
+        "balkonboden",
+        "hauswand",
+        "flachdach"
+      ],
+      "manufacturingOrigin": "china",
+      "bifacial": true,
+      "moduleEfficiency": 21.5,
+      "moduleCount": 2,
+      "includesInverter": false,
+      "inverterACPower": 800,
+      "description": "Die Anker Solix Solarbank 2 Pro ist ein Speichersystem mit 1.6kWh Kapazität zur Ergänzung von Balkonkraftwerken."
+    },
+    {
+      "name": "Zendure Solarflow 800 Pro",
+      "mountingTypes": [
+        "balkonbruestung",
+        "balkonboden",
+        "hauswand",
+        "flachdach"
+      ],
+      "manufacturingOrigin": "china",
+      "bifacial": true,
+      "moduleEfficiency": 21.5,
+      "moduleCount": 2,
+      "includesInverter": true,
+      "inverterACPower": 800,
+      "description": "Intelligentes Speichersystem für Balkonkraftwerke mit 1.92kWh Kapazität und integrierter Energiesteuerung."
+    },
+    {
+      "name": "Jackery HomePower 2000 Ultra",
+      "mountingTypes": [
+        "balkonbruestung",
+        "balkonboden",
+        "hauswand",
+        "flachdach"
+      ],
+      "manufacturingOrigin": "china",
+      "bifacial": true,
+      "moduleEfficiency": 21.5,
+      "moduleCount": 2,
+      "includesInverter": false,
+      "inverterACPower": 800,
+      "description": "Eine leistungsstarke Powerstation von Jackery mit 2.048kWh Speicher, nutzbar als flexible Energiequelle für das Zuhause."
+    },
+    {
+      "name": "Solakon OnBasic",
+      "mountingTypes": [
+        "balkonbruestung",
+        "balkonboden",
+        "hauswand",
+        "flachdach"
+      ],
+      "manufacturingOrigin": "asia",
+      "bifacial": true,
+      "moduleEfficiency": 21,
+      "moduleCount": 2,
+      "includesInverter": true,
+      "inverterACPower": 800,
+      "description": "Ein günstiges Balkonkraftwerk-Basisset von Solakon ohne Speicher für den direkten Einstieg in die Solarenergie."
+    },
+    {
+      "name": "Solakon OnPower",
+      "mountingTypes": [
+        "balkonbruestung",
+        "balkonboden",
+        "hauswand",
+        "flachdach"
+      ],
+      "manufacturingOrigin": "asia",
+      "bifacial": true,
+      "moduleEfficiency": 21.5,
+      "moduleCount": 2,
+      "includesInverter": true,
+      "inverterACPower": 800,
+      "description": "Komplettes Balkonkraftwerk-Set von Solakon mit 2.048kWh Speicher und 800W Wechselrichter für maximale Autarkie."
+    },
+    {
+      "name": "Kleines Kraftwerk Duo",
+      "mountingTypes": [
+        "balkonbruestung",
+        "balkonboden",
+        "hauswand",
+        "flachdach"
+      ],
+      "manufacturingOrigin": "unknown",
+      "bifacial": true,
+      "moduleEfficiency": 20.5,
+      "moduleCount": 2,
+      "includesInverter": true,
+      "inverterACPower": 800,
+      "description": "Ein kompaktes Balkonkraftwerk-Set mit zwei Solarmodulen, ideal für kleinere Haushalte ohne Speicher."
+    }
+  ],
+  "enrichedAt": "2025-12-14T19:07:19.433Z",
+  "source": "Gemini 2.5 Flash",
+  "totalProducts": 10
+}

@@ -23,6 +23,7 @@ import type {
   SolarData,
 } from '@/types/economic';
 import { bkwProducts, getBudgetMaxValue } from '@/data/bkwProducts';
+import { loadScrapedProducts } from '@/data/loadProducts';
 import { calculateProductEcological, generateEcologicalInsights } from '@/lib/ecologicCalculator';
 
 
@@ -514,9 +515,19 @@ export function calculateRecommendations(
   // Get budget max
   const maxBudget = getBudgetMaxValue(budget ?? '0');
   
+  // Load products from scraped data, falling back to static data
+  let allProducts: BKWProduct[];
+  try {
+    allProducts = loadScrapedProducts();
+    console.log(`[Calculator] Loaded ${String(allProducts.length)} products from scraped data`);
+  } catch (error) {
+    console.log(`[Calculator] Failed to load scraped data, using static products`, error);
+    allProducts = bkwProducts;
+  }
+  
   // Filter products by budget (strict) and mounting type
-  let eligibleProducts = bkwProducts.filter(product => product.price <= maxBudget);
-  const filteredOutCount = bkwProducts.length - eligibleProducts.length;
+  let eligibleProducts = allProducts.filter(product => product.price <= maxBudget);
+  const filteredOutCount = allProducts.length - eligibleProducts.length;
   
   // Filter by mounting type if specified
   if (mountingLocation && mountingLocation !== 'weiss-nicht') {
