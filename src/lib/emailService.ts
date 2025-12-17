@@ -45,7 +45,7 @@ function formatRecommendationsHTML(
   recommendations: ProductRanking[],
   includeCarbonFootprint: boolean
 ): string {
-  if (!recommendations || recommendations.length === 0) {
+  if (recommendations.length === 0) {
     return '<p>Leider konnten keine passenden Balkonkraftwerke für Sie gefunden werden.</p>';
   }
 
@@ -61,15 +61,15 @@ function formatRecommendationsHTML(
     // Product header with ranking
     html += `<div style="margin: 20px 0; padding: 15px; border: 1px solid #e5e7eb; border-radius: 8px;">`;
     html += `<h3 style="color: #1e40af; margin-top: 0;">
-      ${index + 1}. ${product.brand} ${product.name}
+      ${(index + 1).toString()}. ${product.brand} ${product.name}
     </h3>`;
     
     // Product details
     html += `<div style="margin: 10px 0;">`;
-    html += `<p style="margin: 5px 0;"><strong>Leistung:</strong> ${product.wattage} Wp</p>`;
+    html += `<p style="margin: 5px 0;"><strong>Leistung:</strong> ${product.wattage.toString()} Wp</p>`;
     html += `<p style="margin: 5px 0;"><strong>Preis:</strong> ${product.price.toFixed(2)} €</p>`;
-    html += `<p style="margin: 5px 0;"><strong>Module:</strong> ${product.moduleCount} Stück</p>`;
-    html += `<p style="margin: 5px 0;"><strong>Wirkungsgrad:</strong> ${product.moduleEfficiency}%</p>`;
+    html += `<p style="margin: 5px 0;"><strong>Module:</strong> ${product.moduleCount.toString()} Stück</p>`;
+    html += `<p style="margin: 5px 0;"><strong>Wirkungsgrad:</strong> ${product.moduleEfficiency.toString()}%</p>`;
     html += `</div>`;
 
     // Economic data
@@ -83,7 +83,7 @@ function formatRecommendationsHTML(
     html += `</div>`;
 
     // Carbon footprint (if requested)
-    if (includeCarbonFootprint && ecological) {
+    if (includeCarbonFootprint) {
       // Calculate forest comparison (100 trees absorb ~1,500 kg CO2 per year)
       const forestAbsorptionPerYearKg = 100 * 24;
       const forestYearsToOffset = (ecological.lifecycleEmissionsKg / forestAbsorptionPerYearKg) * -1;
@@ -111,7 +111,7 @@ function formatRecommendationsHTML(
     }
 
     // Match reasons
-    if (ranking.matchReasons && ranking.matchReasons.length > 0) {
+    if (ranking.matchReasons.length > 0) {
       html += `<div style="margin: 10px 0;">`;
       html += `<p style="margin: 5px 0;"><strong>Warum diese Empfehlung?</strong></p>`;
       html += `<ul style="margin: 5px 0; padding-left: 20px;">`;
@@ -123,7 +123,7 @@ function formatRecommendationsHTML(
     }
 
     // Warnings
-    if (ranking.warnings && ranking.warnings.length > 0) {
+    if (ranking.warnings.length > 0) {
       html += `<div style="margin: 10px 0; padding: 8px; background-color: #fef3c7; border-left: 4px solid #f59e0b;">`;
       html += `<p style="margin: 0 0 5px 0;"><strong>Hinweise:</strong></p>`;
       html += `<ul style="margin: 5px 0; padding-left: 20px;">`;
@@ -152,7 +152,7 @@ function formatRecommendationsText(
   recommendations: ProductRanking[],
   includeCarbonFootprint: boolean
 ): string {
-  if (!recommendations || recommendations.length === 0) {
+  if (recommendations.length === 0) {
     return 'Leider konnten keine passenden Balkonkraftwerke für Sie gefunden werden.';
   }
 
@@ -165,14 +165,14 @@ function formatRecommendationsText(
   topRecommendations.forEach((ranking, index) => {
     const { product, economics, ecological } = ranking;
     
-    text += `${index + 1}. ${product.brand} ${product.name}\n`;
+    text += `${(index + 1).toString()}. ${product.brand} ${product.name}\n`;
     text += '-'.repeat(60) + '\n\n';
     
     // Product details
-    text += `Leistung: ${product.wattage} Wp\n`;
+    text += `Leistung: ${product.wattage.toString()} Wp\n`;
     text += `Preis: ${product.price.toFixed(2)} €\n`;
-    text += `Module: ${product.moduleCount} Stück\n`;
-    text += `Wirkungsgrad: ${product.moduleEfficiency}%\n\n`;
+    text += `Module: ${product.moduleCount.toString()} Stück\n`;
+    text += `Wirkungsgrad: ${product.moduleEfficiency.toString()}%\n\n`;
 
     // Economic data
     text += `WIRTSCHAFTLICHE KENNZAHLEN:\n`;
@@ -184,7 +184,7 @@ function formatRecommendationsText(
     text += `  • CO₂-Einsparung: ${economics.co2SavingsKgPerYear.toFixed(0)} kg/Jahr\n\n`;
 
     // Carbon footprint (if requested)
-    if (includeCarbonFootprint && ecological) {
+    if (includeCarbonFootprint) {
       // Calculate forest comparison (100 trees absorb ~1,500 kg CO2 per year)
       const forestAbsorptionPerYearKg = 100 * 15;
       const forestYearsToOffset = (ecological.lifecycleEmissionsKg / forestAbsorptionPerYearKg) * -1;
@@ -202,7 +202,7 @@ function formatRecommendationsText(
     }
 
     // Match reasons
-    if (ranking.matchReasons && ranking.matchReasons.length > 0) {
+    if (ranking.matchReasons.length > 0) {
       text += `WARUM DIESE EMPFEHLUNG?\n`;
       ranking.matchReasons.forEach(reason => {
         text += `  • ${reason}\n`;
@@ -211,7 +211,7 @@ function formatRecommendationsText(
     }
 
     // Warnings
-    if (ranking.warnings && ranking.warnings.length > 0) {
+    if (ranking.warnings.length > 0) {
       text += `HINWEISE:\n`;
       ranking.warnings.forEach(warning => {
         text += `  ⚠ ${warning}\n`;
@@ -237,7 +237,7 @@ export async function sendRecommendationEmail(
   const { toEmail, recommendations, includeCarbonFootprint } = params;
 
   // Validate input parameters
-  if (!toEmail || !toEmail.includes('@')) {
+  if (!toEmail.includes('@')) {
     return {
       success: false,
       message: 'Ungültige E-Mail-Adresse.',
@@ -245,7 +245,7 @@ export async function sendRecommendationEmail(
     };
   }
 
-  if (!recommendations || recommendations.length === 0) {
+  if (recommendations.length === 0) {
     return {
       success: false,
       message: 'Keine Empfehlungen zum Versenden vorhanden.',
@@ -285,7 +285,7 @@ export async function sendRecommendationEmail(
         message: `E-Mail erfolgreich an ${toEmail} gesendet.`,
       };
     } else {
-      throw new Error(`EmailJS returned status ${response.status}`);
+      throw new Error(`EmailJS returned status ${String(response.status)}`);
     }
   } catch (error) {
     // Handle errors during email sending
@@ -308,7 +308,7 @@ export async function sendRecommendationEmail(
  * @param publicKey - Your EmailJS public key (optional, uses config default if not provided)
  */
 export function initEmailJS(publicKey?: string): void {
-  const key = publicKey || EMAILJS_CONFIG.publicKey;
+  const key = publicKey ?? EMAILJS_CONFIG.publicKey;
   emailjs.init(key);
   console.log('EmailJS initialized successfully');
 }

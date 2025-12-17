@@ -142,7 +142,7 @@ export default function ResultsPage() {
     }
 
     // Check if we have recommendations
-    if (!recommendation || !recommendation.rankings || recommendation.rankings.length === 0) {
+    if (!recommendation?.rankings.length) {
       setEmailStatus({
         type: 'error',
         message: 'Keine Empfehlungen zum Versenden vorhanden.',
@@ -172,7 +172,7 @@ export default function ResultsPage() {
       } else {
         setEmailStatus({
           type: 'error',
-          message: result.error || 'Fehler beim Versenden der E-Mail.',
+          message: result.error ?? 'Fehler beim Versenden der E-Mail.',
         });
       }
     } catch (err) {
@@ -373,7 +373,7 @@ export default function ResultsPage() {
                     {/* Send Button */}
                     <Button
                       variant="primary"
-                      onClick={handleSendEmail}
+                      onClick={() => void handleSendEmail()}
                       disabled={isSendingEmail || !emailInput || !isEmailValid}
                       className="w-full sm:w-auto"
                     >
