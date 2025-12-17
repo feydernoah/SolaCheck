@@ -29,7 +29,7 @@ export function RecommendationCard({
   badgeColor = 'yellow'
 }: RecommendationCardProps) {
   const router = useRouter();
-  const { product, economics, ecological, ecologicalReasons, ecologicalWarnings } = ranking;
+  const { product, economics } = ranking;
   const [isEcoOpen, setIsEcoOpen] = useState(false);
   const [imageError, setImageError] = useState(false);
   
@@ -37,13 +37,6 @@ export function RecommendationCard({
     yellow: 'bg-yellow-100 text-yellow-800',
     green: 'bg-green-100 text-green-800',
     blue: 'bg-blue-100 text-blue-800',
-  };
-
-  // Bestimme Payback-Farbe basierend auf Jahren
-  const getPaybackColor = (years: number) => {
-    if (years < 2) return 'text-green-700 bg-green-50';
-    if (years < 4) return 'text-yellow-700 bg-yellow-50';
-    return 'text-orange-700 bg-orange-50';
   };
 
   return (
