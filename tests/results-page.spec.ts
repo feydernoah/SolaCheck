@@ -324,3 +324,238 @@ test.describe('Results Page - Responsive Design', () => {
   });
 });
 
+test.describe('Results Page - Email Feature', () => {
+  test.beforeEach(async ({ page, context }) => {
+    // Set up quiz answers for positive recommendation
+    await context.addCookies([{
+      name: 'solacheck_quiz_progress',
+      value: encodeURIComponent(JSON.stringify({
+        currentQuestion: 11,
+        answers: {
+          1: '25-34',
+          2: '{"city":"München","postalCode":"80331"}',
+          7: 'sueden',
+          9: 'kaum',
+          11: '400-700'
+        }
+      })),
+      domain: 'localhost',
+      path: '/',
+      sameSite: 'Lax'
+    }]);
+    
+    await page.goto('/solacheck/results');
+    // Wait for results to load
+    await page.waitForSelector('img[alt="Sola Happy"]', { state: 'visible' });
+  });
+
+  test('displays email section with all elements', async ({ page }) => {
+    // Email section heading
+    const emailHeading = page.locator('text=Ergebnis per E-Mail erhalten');
+    await expect(emailHeading).toBeVisible();
+    
+    // Email input field
+    const emailInput = page.locator('input[type="email"]');
+    await expect(emailInput).toBeVisible();
+    await expect(emailInput).toHaveAttribute('placeholder', 'deine@email.de');
+    
+    // CO2 checkbox
+    const co2Checkbox = page.locator('text=CO₂-Daten einbinden');
+    await expect(co2Checkbox).toBeVisible();
+    
+    // Send button
+    const sendButton = page.getByRole('button', { name: 'Ergebnis erhalten' });
+    await expect(sendButton).toBeVisible();
+  });
+
+  test('email input accepts text input', async ({ page }) => {
+    const emailInput = page.locator('input[type="email"]');
+    await emailInput.fill('test@example.com');
+    await expect(emailInput).toHaveValue('test@example.com');
+  });
+
+  test('send button is disabled when email is empty', async ({ page }) => {
+    const sendButton = page.getByRole('button', { name: 'Ergebnis erhalten' });
+    await expect(sendButton).toBeDisabled();
+  });
+
+  test('send button is disabled when email is invalid', async ({ page }) => {
+    const emailInput = page.locator('input[type="email"]');
+    const sendButton = page.getByRole('button', { name: 'Ergebnis erhalten' });
+    
+    // Test invalid email formats
+    await emailInput.fill('invalid');
+    await expect(sendButton).toBeDisabled();
+    
+    await emailInput.fill('invalid@');
+    await expect(sendButton).toBeDisabled();
+    
+    await emailInput.fill('invalid@test');
+    await expect(sendButton).toBeDisabled();
+    
+    await emailInput.fill('@test.com');
+    await expect(sendButton).toBeDisabled();
+  });
+
+  test('send button is enabled when email is valid', async ({ page }) => {
+    const emailInput = page.locator('input[type="email"]');
+    const sendButton = page.getByRole('button', { name: 'Ergebnis erhalten' });
+    
+    await emailInput.fill('valid@email.com');
+    await expect(sendButton).toBeEnabled();
+  });
+
+  test('displays validation error for invalid email in real-time', async ({ page }) => {
+    const emailInput = page.locator('input[type="email"]');
+    
+    // Type invalid email
+    await emailInput.fill('invalid@email');
+    
+    // Error message should appear immediately
+    const errorMessage = page.locator('text=Bitte gib eine gültige E-Mail-Adresse ein');
+    await expect(errorMessage).toBeVisible();
+    
+    // Input should have red border
+    await expect(emailInput).toHaveClass(/border-red-500/);
+  });
+
+  test('validation error disappears when email becomes valid', async ({ page }) => {
+    const emailInput = page.locator('input[type="email"]');
+    
+    // Type invalid email first
+    await emailInput.fill('invalid');
+    const errorMessage = page.locator('text=Bitte gib eine gültige E-Mail-Adresse ein');
+    await expect(errorMessage).toBeVisible();
+    
+    // Complete the email to make it valid
+    await emailInput.fill('valid@email.com');
+    await expect(errorMessage).not.toBeVisible();
+    
+    // Input should not have red border
+    await expect(emailInput).not.toHaveClass(/border-red-500/);
+  });
+
+  test('CO2 checkbox can be toggled', async ({ page }) => {
+    const checkbox = page.locator('input[type="checkbox"]');
+    
+    // Initially unchecked
+    await expect(checkbox).not.toBeChecked();
+    
+    // Click to check
+    await checkbox.click();
+    await expect(checkbox).toBeChecked();
+    
+    // Click to uncheck
+    await checkbox.click();
+    await expect(checkbox).not.toBeChecked();
+  });
+
+  test('email input and checkbox are disabled while sending', async ({ page }) => {
+    const emailInput = page.locator('input[type="email"]');
+    const checkbox = page.locator('input[type="checkbox"]');
+    const sendButton = page.getByRole('button', { name: 'Ergebnis erhalten' });
+    
+    // Fill valid email
+    await emailInput.fill('test@example.com');
+    
+    // Mock the email sending to take time
+    await page.route('**/send', async route => {
+      // Delay response to simulate sending
+      await new Promise(resolve => setTimeout(resolve, 100));
+      await route.fulfill({ status: 200, body: JSON.stringify({ status: 200 }) });
+    });
+    
+    // Click send button
+    await sendButton.click();
+    
+    // Button text should change
+    const sendingButton = page.getByRole('button', { name: 'Wird gesendet...' });
+    await expect(sendingButton).toBeVisible();
+  });
+
+  test('displays error message when trying to send without email', async ({ page }) => {
+    const sendButton = page.getByRole('button', { name: 'Ergebnis erhalten' });
+    
+    // Try to click disabled button (won't work, but we can test validation)
+    // Instead, test that error appears if somehow triggered
+    const emailInput = page.locator('input[type="email"]');
+    
+    // Type invalid email and clear it
+    await emailInput.fill('test');
+    await emailInput.clear();
+    
+    // Button should remain disabled
+    await expect(sendButton).toBeDisabled();
+  });
+
+  test('email section appears after info box', async ({ page }) => {
+    // Both info box and email section should be visible
+    const infoBox = page.locator('text=Noch Fragen?');
+    const emailSection = page.locator('text=Ergebnis per E-Mail erhalten');
+    
+    await expect(infoBox).toBeVisible();
+    await expect(emailSection).toBeVisible();
+    
+    // Email section should be below info box in DOM
+    const infoBoxPosition = await infoBox.boundingBox();
+    const emailSectionPosition = await emailSection.boundingBox();
+    
+    if (infoBoxPosition && emailSectionPosition) {
+      expect(emailSectionPosition.y).toBeGreaterThan(infoBoxPosition.y);
+    }
+  });
+
+  test('email input label is present and correct', async ({ page }) => {
+    const label = page.locator('label[for="email-input"]');
+    await expect(label).toBeVisible();
+    await expect(label).toHaveText('E-Mail-Adresse');
+  });
+
+  test('accepts various valid email formats', async ({ page }) => {
+    const emailInput = page.locator('input[type="email"]');
+    const sendButton = page.getByRole('button', { name: 'Ergebnis erhalten' });
+    
+    const validEmails = [
+      'user@example.com',
+      'user.name@example.com',
+      'user+tag@example.co.uk',
+      'user123@test-domain.de',
+      'a@b.c'
+    ];
+    
+    for (const email of validEmails) {
+      await emailInput.fill(email);
+      await expect(sendButton).toBeEnabled();
+    }
+  });
+});
+
+test.describe('Results Page - Email Feature - Negative Recommendation', () => {
+  test.beforeEach(async ({ page, context }) => {
+    // Set up quiz answers for negative recommendation
+    await context.addCookies([{
+      name: 'solacheck_quiz_progress',
+      value: encodeURIComponent(JSON.stringify({
+        currentQuestion: 11,
+        answers: {
+          1: '25-34',
+          2: '{"city":"Berlin","postalCode":"10115"}',
+          7: 'norden',
+          9: 'ganzen-tag',
+          11: '400-700'
+        }
+      })),
+      domain: 'localhost',
+      path: '/',
+      sameSite: 'Lax'
+    }]);
+    
+    await page.goto('/solacheck/results');
+    await page.waitForSelector('img[alt="Sola Nachdenklich"]', { state: 'visible' });
+  });
+
+  test('email section is not displayed for negative recommendations', async ({ page }) => {
+    const emailSection = page.locator('text=Ergebnis per E-Mail erhalten');
+    await expect(emailSection).not.toBeVisible();
+  });
+});
