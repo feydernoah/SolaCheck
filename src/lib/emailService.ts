@@ -80,7 +80,6 @@ function formatRecommendationsHTML(
     html += `<p style="margin: 5px 0;"><strong>Jährliche Ersparnis:</strong> ${economics.annualSavingsEuro.toFixed(2)} €/Jahr</p>`;
     html += `<p style="margin: 5px 0;"><strong>Amortisation:</strong> ${economics.amortizationYears.toFixed(1)} Jahre</p>`;
     html += `<p style="margin: 5px 0;"><strong>Ersparnis nach 10 Jahren:</strong> ${economics.totalSavings10Years.toFixed(2)} €</p>`;
-    html += `<p style="margin: 5px 0;"><strong>CO₂-Einsparung:</strong> ${economics.co2SavingsKgPerYear.toFixed(0)} kg/Jahr</p>`;
     html += `</div>`;
 
     // Carbon footprint (if requested)
@@ -94,6 +93,7 @@ function formatRecommendationsHTML(
       html += `<p style="margin: 5px 0;"><strong>CO₂ Herstellung:</strong> ${ecological.manufacturingCo2Kg.toFixed(0)} kg</p>`;
       html += `<p style="margin: 5px 0;"><strong>CO₂ Amortisation:</strong> ${ecological.paybackPeriodYears.toFixed(1)} Jahre</p>`;
       html += `<p style="margin: 5px 0;"><strong>Lebenszyklusemissionen (25 Jahre):</strong> ${Math.abs(ecological.lifecycleEmissionsKg).toFixed(0)} kg CO₂ Gesamteinsparung</p>`;
+      html += `<p style="margin: 5px 0;"><strong>CO₂-Einsparung pro Jahr:</strong> ${economics.co2SavingsKgPerYear.toFixed(0)} kg/Jahr</p>`;
       
       // Breakdown of manufacturing CO2
       html += `<p style="margin: 10px 0 5px 0; font-size: 0.9em;"><strong>Herstellungs-CO₂ Aufschlüsselung:</strong></p>`;
