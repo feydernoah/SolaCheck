@@ -43,18 +43,33 @@ function deleteCookie(name: string): void {
 /**
  * Validates that the saved progress is compatible with the current quiz structure.
  * Returns true if valid, false if the cookie should be reset.
+ * Accepts `unknown` to validate raw parsed JSON before type assertion.
  */
-function isProgressValid(progress: QuizProgress): boolean {
-  if (
-    typeof progress.currentQuestion !== 'number' ||
-    progress.currentQuestion < 0 ||
-    progress.currentQuestion >= TOTAL_QUESTIONS
-  ) {
-    console.warn('Quiz progress reset: currentQuestion out of bounds', progress.currentQuestion);
+function isProgressValid(progress: unknown): progress is QuizProgress {
+  // Type guard for basic structure
+  if (!progress || typeof progress !== 'object') {
+    console.warn('Quiz progress reset: progress is not an object');
     return false;
   }
 
-  const answerKeys = Object.keys(progress.answers).map(Number);
+  const p = progress as Record<string, unknown>;
+  
+  if (
+    typeof p.currentQuestion !== 'number' ||
+    p.currentQuestion < 0 ||
+    p.currentQuestion >= TOTAL_QUESTIONS
+  ) {
+    console.warn('Quiz progress reset: currentQuestion out of bounds', p.currentQuestion);
+    return false;
+  }
+
+  // Ensure answers exists and is an object before processing
+  if (!p.answers || typeof p.answers !== 'object') {
+    console.warn('Quiz progress reset: answers is missing or not an object');
+    return false;
+  }
+
+  const answerKeys = Object.keys(p.answers).map(Number);
   for (const key of answerKeys) {
     if (!VALID_QUESTION_IDS.includes(key)) {
       console.warn('Quiz progress reset: invalid question ID in answers', key);
@@ -69,7 +84,7 @@ function getProgressFromCookie(): QuizProgress {
   const savedProgress = getCookie(COOKIE_NAME);
   if (savedProgress) {
     try {
-      const parsed = JSON.parse(savedProgress) as QuizProgress;
+      const parsed: unknown = JSON.parse(savedProgress);
       
       if (isProgressValid(parsed)) {
         return parsed;

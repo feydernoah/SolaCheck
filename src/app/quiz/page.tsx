@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useState } from "react";
+import { useCallback, useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
@@ -324,9 +324,16 @@ export default function Home() {
 
   // Safety fallback: ensure currentQuestion is always within valid bounds
   // The hook already validates cookies, but this guards against any edge cases
-  const safeCurrentQuestion = currentQuestion >= 0 && currentQuestion < questions.length 
-    ? currentQuestion 
-    : 0;
+  // If out of bounds, correct the persisted state as well
+  const isOutOfBounds = currentQuestion < 0 || currentQuestion >= questions.length;
+  const safeCurrentQuestion = isOutOfBounds ? 0 : currentQuestion;
+  
+  // Correct the persisted state if it was out of bounds
+  useEffect(() => {
+    if (isOutOfBounds) {
+      setCurrentQuestion(0);
+    }
+  }, [isOutOfBounds, setCurrentQuestion]);
 
   const handleNext = () => {
     let nextQuestion = safeCurrentQuestion + 1;

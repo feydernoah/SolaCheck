@@ -34,9 +34,10 @@ import {
 } from '@/lib/economicCalculator';
 import { calculateProductEcological, generateEcologicalInsights } from '@/lib/ecologicCalculator';
 import {
-  LEGAL_AC_LIMIT_W,
   CO2_GRAMS_PER_KWH,
   BASE_YIELD_KWH_PER_WP,
+  ELECTRICITY_PRICE_CT_PER_KWH,
+  FEED_IN_TARIFF_CT_PER_KWH,
   ORIENTATION_LABELS,
   HOUSEHOLD_LABELS,
   SHADING_LABELS,
@@ -246,15 +247,8 @@ export function calculateRecommendations(
   }
   
   // Calculate economics and ecological impact for each product
+  // Note: AC limit enforcement is handled internally by calculateProductEconomics/calculateAnnualYield
   const rankings: ProductRanking[] = eligibleProducts.map(product => {
-    // === AC LIMIT ENFORCEMENT ===
-    // For all calculations, use the effective AC power (min of inverterACPower and LEGAL_AC_LIMIT_W)
-    // This ensures the legal cap is respected for all recommendations.
-    const acPower = typeof product.inverterACPower === 'number' ? product.inverterACPower : LEGAL_AC_LIMIT_W;
-    const effectiveACPower = Math.min(acPower, LEGAL_AC_LIMIT_W);
-    // Clone product with effectiveACPower for calculation (do not mutate original)
-    const productWithEffectiveAC = { ...product, inverterACPower: effectiveACPower };
-
     const selfConsumptionRate = getSelfConsumptionRate(
       householdSize,
       product.includesStorage,
@@ -262,7 +256,7 @@ export function calculateRecommendations(
     );
 
     const economics = calculateProductEconomics(
-      productWithEffectiveAC,
+      product,
       orientationFactor,
       shadingFactor,
       selfConsumptionRate,
@@ -271,17 +265,17 @@ export function calculateRecommendations(
     );
 
     // Calculate ecological impact
-    const ecological = calculateProductEcological(productWithEffectiveAC, economics);
-    const { reasons: ecologicalReasons, warnings: ecologicalWarnings } = generateEcologicalInsights(productWithEffectiveAC, ecological);
+    const ecological = calculateProductEcological(product, economics);
+    const { reasons: ecologicalReasons, warnings: ecologicalWarnings } = generateEcologicalInsights(product, ecological);
 
     return {
       rank: 0, // Will be set after sorting
-      product: productWithEffectiveAC,
+      product,
       economics,
       ecological,
       score: economics.amortizationYears, // Lower is better
-      matchReasons: generateMatchReasons(productWithEffectiveAC, economics, answers),
-      warnings: generateWarnings(productWithEffectiveAC, economics, answers),
+      matchReasons: generateMatchReasons(product, economics, answers),
+      warnings: generateWarnings(product, economics, answers),
       ecologicalReasons,
       ecologicalWarnings,
     };
@@ -304,8 +298,8 @@ export function calculateRecommendations(
   
   // Build assumptions object
   const assumptions: CalculationAssumptions = {
-    electricityPriceCentPerKwh: 40, // from constants
-    feedInTariffCentPerKwh: 8.2, // from constants
+    electricityPriceCentPerKwh: ELECTRICITY_PRICE_CT_PER_KWH,
+    feedInTariffCentPerKwh: FEED_IN_TARIFF_CT_PER_KWH,
     orientationFactor,
     shadingFactor,
     selfConsumptionRate: getSelfConsumptionRate(householdSize, false, orientation),
