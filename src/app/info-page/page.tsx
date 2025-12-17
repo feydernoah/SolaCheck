@@ -8,13 +8,13 @@ import { Button } from "@/components/ui/Button";
 
 // File: app/info-page/page.tsx
 
-type TextSubSection = {
+interface TextSubSection  {
   type?: "text"; // optional (default)
   heading: string;
   bullets: string[];
 };
 
-type ImageSubSection = {
+interface ImageSubSection  {
   type: "image";
   src: string;
   alt: string;
@@ -23,7 +23,7 @@ type ImageSubSection = {
 
 type SubSection = TextSubSection | ImageSubSection;
 
-type Section = {
+interface Section {
   id: string;
   title: string;
   paragraphs?: string[];
@@ -401,7 +401,7 @@ const SECTIONS = [
   },
 ] satisfies Section[];
 
-function classNames(...parts: Array<string | false | undefined | null>) {
+function classNames(...parts: (string | false | undefined | null)[]) {
   return parts.filter(Boolean).join(" ");
 }
 
@@ -466,14 +466,14 @@ function SectionBody({ section }: { section: Section }) {
         }
 
         return (
-          <div key={`${sub.heading}-${idx}`} className="mt-4">
-            <h4 className="text-sm font-semibold text-slate-900">{sub.heading}</h4>
-            <ul className="mt-2 list-disc space-y-1 pl-5 text-sm leading-6 text-slate-700">
-              {sub.bullets.map((b) => (
-                <li key={b}>{b}</li>
-              ))}
-            </ul>
-          </div>
+            <div key={`${sub.heading}-${String(idx)}`} className="mt-4">
+                <h4 className="text-sm font-semibold text-slate-900">{sub.heading}</h4>
+                <ul className="mt-2 list-disc space-y-1 pl-5 text-sm leading-6 text-slate-700">
+                {sub.bullets.map((b) => (
+                    <li key={b}>{b}</li>
+                ))}
+                </ul>
+            </div>
         );
       })}
     </div>
