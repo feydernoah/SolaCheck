@@ -13,8 +13,12 @@
 import { useState } from 'react';
 import Image from 'next/image';
 <<<<<<< HEAD
+<<<<<<< HEAD
 import Link from 'next/link';
 =======
+=======
+import Link from 'next/link';
+>>>>>>> f99efa0 (refactored RecommendationCard to use Link for navigation to CO₂-Bilanz page)
 import { useRouter } from 'next/navigation';
 >>>>>>> 9ab42ad (removed collapsible ecological section and updated button to navigate to CO2-Bilanz page)
 import { ProductRanking } from '@/types/economic';
@@ -135,6 +139,9 @@ export function RecommendationCard({
 
       {/* CTA Button */}
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> f99efa0 (refactored RecommendationCard to use Link for navigation to CO₂-Bilanz page)
       <Link href="/carbon-footprint" className="w-full">
         <Button 
           variant="primary" 
@@ -150,6 +157,7 @@ export function RecommendationCard({
           CO₂-Bilanz anzeigen
         </Button>
       </Link>
+<<<<<<< HEAD
 =======
       <Button 
         variant="primary" 
@@ -166,6 +174,8 @@ export function RecommendationCard({
         CO₂-Bilanz anzeigen
       </Button>
 >>>>>>> 9ab42ad (removed collapsible ecological section and updated button to navigate to CO2-Bilanz page)
+=======
+>>>>>>> f99efa0 (refactored RecommendationCard to use Link for navigation to CO₂-Bilanz page)
     </Card>
   );
 }
