@@ -53,6 +53,12 @@ export default function ResultsPage() {
   const [includeCarbonFootprint, setIncludeCarbonFootprint] = useState(false);
   const [isSendingEmail, setIsSendingEmail] = useState(false);
   const [emailStatus, setEmailStatus] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
+  const [emailTouched, setEmailTouched] = useState(false);
+
+  // Email validation regex
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const isEmailValid = emailRegex.test(emailInput);
+  const showEmailError = emailTouched && emailInput.length > 0 && !isEmailValid;
 
   // Email validation regex
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -138,6 +144,7 @@ export default function ResultsPage() {
         type: 'error',
         message: 'Bitte gib eine gültige E-Mail-Adresse ein (z.B. beispiel@email.de).',
       });
+      setEmailTouched(true);
       return;
     }
 
@@ -169,6 +176,7 @@ export default function ResultsPage() {
         // Clear email input on success
         setEmailInput('');
         setIncludeCarbonFootprint(false);
+        setEmailTouched(false);
       } else {
         setEmailStatus({
           type: 'error',
