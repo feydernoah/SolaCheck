@@ -30,7 +30,6 @@ export function RecommendationCard({
 }: RecommendationCardProps) {
   const router = useRouter();
   const { product, economics } = ranking;
-  const [isEcoOpen, setIsEcoOpen] = useState(false);
   const [imageError, setImageError] = useState(false);
   
   const badgeColors = {
