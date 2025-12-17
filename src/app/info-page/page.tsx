@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/Button";
 
 // File: app/info-page/page.tsx
 
-interface TextSubSection  {
+interface TextSubSection {
   type?: "text"; // optional (default)
   heading: string;
   bullets: string[];
