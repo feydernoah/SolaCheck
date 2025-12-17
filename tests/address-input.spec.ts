@@ -228,10 +228,10 @@ async function setupPhotonMock(page: Page): Promise<void> {
     const query = url.searchParams.get('q')?.toLowerCase() ?? '';
     
     // Find matching mock response
-    let response = { features: [] };
+    let response: object = { features: [] };
     for (const [key, value] of Object.entries(MOCK_RESPONSES)) {
       if (query.includes(key)) {
-        response = value as { features: object[] };
+        response = value;
         break;
       }
     }
