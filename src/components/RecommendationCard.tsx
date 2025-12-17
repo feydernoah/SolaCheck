@@ -36,7 +36,7 @@ export function RecommendationCard({
   const { product, economics } = ranking;
 =======
   const router = useRouter();
-  const { product, economics, ecological, ecologicalReasons, ecologicalWarnings } = ranking;
+  const { product, economics } = ranking;
   const [isEcoOpen, setIsEcoOpen] = useState(false);
 >>>>>>> 9ab42ad (removed collapsible ecological section and updated button to navigate to CO2-Bilanz page)
   const [imageError, setImageError] = useState(false);
