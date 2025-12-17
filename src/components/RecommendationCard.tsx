@@ -29,7 +29,6 @@ export function RecommendationCard({
   badge,
   badgeColor = 'yellow'
 }: RecommendationCardProps) {
-  const router = useRouter();
   const { product, economics } = ranking;
   const [imageError, setImageError] = useState(false);
   
