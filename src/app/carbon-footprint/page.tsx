@@ -15,20 +15,23 @@ export default function CarbonFootprintPage() {
 
   useEffect(() => {
     // Ranking data is stored in sessionStorage
-    if (typeof window !== 'undefined') {
-      const storedData = sessionStorage.getItem('carbon-footprint-data');
-      
-      if (storedData) {
-        try {
-          const decodedRanking = JSON.parse(storedData) as ProductRanking;
-          setRanking(decodedRanking);
-        } catch (error) {
-          console.error('Fehler beim Dekodieren der Produktdaten:', error);
+    const loadData = () => {
+      if (typeof window !== 'undefined') {
+        const storedData = sessionStorage.getItem('carbon-footprint-data');
+
+        if (storedData) {
+          try {
+            const decodedRanking = JSON.parse(storedData) as ProductRanking;
+            setRanking(decodedRanking);
+          } catch (error) {
+            console.error('Fehler beim Dekodieren der Produktdaten:', error);
+          }
         }
       }
-    }
-    
-    setIsLoading(false);
+      setIsLoading(false);
+    };
+
+    loadData();
   }, []);
 
   if (isLoading) {
@@ -69,6 +72,10 @@ export default function CarbonFootprintPage() {
     return 'text-orange-700 bg-orange-50';
   };
 
+  // Kleiner Wald (100 Bäume) absorbiert pro Jahr ca. 1.500 kg CO₂
+  const forestAbsorptionPerYearKg = 100 * 15;
+  const forestYearsToOffset = (ecological.lifecycleEmissionsKg / forestAbsorptionPerYearKg)*-1;
+
   return (
     <div className="min-h-screen bg-white">
       <BurgerMenu showHome showQuiz onHomeClick={() => {
@@ -77,7 +84,7 @@ export default function CarbonFootprintPage() {
       }} />
 
       <div className="flex flex-col items-center justify-center min-h-screen px-4 py-8 md:py-16">
-        <div className="w-full max-w-4xl">
+        <Card padding="lg" className="w-full max-w-4xl">
           {/* Header */}
           <div className="mb-8 text-center">
             <h1 className="text-6xl md:text-7xl font-bold text-gray-800 mb-4">
@@ -89,93 +96,87 @@ export default function CarbonFootprintPage() {
 
           {/* Main Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-            {/* Manufacturing CO2 Card */}
-            <Card padding="lg" className="bg-gradient-to-br from-orange-50 to-orange-100 border border-orange-200">
-              <h2 className="text-heading-3 font-bold text-orange-900 mb-4">🏭 Herstellung</h2>
+            {/* Manufacturing CO2 Section */}
+            <div className="bg-gradient-to-br from-orange-50 to-orange-100 border border-orange-200 rounded-lg p-6">
+              <h2 className="text-heading-2 font-bold text-orange-900 mb-4" style={{ fontSize: '1.875rem', lineHeight: '1.2' }}>Herstellung</h2>
               <div className="space-y-4">
-                <div className="flex justify-between items-center p-3 bg-white rounded-lg">
-                  <span className="text-body-sm text-gray-700 font-medium">CO₂-Emissionen</span>
+                <div className="flex justify-between items-center p-3 bg-white rounded-lg shadow-md">
+                  <span className="text-body-sm text-gray-700 font-bold">CO₂-Emissionen</span>
                   <span className="text-heading-3 font-bold text-orange-700">
                     {ecological.manufacturingCo2Kg.toFixed(1)} kg
                   </span>
                 </div>
-                <div className="bg-white rounded-lg p-3 text-body-sm text-gray-700">
-                  <p className="font-semibold mb-2">Aufschlüsselung:</p>
+                <div className="bg-white rounded-lg p-3 shadow-md text-body-sm text-gray-700">
+                  <p className="font-bold mb-2">Aufschlüsselung:</p>
                   <ul className="space-y-1 ml-4">
                     <li>• Rohstoffgewinnung: {ecological.resourceExtractionCo2Kg.toFixed(1)} kg</li>
                     <li>• Produktion: {ecological.productionCo2Kg.toFixed(1)} kg</li>
                     <li>• Transport: {ecological.transportCo2Kg.toFixed(1)} kg</li>
                   </ul>
                 </div>
-                <div className="bg-white rounded-lg p-3">
-                  <p className="text-body-sm text-gray-700 font-medium mb-1">Herkunft</p>
+                <div className="bg-white rounded-lg p-3 shadow-md">
+                  <p className="text-body-sm text-gray-700 font-bold mb-1">Herkunft</p>
                   <p className="text-body-sm text-gray-600">
                     {product.manufacturingOrigin === 'germany' && '🇩🇪 Deutschland'}
                     {product.manufacturingOrigin === 'europe' && '🇪🇺 Europa'}
-                    {product.manufacturingOrigin === 'asia' && '🌏 Asien'}
+                    {product.manufacturingOrigin === 'asia' && 'Asien'}
                     {product.manufacturingOrigin === 'china' && '🇨🇳 China'}
-                    {product.manufacturingOrigin === 'unknown' && '❓ Unbekannt'}
+                    {product.manufacturingOrigin === 'unknown' && 'Unbekannt'}
                   </p>
                 </div>
               </div>
-            </Card>
+            </div>
 
-            {/* CO2 Payback Card */}
-            <Card padding="lg" className={`bg-gradient-to-br border ${
+            {/* CO2 Payback Section */}
+            <div className={`bg-gradient-to-br border rounded-lg p-6 ${
               getPaybackColor(ecological.paybackPeriodYears).includes('green')
                 ? 'from-green-50 to-green-100 border-green-200'
                 : getPaybackColor(ecological.paybackPeriodYears).includes('yellow')
                 ? 'from-yellow-50 to-yellow-100 border-yellow-200'
                 : 'from-orange-50 to-orange-100 border-orange-200'
             }`}>
-              <h2 className="text-heading-3 font-bold mb-4">⏱️ CO₂-Amortisation</h2>
+              <h2 className="text-heading-2 font-bold mb-4" style={{ fontSize: '1.875rem', lineHeight: '1.2' }}>CO₂-Amortisation</h2>
               <div className="space-y-4">
-                <div className={`flex justify-between items-center p-4 rounded-lg font-semibold text-white ${
+                <div className={`flex justify-between items-center p-4 rounded-lg shadow-md font-semibold text-white ${
                   getPaybackColor(ecological.paybackPeriodYears).includes('green')
                     ? 'bg-green-600'
                     : getPaybackColor(ecological.paybackPeriodYears).includes('yellow')
                     ? 'bg-yellow-600'
                     : 'bg-orange-600'
                 }`}>
-                  <span>Amortisationszeit</span>
+                  <span className="font-bold">Amortisationszeit</span>
                   <span className="text-heading-2">
                     {ecological.paybackPeriodYears < 1
-                      ? `${Math.round(ecological.paybackPeriodYears * 12)} Monate`
+                      ? `${String(Math.round(ecological.paybackPeriodYears * 12))} Monate`
                       : `${ecological.paybackPeriodYears.toFixed(1)} Jahre`}
                   </span>
                 </div>
-                <div className="bg-white rounded-lg p-3">
+                <div className="bg-white rounded-lg p-3 shadow-md">
                   <p className="text-body-sm text-gray-700">
                     Nach dieser Zeit hat das Kraftwerk durch die Stromerzeugung genauso viel CO₂ eingespart, 
-                    wie bei der Herstellung emittiert wurde.
+                    wie bei der Herstellung ausgestoßen wurde.
                   </p>
                 </div>
               </div>
-            </Card>
+            </div>
           </div>
 
-          {/* Lifecycle Card */}
-          <Card padding="lg" className="bg-gradient-to-br from-green-50 to-green-100 border border-green-200 mb-8">
-            <h2 className="text-heading-3 font-bold text-green-900 mb-4">🌱 Lebenszyklusanalyse</h2>
+          {/* Lifecycle Section */}
+          <div className="bg-gradient-to-br from-green-50 to-green-100 border border-green-200 rounded-lg p-6 mb-8">
+            <h2 className="font-bold text-green-900 mb-4" style={{ fontSize: '1.875rem', lineHeight: '1.2' }}>Lebenszyklusanalyse</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="bg-white rounded-lg p-4">
-                <p className="text-body-sm text-gray-600 mb-2">CO₂-Bilanz über {product.warrantyYears} Jahre</p>
+              <div className="bg-white rounded-lg p-4 shadow-md">
+                <p className="text-body-sm text-gray-600 font-bold mb-2">CO₂-Bilanz über die Garantiezeit von {product.warrantyYears} Jahren:</p>
                 <div className="flex items-baseline gap-2">
                   <span className="text-display font-bold text-green-700">
-                    {ecological.lifecycleEmissionsKg < 0 ? '+' : ''}
                     {Math.abs(ecological.lifecycleEmissionsKg).toFixed(0)}
                   </span>
-                  <span className="text-body-sm text-gray-600">kg CO₂</span>
+                  <span className="text-body-sm text-gray-600">kg CO₂ Gesamteinsparung</span>
                 </div>
-                <p className="text-body-xs text-gray-500 mt-2">
-                  {ecological.lifecycleEmissionsKg < 0
-                    ? '✓ Netto-Einsparungen erreicht!'
-                    : 'Gesamtemissionen inkl. Herstellung'}
-                </p>
               </div>
 
-              <div className="bg-white rounded-lg p-4">
-                <p className="text-body-sm text-gray-600 mb-2">Jährliche CO₂-Einsparung</p>
+              <div className="bg-white rounded-lg p-4 shadow-md">
+                <p className="text-body-sm text-gray-600 mb-2 font-bold">Jährliche CO₂-Einsparung:</p>
                 <div className="flex items-baseline gap-2">
                   <span className="text-display font-bold text-green-700">
                     {economics.co2SavingsKgPerYear.toFixed(0)}
@@ -184,64 +185,58 @@ export default function CarbonFootprintPage() {
                 </div>
               </div>
             </div>
-          </Card>
 
-          {/* Ecological Score Card */}
-          <Card padding="lg" className="mb-8">
-            <h2 className="text-heading-3 font-bold text-gray-800 mb-4">📊 Ökologischer Score</h2>
-            <div className="flex items-center justify-center gap-4">
-              <div className="text-center">
-                <div className="inline-flex items-center justify-center w-24 h-24 rounded-full bg-gradient-to-br from-green-100 to-green-200 border-4 border-green-600">
-                  <span className="text-heading-1 font-bold text-green-700">
-                    {Math.round(ecological.ecologicalScore)}
-                  </span>
-                </div>
-                <p className="text-body-sm text-gray-600 mt-4">von 100</p>
+            {/* Wald-Vergleich */}
+            <div className="mt-6 bg-white rounded-lg p-4 shadow-md flex flex-col gap-4 md:flex-row md:items-center">
+              <div className="flex justify-center md:justify-start shrink-0">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src="/solacheck/z-image_00004_transparent.png"
+                  alt="Kleiner Wald"
+                  width="180"
+                  height="120"
+                  style={{ maxWidth: '180px', height: 'auto', objectFit: 'contain' }}
+                />
               </div>
-              <div className="flex-1">
-                <p className="text-body text-gray-700 mb-4">
-                  {ecological.ecologicalScore >= 80
-                    ? '🌟 Hervorragende Umweltbilanz – eines der besten Produkte!'
-                    : ecological.ecologicalScore >= 60
-                    ? '👍 Gute Umweltbilanz mit zufriedenstellender Ökobilanz'
-                    : ecological.ecologicalScore >= 40
-                    ? '⚠️ Durchschnittliche Umweltbilanz – weitere Verbesserungen möglich'
-                    : '❌ Schwache Umweltbilanz – überdenken Sie die Auswahl'}
+              <div className="flex-1 text-left">
+                <p className="text-body text-gray-800">
+                  Ein kleiner Wald mit 100 Bäumen bräuchte etwa <span className="font-bold">{forestYearsToOffset.toFixed(1)} Jahre</span>,
+                  um diese Menge an CO₂ aufzunehmen.
                 </p>
               </div>
             </div>
-          </Card>
+          </div>
 
-          {/* Product Details Card */}
-          <Card padding="lg" className="mb-8">
-            <h2 className="text-heading-3 font-bold text-gray-800 mb-4">📋 Produktdetails</h2>
+          {/* Product Details Section */}
+          <div className="bg-gray-50 rounded-lg p-6 mb-8 border border-gray-200">
+            <h2 className="text-heading-1 font-bold text-gray-800 mb-4">Produktdetails</h2>
             <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-              <div className="bg-gray-50 rounded-lg p-3">
+              <div className="bg-white rounded-lg p-3 shadow-md">
                 <p className="text-body-xs text-gray-600 mb-1">Leistung</p>
                 <p className="text-body font-semibold text-gray-800">{product.wattage} Wp</p>
               </div>
-              <div className="bg-gray-50 rounded-lg p-3">
+              <div className="bg-white rounded-lg p-3 shadow-md">
                 <p className="text-body-xs text-gray-600 mb-1">Garantie</p>
                 <p className="text-body font-semibold text-gray-800">{product.warrantyYears} Jahre</p>
               </div>
-              <div className="bg-gray-50 rounded-lg p-3">
+              <div className="bg-white rounded-lg p-3 shadow-md">
                 <p className="text-body-xs text-gray-600 mb-1">Preis</p>
                 <p className="text-body font-semibold text-gray-800">{product.price} €</p>
               </div>
-              <div className="bg-gray-50 rounded-lg p-3">
+              <div className="bg-white rounded-lg p-3 shadow-md">
                 <p className="text-body-xs text-gray-600 mb-1">Module</p>
                 <p className="text-body font-semibold text-gray-800">{product.moduleCount}</p>
               </div>
-              <div className="bg-gray-50 rounded-lg p-3">
+              <div className="bg-white rounded-lg p-3 shadow-md">
                 <p className="text-body-xs text-gray-600 mb-1">Inverter</p>
-                <p className="text-body font-semibold text-gray-800">{product.inverterBrand || 'Enthalten'}</p>
+                <p className="text-body font-semibold text-gray-800">{product.inverterBrand ?? 'Enthalten'}</p>
               </div>
-              <div className="bg-gray-50 rounded-lg p-3">
+              <div className="bg-white rounded-lg p-3 shadow-md">
                 <p className="text-body-xs text-gray-600 mb-1">Bifazial</p>
                 <p className="text-body font-semibold text-gray-800">{product.bifacial ? 'Ja' : 'Nein'}</p>
               </div>
             </div>
-          </Card>
+          </div>
 
           {/* Action Buttons */}
           <div className="flex flex-col gap-3 md:flex-row md:gap-4">
@@ -252,11 +247,11 @@ export default function CarbonFootprintPage() {
             </Link>
             <Link href="/quiz" className="flex-1">
               <Button variant="secondary" size="lg" fullWidth>
-                🔄 Neues Quiz starten
+                Zurück zum Quiz
               </Button>
             </Link>
           </div>
-        </div>
+        </Card>
       </div>
     </div>
   );
