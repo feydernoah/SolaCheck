@@ -15,7 +15,7 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { calculateRecommendations } from '@/lib/economicCalculator';
+import { calculateRecommendations } from '@/lib/recommendationEngine';
 import type { QuizAnswers, RecommendationResponse, SolarData } from '@/types/economic';
 
 // PVGIS API configuration (same as solar-data route)

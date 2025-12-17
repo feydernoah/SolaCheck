@@ -12,12 +12,10 @@ import type {
   ProductEcological,
   ProductEconomics,
 } from '@/types/economic';
+import { CO2_GRAMS_PER_KWH } from '@/lib/constants';
 
-/**
- * CO2 emissions from German grid electricity (g/kWh)
- * Source: Umweltbundesamt 2023 - Strommix Deutschland (see confluence page for details)
- */
-const GRID_CO2_GRAMS_PER_KWH = 380;
+// Use shared constant for grid CO2 intensity
+const GRID_CO2_GRAMS_PER_KWH = CO2_GRAMS_PER_KWH;
 
 /**
  * Manufacturing CO2 emissions per Wp of PV module

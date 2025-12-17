@@ -1,7 +1,10 @@
 import { test, expect, type Page } from '@playwright/test';
+import { setupPhotonMock } from './utils/photon-mock';
 
 test.describe('Quiz Dependencies', () => {
   test.beforeEach(async ({ page }) => {
+    // Use simple mocks (always returns Berlin) - faster for dependency tests
+    await setupPhotonMock(page, { useFullMocks: false });
     await page.context().clearCookies();
     await page.goto('/solacheck/quiz');
     // Wait for quiz to be ready
@@ -27,7 +30,7 @@ test.describe('Quiz Dependencies', () => {
     
     // Wait for suggestions and click the first one
     const suggestion = page.locator('button').filter({ hasText: /Berlin/i }).first();
-    await expect(suggestion).toBeVisible({ timeout: 10000 });
+    await expect(suggestion).toBeVisible({ timeout: 3000 });
     await suggestion.click();
     
     // Wait for location to be selected (green success card)
