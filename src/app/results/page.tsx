@@ -53,6 +53,12 @@ export default function ResultsPage() {
   const [includeCarbonFootprint, setIncludeCarbonFootprint] = useState(false);
   const [isSendingEmail, setIsSendingEmail] = useState(false);
   const [emailStatus, setEmailStatus] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
+  const [emailTouched, setEmailTouched] = useState(false);
+
+  // Email validation regex
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const isEmailValid = emailRegex.test(emailInput);
+  const showEmailError = emailTouched && emailInput.length > 0 && !isEmailValid;
 
   useEffect(() => { initEmailJS(); }, []);
 
@@ -127,11 +133,12 @@ export default function ResultsPage() {
 
   const handleSendEmail = async () => {
     // Validate email input
-    if (!emailInput || !emailInput.includes('@')) {
+    if (!emailInput || !isEmailValid) {
       setEmailStatus({
         type: 'error',
-        message: 'Bitte gib eine gültige E-Mail-Adresse ein.',
+        message: 'Bitte gib eine gültige E-Mail-Adresse ein (z.B. beispiel@email.de).',
       });
+      setEmailTouched(true);
       return;
     }
 
@@ -163,6 +170,7 @@ export default function ResultsPage() {
         // Clear email input on success
         setEmailInput('');
         setIncludeCarbonFootprint(false);
+        setEmailTouched(false);
       } else {
         setEmailStatus({
           type: 'error',
@@ -334,9 +342,19 @@ export default function ResultsPage() {
                         placeholder="deine@email.de"
                         value={emailInput}
                         onChange={(e) => setEmailInput(e.target.value)}
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 outline-none transition-colors"
+                        onBlur={() => setEmailTouched(true)}
+                        className={`w-full px-4 py-2 border rounded-lg focus:ring-2 outline-none transition-colors ${
+                          showEmailError
+                            ? 'border-red-500 focus:ring-red-500 focus:border-red-500'
+                            : 'border-gray-300 focus:ring-yellow-500 focus:border-yellow-500'
+                        }`}
                         disabled={isSendingEmail}
                       />
+                      {showEmailError && (
+                        <p className="mt-1 text-sm text-red-600">
+                          Bitte gib eine gültige E-Mail-Adresse ein (z.B. beispiel@email.de)
+                        </p>
+                      )}
                     </div>
 
                     {/* Checkbox for CO2 Data */}
@@ -359,7 +377,7 @@ export default function ResultsPage() {
                     <Button
                       variant="primary"
                       onClick={handleSendEmail}
-                      disabled={isSendingEmail || !emailInput}
+                      disabled={isSendingEmail || !emailInput || !isEmailValid}
                       className="w-full sm:w-auto"
                     >
                       {isSendingEmail ? 'Wird gesendet...' : 'Ergebnis erhalten'}
