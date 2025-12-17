@@ -37,8 +37,11 @@ export function RecommendationCard({
 =======
   const router = useRouter();
   const { product, economics } = ranking;
+<<<<<<< HEAD
   const [isEcoOpen, setIsEcoOpen] = useState(false);
 >>>>>>> 9ab42ad (removed collapsible ecological section and updated button to navigate to CO2-Bilanz page)
+=======
+>>>>>>> 81018d8 (removed unused state variable isEcoOpen from RecommendationCard component)
   const [imageError, setImageError] = useState(false);
   
   const badgeColors = {
