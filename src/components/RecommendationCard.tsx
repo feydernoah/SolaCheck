@@ -37,9 +37,12 @@ export function RecommendationCard({
   badgeColor = 'yellow'
 }: RecommendationCardProps) {
 <<<<<<< HEAD
+<<<<<<< HEAD
   const { product, economics } = ranking;
 =======
   const router = useRouter();
+=======
+>>>>>>> 47ecbc4 (Fixed lint error (variable assigned but not used))
   const { product, economics } = ranking;
 <<<<<<< HEAD
   const [isEcoOpen, setIsEcoOpen] = useState(false);
