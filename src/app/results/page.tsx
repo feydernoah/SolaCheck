@@ -53,12 +53,12 @@ export default function ResultsPage() {
   const [includeCarbonFootprint, setIncludeCarbonFootprint] = useState(false);
   const [isSendingEmail, setIsSendingEmail] = useState(false);
   const [emailStatus, setEmailStatus] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
-  const [emailTouched, setEmailTouched] = useState(false);
 
   // Email validation regex
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   const isEmailValid = emailRegex.test(emailInput);
-  const showEmailError = emailTouched && emailInput.length > 0 && !isEmailValid;
+  // Show error only if user has typed something and it's invalid
+  const showEmailError = emailInput.length > 0 && !isEmailValid;
 
   useEffect(() => { initEmailJS(); }, []);
 
@@ -138,7 +138,6 @@ export default function ResultsPage() {
         type: 'error',
         message: 'Bitte gib eine gültige E-Mail-Adresse ein (z.B. beispiel@email.de).',
       });
-      setEmailTouched(true);
       return;
     }
 
@@ -170,7 +169,6 @@ export default function ResultsPage() {
         // Clear email input on success
         setEmailInput('');
         setIncludeCarbonFootprint(false);
-        setEmailTouched(false);
       } else {
         setEmailStatus({
           type: 'error',
@@ -342,7 +340,6 @@ export default function ResultsPage() {
                         placeholder="deine@email.de"
                         value={emailInput}
                         onChange={(e) => setEmailInput(e.target.value)}
-                        onBlur={() => setEmailTouched(true)}
                         className={`w-full px-4 py-2 border rounded-lg focus:ring-2 outline-none transition-colors ${
                           showEmailError
                             ? 'border-red-500 focus:ring-red-500 focus:border-red-500'
