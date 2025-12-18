@@ -57,12 +57,6 @@ test.describe('Landing Page', () => {
     const speechBubble = page.locator('text=Hallo! Willkommen bei SolaCheck. Ich bin Sola und helfe dir gerne weiter! 👋');
     await expect(speechBubble).toBeVisible();
   });
-
-  test('displays placeholder for small logo in top left', async ({ page }) => {
-    const smallLogoPlaceholder = page.locator('text=Logo').first();
-    await expect(smallLogoPlaceholder).toBeVisible();
-  });
-
   test('hover effect on Start button', async ({ page }) => {
     const startButton = page.getByRole('button', { name: 'Start' });
     

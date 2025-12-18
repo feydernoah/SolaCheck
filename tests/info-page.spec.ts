@@ -24,11 +24,6 @@ test.describe("Info Page", () => {
     const burgerMenu = page.getByRole("button", { name: /menu/i });
     await expect(burgerMenu).toBeVisible();
   });
-
-  test("shows small logo placeholder in the top left corner", async ({ page }) => {
-    await expect(page.locator("text=Logo").first()).toBeVisible();
-  });
-
   test("shows CTA links: 'Zum Quiz' and 'Zurück'", async ({ page }) => {
     const quizLink = page.getByRole("link", { name: /zum quiz/i });
     const backLink = page.getByRole("link", { name: /zurück/i });

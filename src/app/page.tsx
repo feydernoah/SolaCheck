@@ -29,14 +29,6 @@ export default function LandingPage() {
     <div className="min-h-screen bg-white relative overflow-hidden">
       {/* Burger Menu - Top Right */}
       <BurgerMenu showHome={false} showQuiz />
-
-      {/* Small Logo - Top Left (Placeholder for now) */}
-      <div className="fixed top-4 left-4 sm:top-5 sm:left-5 md:top-6 md:left-6 z-40">
-        <div className="w-10 h-10 sm:w-11 sm:h-11 md:w-12 md:h-12 bg-gray-200 rounded-lg flex items-center justify-center text-xs text-gray-500">
-          Logo
-        </div>
-      </div>
-
       {/* Main Content - Centered */}
       <div className="flex flex-col items-center justify-center min-h-screen px-4 py-20 md:py-8 -mt-0 md:-mt-16">
         {/* Main Logo */}
