@@ -12,18 +12,7 @@
 
 import { useState } from 'react';
 import Image from 'next/image';
-<<<<<<< HEAD
-<<<<<<< HEAD
 import Link from 'next/link';
-<<<<<<< HEAD
-=======
-=======
-import Link from 'next/link';
->>>>>>> f99efa0 (refactored RecommendationCard to use Link for navigation to CO₂-Bilanz page)
-import { useRouter } from 'next/navigation';
->>>>>>> 9ab42ad (removed collapsible ecological section and updated button to navigate to CO2-Bilanz page)
-=======
->>>>>>> 051c02e (fixed lint error)
 import { ProductRanking } from '@/types/economic';
 import { Card } from './ui/Card';
 import { Button } from './ui/Button';
@@ -39,19 +28,7 @@ export function RecommendationCard({
   badge,
   badgeColor = 'yellow'
 }: RecommendationCardProps) {
-<<<<<<< HEAD
-<<<<<<< HEAD
   const { product, economics } = ranking;
-=======
-  const router = useRouter();
-=======
->>>>>>> 47ecbc4 (Fixed lint error (variable assigned but not used))
-  const { product, economics } = ranking;
-<<<<<<< HEAD
-  const [isEcoOpen, setIsEcoOpen] = useState(false);
->>>>>>> 9ab42ad (removed collapsible ecological section and updated button to navigate to CO2-Bilanz page)
-=======
->>>>>>> 81018d8 (removed unused state variable isEcoOpen from RecommendationCard component)
   const [imageError, setImageError] = useState(false);
   
   const badgeColors = {
@@ -144,10 +121,6 @@ export function RecommendationCard({
       <div className="grow"></div>
 
       {/* CTA Button */}
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> f99efa0 (refactored RecommendationCard to use Link for navigation to CO₂-Bilanz page)
       <Link href="/carbon-footprint" className="w-full">
         <Button 
           variant="primary" 
@@ -163,25 +136,6 @@ export function RecommendationCard({
           CO₂-Bilanz anzeigen
         </Button>
       </Link>
-<<<<<<< HEAD
-=======
-      <Button 
-        variant="primary" 
-        size="lg" 
-        fullWidth
-        onClick={() => {
-          // Store ranking data in sessionStorage to avoid long URLs
-          if (typeof window !== 'undefined') {
-            sessionStorage.setItem('carbon-footprint-data', JSON.stringify(ranking));
-          }
-          router.push('/carbon-footprint');
-        }}
-      >
-        CO₂-Bilanz anzeigen
-      </Button>
->>>>>>> 9ab42ad (removed collapsible ecological section and updated button to navigate to CO2-Bilanz page)
-=======
->>>>>>> f99efa0 (refactored RecommendationCard to use Link for navigation to CO₂-Bilanz page)
     </Card>
   );
 }
