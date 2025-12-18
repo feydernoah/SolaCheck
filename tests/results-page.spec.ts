@@ -149,18 +149,13 @@ test.describe('Results Page - Positive Recommendation', () => {
     await expect(infoText).toBeVisible();
   });
 
-  test('displays CO2-Bilanz CTA button', async ({ page }) => {
-    const co2Button = page.locator('text=CO₂-Bilanz berechnen');
-    await expect(co2Button).toBeVisible();
-  });
-
   test('displays "Neues Quiz starten" button', async ({ page }) => {
     const newQuizButton = page.locator('text=Neues Quiz starten');
     await expect(newQuizButton).toBeVisible();
   });
 
-  test('CO2-Bilanz button links to /carbon-footprint', async ({ page }) => {
-    const co2Button = page.locator('text=CO₂-Bilanz berechnen');
+  test('CO2-Bilanz button links to /solacheck/carbon-footprint', async ({ page }) => {
+    const co2Button = page.locator('text=CO₂-Bilanz anzeigen').first();
     const href = await co2Button.locator('..').getAttribute('href');
     expect(href).toBe('/solacheck/carbon-footprint');
   });
@@ -293,13 +288,6 @@ test.describe('Results Page - Responsive Design', () => {
   test('recommendation cards are in grid layout on desktop', async ({ page }) => {
     const grid = page.locator('[class*="grid"][class*="md:grid-cols-3"]');
     await expect(grid).toBeVisible();
-  });
-
-  test('CTA buttons stack vertically on mobile, horizontal on desktop', async ({ page }) => {
-    const ctaContainer = page.locator('[class*="flex-col"][class*="sm:flex-row"]').filter({ 
-      has: page.locator('text=CO₂-Bilanz berechnen') 
-    });
-    await expect(ctaContainer).toBeVisible();
   });
 
   test('content is centered and has max-width', async ({ page }) => {

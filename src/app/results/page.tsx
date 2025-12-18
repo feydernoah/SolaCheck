@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { BurgerMenu } from '@/components/BurgerMenu';
@@ -254,11 +253,6 @@ export default function ResultsPage() {
           <div className="flex flex-col sm:flex-row gap-4 justify-center mb-8">
             {recommendation.isRecommended ? (
               <>
-                <Link href="/carbon-footprint">
-                  <Button variant="primary" size="lg" className="px-12">
-                    CO₂-Bilanz berechnen →
-                  </Button>
-                </Link>
                 <Button
                   variant="outline"
                   size="lg"
