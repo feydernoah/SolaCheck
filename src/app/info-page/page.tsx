@@ -566,16 +566,6 @@ export default function SolaCheckInfoPage() {
   return (
     <div className="min-h-screen bg-white relative overflow-hidden">
       <BurgerMenu showHome showQuiz />
-
-      {/* Small Logo - Top Left */}
-      <div className="fixed top-4 left-4 sm:top-5 sm:left-5 md:top-6 md:left-6 z-40">
-        <Link href="/">
-          <div className="w-10 h-10 sm:w-11 sm:h-11 md:w-12 md:h-12 bg-gray-200 rounded-lg flex items-center justify-center text-xs text-gray-500">
-            Logo
-          </div>
-        </Link>
-      </div>
-
       {/* Main Content */}
       <main className="mx-auto w-full max-w-3xl px-4 pt-24 pb-24 sm:px-6 sm:pt-28">
         <header className="mb-8">
