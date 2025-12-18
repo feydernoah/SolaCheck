@@ -58,6 +58,13 @@ export default function LandingPage() {
             Start
           </Button>
         </Link>
+
+        {/* Info Button */}
+        <Link href="/info-page">
+          <Button className="mt-6 sola-secondary-button">
+            Mehr Infos
+          </Button>
+        </Link>
       </div>
 
       {/* Chat Buddy - Bottom Left */}
