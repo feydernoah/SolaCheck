@@ -72,8 +72,8 @@ export default function CarbonFootprintPage() {
     return 'text-orange-700 bg-orange-50';
   };
 
-  // Kleiner Wald (100 Bäume) absorbiert pro Jahr ca. 1.500 kg CO₂
-  const forestAbsorptionPerYearKg = 100 * 15;
+  // Kleiner Wald (100 Bäume) absorbiert pro Jahr ca. 2400 kg CO₂
+  const forestAbsorptionPerYearKg = 100 * 24;
   const forestYearsToOffset = (ecological.lifecycleEmissionsKg / forestAbsorptionPerYearKg)*-1;
 
   return (
