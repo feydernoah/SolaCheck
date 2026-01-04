@@ -12,6 +12,7 @@ import { AddressInput } from "@/components/AddressInput";
 import { NumberInput } from "@/components/NumberInput";
 import { CompassSelector } from "@/components/CompassSelector";
 import { SolaWalkingAnimation } from "@/components/SolaWalkingAnimation";
+import { LandingPageSnapshot } from "@/components/LandingPageSnapshot";
 import { useQuizProgress } from "@/hooks/useQuizProgress";
 import { getQuestionInfo } from "@/data/questionInfoData";
 import { 
@@ -403,9 +404,68 @@ export default function Home() {
 
   // Show walking animation on first visit
   if (showWalkingAnimation) {
+    const firstQuestion = questions[0];
     return (
       <SolaWalkingAnimation 
         onComplete={() => setShowWalkingAnimation(false)}
+        fromPage={<LandingPageSnapshot hideBuddy={true} />}
+        toPage={
+          <div className="min-h-screen bg-white relative overflow-hidden p-4">
+            <div className="fixed top-4 right-4 sm:top-5 sm:right-5 md:top-6 md:right-6 z-40 flex items-center gap-4">
+              <InfoButton onClick={() => setIsInfoModalOpen(true)} />
+              <BurgerMenu showHome showQuiz={false} onHomeClick={resetWithConfirmation} inline />
+            </div>
+            <div className="flex items-center justify-center min-h-screen">
+              <div className="w-full max-w-4xl px-4">
+                <Card padding="lg" className="animate-fade-in">
+                  <div className="mb-4">
+                    <span className="inline-block bg-yellow-100 text-yellow-800 text-sm font-medium px-3 py-1 rounded-full">
+                      {firstQuestion.category}
+                    </span>
+                  </div>
+                  
+                  <div className="mb-8">
+                    <div className="flex justify-end text-sm text-gray-600 mb-2">
+                      <span>{Math.round((1 / questions.length) * 100)}%</span>
+                    </div>
+                    <div className="w-full bg-gray-200 rounded-full h-2">
+                      <div
+                        className="bg-yellow-400 h-2 rounded-full transition-all duration-300"
+                        style={{ width: `${((1 / questions.length) * 100).toString()}%` }}
+                      ></div>
+                    </div>
+                  </div>
+
+                  <h2 className="text-heading-2 md:text-heading-1 font-bold text-gray-800 mb-8">
+                    {firstQuestion.question}
+                  </h2>
+
+                  <div className="mb-8">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      {firstQuestion.options?.map((option) => (
+                        <button
+                          key={option.value}
+                          className="p-4 rounded-lg border-2 border-gray-200 bg-white text-gray-700 hover:border-yellow-200 hover:bg-yellow-50 transition-all duration-200 text-left font-medium"
+                        >
+                          {option.label}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="flex justify-between items-center pt-6 border-t border-gray-200">
+                    <Button variant="ghost" size="md" disabled>
+                      ← Zurück
+                    </Button>
+                    <Button variant="primary" size="lg" disabled>
+                      Weiter →
+                    </Button>
+                  </div>
+                </Card>
+              </div>
+            </div>
+          </div>
+        }
       />
     );
   }
