@@ -271,21 +271,19 @@ export function AddressInput({ value, onChange, onValidationChange }: AddressInp
       
       try {
         // Detect if query looks like a postal code (4-5 digits for DE/AT/CH)
-        // If so, append country context to improve search results
+        // If so, optionally append country context to improve search results
         const isPostalCode = /^\d{4,5}$/.test(debouncedQuery);
         let searchQuery = debouncedQuery;
         
         if (isPostalCode) {
-          // Swiss postal codes are 4 digits, German/Austrian are 5 digits
-          // Append country context to help Photon find postal codes
+          // German postal codes are 5 digits; 4-digit codes occur in multiple countries
+          // Only bias 5-digit codes towards Germany; let 4-digit codes be resolved by Photon + bbox
           const digits = debouncedQuery.length;
-          if (digits === 4) {
-            // Likely Swiss or Austrian postal code (both use 4 digits)
-            searchQuery = `${debouncedQuery} Schweiz`;
-          } else if (digits === 5) {
+          if (digits === 5) {
             // Likely German postal code
             searchQuery = `${debouncedQuery} Deutschland`;
           }
+          // For 4-digit codes (AT/CH), let the bounding box and country filter handle it
         }
         
         // Use Photon API (by Komoot) - better for autocomplete than Nominatim
