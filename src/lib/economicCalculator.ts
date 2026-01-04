@@ -25,6 +25,7 @@ import {
   CO2_GRAMS_PER_KWH,
   BASE_YIELD_KWH_PER_WP,
   BIFACIAL_GAIN,
+  BATTERY_EFFICIENCY,
   ORIENTATION_FACTORS,
   SHADING_FACTORS,
   SELF_CONSUMPTION_BY_HOUSEHOLD,
@@ -109,19 +110,22 @@ export function getAnnualConsumption(householdSize: string | undefined): number 
 /**
  * Calculate annual yield for a product, respecting the legal AC feed-in limit.
  *
- * The usable annual yield is capped by the inverter's AC output, limited to LEGAL_AC_LIMIT_W.
- * This models inverter clipping when DC/AC ratio > 1, as required by German law.
+ * For systems WITHOUT battery:
+ * - The usable annual yield is capped by the inverter's AC output (max 800W)
+ * - Excess DC power during peak sun is "clipped" and lost
+ *
+ * For systems WITH battery:
+ * - The battery stores excess DC power before it reaches the inverter
+ * - This energy is discharged later through the inverter at ≤800W
+ * - Battery round-trip efficiency losses apply (~10%)
+ * - Result: Much more of the panel's production is usable
  *
  * When PVGIS data is available:
  * - Uses location-specific yield from PVGIS (already accounts for orientation/tilt)
  * - Still applies shading factor (PVGIS can't know about local obstructions)
  * - Still applies bifacial bonus
  *
- * Fallback (no PVGIS):
- * - Uses hardcoded BASE_YIELD_KWH_PER_WP
- * - Applies orientation and shading factors
- *
- * @returns Usable annual yield in kWh (capped by AC limit)
+ * @returns Usable annual yield in kWh
  */
 function calculateAnnualYield(
   product: BKWProduct,
@@ -148,15 +152,43 @@ function calculateAnnualYield(
     rawYieldKwh *= (1 + BIFACIAL_GAIN);
   }
 
-  // === AC LIMIT ENFORCEMENT ===
+  // === AC LIMIT CALCULATION (applies to all systems) ===
   // The usable AC output is limited by the inverter's AC power, capped at LEGAL_AC_LIMIT_W.
-  // This models the legal 800 W AC cap for Balkonkraftwerke in Germany.
-  // If the DC module power is higher, the system will clip excess production.
   const acPower = typeof product.inverterACPower === 'number' ? product.inverterACPower : LEGAL_AC_LIMIT_W;
   const effectiveACPower = Math.min(acPower, LEGAL_AC_LIMIT_W);
-  const maxACAnnualYield = effectiveACPower * 365 * 24 / 1000;
   
-  // The actual usable yield is the lower of the raw yield and the legal AC cap
+  // Calculate max AC yield (what can pass through the inverter without clipping)
+  let maxACAnnualYield: number;
+  if (pvgisYieldKwhPerKwp !== undefined) {
+    maxACAnnualYield = effectiveACPower * pvgisToPerWp(pvgisYieldKwhPerKwp) * shadingFactor;
+  } else {
+    maxACAnnualYield = effectiveACPower * BASE_YIELD_KWH_PER_WP * orientationFactor * shadingFactor;
+  }
+
+  // === BATTERY SYSTEMS: RECOVER CLIPPED ENERGY ===
+  // Systems with battery storage can capture excess DC power that would be clipped.
+  // The battery charges during peak sun and discharges later through the inverter.
+  // 
+  // Key constraint: Battery can only cycle once per day.
+  // Max annual storage recovery = storageCapacity × 365 × battery efficiency
+  if (product.includesStorage && product.storageCapacity && product.storageCapacity > 0) {
+    // Calculate clipped energy (what would be lost without battery)
+    const clippedEnergy = Math.max(0, rawYieldKwh - maxACAnnualYield);
+    
+    // Battery can recover up to its daily capacity × 365 days
+    // This models one charge/discharge cycle per day
+    const maxAnnualStorageRecovery = product.storageCapacity * 365 * BATTERY_EFFICIENCY;
+    
+    // Actual recovered energy is the lesser of clipped energy and battery capacity
+    const recoveredEnergy = Math.min(clippedEnergy, maxAnnualStorageRecovery);
+    
+    // Total yield = AC-passed energy + recovered stored energy
+    const usableYieldKwh = maxACAnnualYield + recoveredEnergy;
+    return Math.round(usableYieldKwh);
+  }
+
+  // === NON-BATTERY SYSTEMS ===
+  // The actual usable yield is the lower of the raw DC yield and the AC-limited yield
   const usableYieldKwh = Math.min(rawYieldKwh, maxACAnnualYield);
   return Math.round(usableYieldKwh);
 }

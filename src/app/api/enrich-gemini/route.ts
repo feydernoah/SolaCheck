@@ -76,7 +76,13 @@ ${productList}
 
 Return data for each product with mounting options, manufacturing origin, whether panels are bifacial,
 module efficiency, module count, whether inverter is included, the inverter AC output power in watts,
-and a short German description.
+the battery storage capacity in kWh (0 if no storage), and a short German description.
+
+IMPORTANT for storageCapacity:
+- Many products include battery storage (Speicher)
+- Common capacities: 1.6kWh, 1.92kWh, 2.0kWh, 2.68kWh
+- Products with "Solarbank", "Hyper", "PowerStream", "SolarFlow" usually have storage
+- If no storage, set to 0
 
 IMPORTANT for inverterACPower:
 - Most Balkonkraftwerke have 800W inverters (legal limit in Germany)
@@ -108,6 +114,10 @@ IMPORTANT for inverterACPower:
           type: "INTEGER", 
           description: "Inverter AC output power in watts (W). Usually 800 for legal compliance, some have 600 or lower." 
         },
+        storageCapacity: {
+          type: "NUMBER",
+          description: "Battery storage capacity in kWh. 0 if no storage included. Common values: 1.6, 1.92, 2.0, 2.68"
+        },
         description: { type: "STRING", description: "Short German description" },
       },
       required: [
@@ -119,6 +129,7 @@ IMPORTANT for inverterACPower:
         "moduleCount",
         "includesInverter",
         "inverterACPower",
+        "storageCapacity",
         "description",
       ],
     },
