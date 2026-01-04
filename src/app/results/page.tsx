@@ -278,11 +278,14 @@ export default function ResultsPage() {
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
                 {topRankings.map((ranking, index) => {
-                  const badges = [
-                    { text: '🥇 Beste Wahl', color: 'yellow' as const },
-                    { text: '🥈 Zweite Wahl', color: 'blue' as const },
-                    { text: '🥉 Dritte Wahl', color: 'green' as const },
+                  // Feature-based badges with distinct colors
+                  const badges: { text: string; color: 'yellow' | 'blue' | 'green' }[] = [
+                    { text: '🌱 Beste CO₂-Bilanz', color: 'green' },
+                    { text: '✅ Gute Alternative', color: 'blue' },
+                    { text: '✅ Solide Option', color: 'yellow' },
                   ];
+                  
+                  const badge = badges[index] ?? badges[2];
                   
                   return (
                     <div 
@@ -292,8 +295,8 @@ export default function ResultsPage() {
                     >
                       <RecommendationCard
                         ranking={ranking}
-                        badge={badges[index]?.text}
-                        badgeColor={badges[index]?.color}
+                        badge={badge.text}
+                        badgeColor={badge.color}
                       />
                     </div>
                   );
@@ -309,8 +312,8 @@ export default function ResultsPage() {
                       Noch Fragen?
                     </h3>
                     <p className="text-body text-gray-700">
-                      Alle gezeigten Modelle sind nach kürzester Amortisationszeit sortiert. 
-                      Das bedeutet, du bekommst dein investiertes Geld am schnellsten zurück.
+                      Alle gezeigten Modelle sind nach bester CO₂-Bilanz sortiert. 
+                      Das bedeutet, die Herstellungs-Emissionen werden am schnellsten durch eingesparten Strom ausgeglichen.
                       Die Empfehlungen basieren auf deinen Angaben zu Standort, Ausrichtung und Verbrauch.
                     </p>
                   </div>

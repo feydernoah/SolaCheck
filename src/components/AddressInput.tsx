@@ -270,11 +270,27 @@ export function AddressInput({ value, onChange, onValidationChange }: AddressInp
       setIsSearching(true);
       
       try {
+        // Detect if query looks like a postal code (4-5 digits for DE/AT/CH)
+        // If so, optionally append country context to improve search results
+        const isPostalCode = /^\d{4,5}$/.test(debouncedQuery);
+        let searchQuery = debouncedQuery;
+        
+        if (isPostalCode) {
+          // German postal codes are 5 digits; 4-digit codes occur in multiple countries
+          // Only bias 5-digit codes towards Germany; let 4-digit codes be resolved by Photon + bbox
+          const digits = debouncedQuery.length;
+          if (digits === 5) {
+            // Likely German postal code
+            searchQuery = `${debouncedQuery} Deutschland`;
+          }
+          // For 4-digit codes (AT/CH), let the bounding box and country filter handle it
+        }
+        
         // Use Photon API (by Komoot) - better for autocomplete than Nominatim
         // Bounding box for Central Europe to prioritize local results
         const response = await fetch(
           `https://photon.komoot.io/api/?` +
-          `q=${encodeURIComponent(debouncedQuery)}&` +
+          `q=${encodeURIComponent(searchQuery)}&` +
           `lang=de&` +
           `limit=15&` + // Fetch more to filter by country
           `bbox=5.8,45.8,17.2,55.1`, // Central Europe bounding box
@@ -285,14 +301,50 @@ export function AddressInput({ value, onChange, onValidationChange }: AddressInp
 
         if (response.ok) {
           const data = await response.json() as PhotonResponse;
-          const suggestions = data.features
+          let suggestions = data.features
             .map(photonToSuggestion)
             // Filter to only German-speaking countries (DE, AT, CH)
             .filter(s => !s.countryCode || ALLOWED_COUNTRIES.includes(s.countryCode))
             // Filter out duplicates by display name
-            .filter((s, i, arr) => arr.findIndex(x => x.displayName === s.displayName) === i)
-            // Limit to 5 results
-            .slice(0, 5);
+            .filter((s, i, arr) => arr.findIndex(x => x.displayName === s.displayName) === i);
+          
+          // For postal code searches, prioritize city/town/village results
+          // If none found, try to extract city info from the first result
+          if (isPostalCode && suggestions.length > 0) {
+            const cityResults = suggestions.filter(s => 
+              s.type === 'city' || s.type === 'town' || s.type === 'village'
+            );
+            
+            if (cityResults.length > 0) {
+              // Use the city/town/village results
+              suggestions = cityResults;
+            } else if (data.features.length > 0) {
+              // Extract city from the first result and search for it
+              const firstResult = data.features[0];
+              const cityName = firstResult.properties.city ?? 
+                              firstResult.properties.town ?? 
+                              firstResult.properties.village ?? 
+                              firstResult.properties.municipality;
+              
+              if (cityName) {
+                // Create a city-level suggestion from the postal code search result
+                const [lon, lat] = firstResult.geometry.coordinates;
+                const postcode = firstResult.properties.postcode ?? debouncedQuery;
+                suggestions = [{
+                  id: `postcode-${postcode}`,
+                  name: cityName,
+                  displayName: `${postcode} ${cityName}`,
+                  lat,
+                  lon,
+                  type: 'city' as const,
+                  countryCode: firstResult.properties.countrycode,
+                }];
+              }
+            }
+          }
+          
+          // Limit to 5 results
+          suggestions = suggestions.slice(0, 5);
           
           setSuggestions(suggestions);
           setShowSuggestions(suggestions.length > 0);

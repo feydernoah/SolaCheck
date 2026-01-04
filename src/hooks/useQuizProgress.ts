@@ -80,6 +80,9 @@ function isProgressValid(progress: unknown): progress is QuizProgress {
   return true;
 }
 
+// Default preselected appliances for question 10 (devices)
+const DEFAULT_DEVICES = ['kuehlschrank', 'waschmaschine', 'herd', 'fernseher'];
+
 function getProgressFromCookie(): QuizProgress {
   const savedProgress = getCookie(COOKIE_NAME);
   if (savedProgress) {
@@ -95,7 +98,8 @@ function getProgressFromCookie(): QuizProgress {
       deleteCookie(COOKIE_NAME);
     }
   }
-  return { currentQuestion: 0, answers: {} };
+  // Return default progress with preselected devices
+  return { currentQuestion: 0, answers: { 10: DEFAULT_DEVICES } };
 }
 
 export function useQuizProgress(): UseQuizProgressReturn {
