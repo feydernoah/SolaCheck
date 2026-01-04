@@ -141,6 +141,10 @@ export function useQuizProgress(): UseQuizProgressReturn {
     setCurrentQuestionState(0);
     setAnswersState({});
     deleteCookie(COOKIE_NAME);
+    // Clear animation flag so it shows again on next quiz start
+    if (typeof window !== 'undefined') {
+      sessionStorage.removeItem('hasSeenQuizAnimation');
+    }
   }, []);
 
   const resetWithConfirmation = useCallback(() => {
