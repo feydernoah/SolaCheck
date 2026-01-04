@@ -317,13 +317,30 @@ export default function Home() {
   const router = useRouter();
   const [isInfoModalOpen, setIsInfoModalOpen] = useState(false);
   const [isAddressValid, setIsAddressValid] = useState(false);
-  const [showWalkingAnimation, setShowWalkingAnimation] = useState(true);
   const { 
     currentQuestion, 
     answers, 
     setCurrentQuestion, 
     updateAnswer,
   } = useQuizProgress();
+
+  // Only show walking animation on absolute first visit (use sessionStorage to track)
+  const [showWalkingAnimation, setShowWalkingAnimation] = useState(() => {
+    if (typeof window !== 'undefined') {
+      const hasSeenAnimation = sessionStorage.getItem('hasSeenQuizAnimation');
+      const hasAnswers = Object.keys(answers).length > 0;
+      return !hasSeenAnimation && !hasAnswers;
+    }
+    return false;
+  });
+
+  // Mark animation as seen when it completes
+  const handleAnimationComplete = () => {
+    if (typeof window !== 'undefined') {
+      sessionStorage.setItem('hasSeenQuizAnimation', 'true');
+    }
+    setShowWalkingAnimation(false);
+  };
 
   // Safety fallback: ensure currentQuestion is always within valid bounds
   // The hook already validates cookies, but this guards against any edge cases
@@ -407,7 +424,7 @@ export default function Home() {
     const firstQuestion = questions[0];
     return (
       <SolaWalkingAnimation 
-        onComplete={() => setShowWalkingAnimation(false)}
+        onComplete={handleAnimationComplete}
         fromPage={<LandingPageSnapshot hideBuddy={true} />}
         toPage={
           <div className="min-h-screen bg-white relative overflow-hidden p-4">
