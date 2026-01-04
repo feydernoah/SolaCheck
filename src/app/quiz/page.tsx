@@ -9,6 +9,7 @@ import { BurgerMenu } from "@/components/BurgerMenu";
 import { InfoButton } from "@/components/InfoButton";
 import { InfoModal } from "@/components/InfoModal";
 import { AddressInput } from "@/components/AddressInput";
+import { SolaWalkingAnimation } from "@/components/SolaWalkingAnimation";
 import { useQuizProgress } from "@/hooks/useQuizProgress";
 import { getQuestionInfo } from "@/data/questionInfoData";
 import { 
@@ -314,6 +315,7 @@ export default function Home() {
   const router = useRouter();
   const [isInfoModalOpen, setIsInfoModalOpen] = useState(false);
   const [isAddressValid, setIsAddressValid] = useState(false);
+  const [showWalkingAnimation, setShowWalkingAnimation] = useState(true);
   const { 
     currentQuestion, 
     answers, 
@@ -394,6 +396,15 @@ export default function Home() {
     }
     return !!currentAnswer;
   };
+
+  // Show walking animation on first visit
+  if (showWalkingAnimation) {
+    return (
+      <SolaWalkingAnimation 
+        onComplete={() => setShowWalkingAnimation(false)}
+      />
+    );
+  }
 
   return (
     <div className="min-h-screen bg-white relative overflow-hidden p-4">
