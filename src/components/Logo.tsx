@@ -70,7 +70,7 @@ export function Logo({
       className="inline-flex cursor-pointer"
     >
       <Image
-        src="/solacheck/LogoSolaCheck.png"
+        src="/solacheck/SolaSunLOGO.png"
         alt="SolaCheck Logo"
         width={size}
         height={size}
