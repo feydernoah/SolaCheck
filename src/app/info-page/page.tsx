@@ -447,29 +447,7 @@ function ChevronIcon({ isOpen }: { isOpen: boolean }) {
     </svg>
   );
 }
-function renderTextWithLinks(text: string) {
-  // findet http/https Links
-  const urlRegex = /(https?:\/\/[^\s]+)/g;
-  const parts = text.split(urlRegex);
 
-  return parts.map((part, idx) => {
-    if (part.match(urlRegex)) {
-      return (
-        <a
-          key={idx}
-          href={part}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="underline text-slate-700 hover:text-slate-900"
-        >
-          {part}
-        </a>
-      );
-    }
-
-    return <React.Fragment key={idx}>{part}</React.Fragment>;
-  });
-}
 function SectionBody({ section }: { section: Section }) {
   return (
     <div className="px-4 pb-4 pt-2 sm:px-6">
@@ -482,7 +460,8 @@ function SectionBody({ section }: { section: Section }) {
       {section.bullets?.length ? (
       <ul className="mt-3 list-disc space-y-2 pl-5 text-xs leading-5 text-slate-700 break-words">
          {section.bullets.map((item) => {
-  const urlMatch = item.match(/https?:\/\/\S+/);
+   const urlRegex = /https?:\/\/\S+/;
+   const urlMatch = urlRegex.exec(item);
 
   if (!urlMatch) {
     return <li key={item}>{item}</li>;
