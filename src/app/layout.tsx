@@ -28,7 +28,7 @@ export default function RootLayout({
     <html lang="de">
       <body className="min-h-screen bg-white relative">
         {/* Globales Logo */}
-        <div className="fixed top-4 left-4 sm:top-5 sm:left-5 md:top-6 md:left-6 z-50">
+        <div className="fixed top-4 left-4 sm:top-5 sm:left-5 md:top-6 md:left-6 z-50 h-14 flex items-center">
           <Logo size={80} resetOnClick />
         </div>
 
