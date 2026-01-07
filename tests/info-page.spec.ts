@@ -157,4 +157,30 @@ test.describe("Info Page", () => {
     const mainContainer = page.locator("div.min-h-screen.bg-white").first();
     await expect(mainContainer).toBeVisible();
   });
+  test("quellen accordion renders and contains clickable source links", async ({ page }) => {
+  // 1) Accordion-Button finden (Titel)
+  const quellenButton = page.getByRole("button", {
+    name: /Quellen & weiterführende Informationen/i,
+  });
+  await expect(quellenButton).toBeVisible();
+
+  // 2) Öffnen
+  await quellenButton.click();
+  await expect(quellenButton).toHaveAttribute("aria-expanded", "true");
+
+  // 3) Intro-Text der Quellen sichtbar (Teilstring reicht)
+  await expect(
+    page.getByText(/Die folgenden Quellen wurden zur Erstellung/i)
+  ).toBeVisible();
+
+  // 4) Mindestens ein Link vorhanden und hat https:// im href
+  const firstSourceLink = page
+    .locator("a")
+    .filter({ hasText: /https?:\/\// })
+    .first();
+
+  await expect(firstSourceLink).toBeVisible();
+  await expect(firstSourceLink).toHaveAttribute("href", /https?:\/\//);
+});
+
 });

@@ -399,6 +399,29 @@ const SECTIONS = [
       "Standort wird nur zur Berechnung genutzt und danach verworfen",
     ],
   },
+{
+  id: "quellen",
+  title: "Quellen & weiterführende Informationen",
+  paragraphs: [
+    "Die folgenden Quellen wurden zur Erstellung und inhaltlichen Einordnung der Informationen auf dieser Seite genutzt. Sie dienen der Transparenz sowie der weiterführenden Information.",
+  ],
+  bullets: [
+    "Umweltbundesamt (2024) - Entwicklung der spezifischen Treibhausgas-Emissionen des deutschen Strommix: https://www.umweltbundesamt.de/publikationen/entwicklung-der-spezifischen-treibhausgas-emissionen",
+    "Fraunhofer ISE (2024) - Energy Charts (Stromerzeugung / PV-Daten): https://energy-charts.info",
+    "Fraunhofer ISE (2024) - Life Cycle Assessment of Photovoltaic Systems: https://www.ise.fraunhofer.de",
+    "PVGIS (EU Joint Research Centre) - Photovoltaic Geographical Information System: https://joint-research-centre.ec.europa.eu/pvgis_en",
+    "Deutscher Wetterdienst (DWD) - Climate Data Center (Strahlungsdaten): https://www.dwd.de/EN/ourservices/cdc/cdc.html",
+    "Deutscher Wetterdienst (DWD) - Testreferenzjahre (TRY-Daten): https://www.dwd.de/DE/leistungen/testreferenzjahre/testreferenzjahre.html",
+    "Solargis - Solar Resource Maps & GIS-Daten (Deutschland): https://solargis.com/resources/free-maps-and-gis-data?locality=germany",
+    "Bundesnetzagentur & Bundeskartellamt (2024) - Monitoringbericht Strom & Gas: https://www.bundesnetzagentur.de/DE/Fachthemen/ElektrizitaetundGas/Monitoringberichte/monitoringberichte_node.html",
+    "Bundesnetzagentur - Marktstammdatenregister (MaStR): https://www.marktstammdatenregister.de",
+    "BDEW (2024) - Strompreisanalyse Deutschland: https://www.bdew.de/energie/strompreisanalyse/",
+    "BDEW - Standardlastprofile Strom : https://www.bdew.de/energie/standardlastprofile-strom/",
+    "EEG 2023 - Gesetz zur Förderung Erneuerbarer Energien (u. a. § 48 Abs. 2): https://www.gesetze-im-internet.de/eeg_2023/",
+    "Verbraucherzentrale (2025) - Leitfaden Mini-Solaranlagen / Balkonkraftwerke: https://www.verbraucherzentrale.de/wissen/energie/erneuerbare-energien/balkonkraftwerk-energie-vom-balkon-14147",
+  ],
+}
+
 ] satisfies Section[];
 
 function classNames(...parts: (string | false | undefined | null)[]) {
@@ -424,7 +447,29 @@ function ChevronIcon({ isOpen }: { isOpen: boolean }) {
     </svg>
   );
 }
+function renderTextWithLinks(text: string) {
+  // findet http/https Links
+  const urlRegex = /(https?:\/\/[^\s]+)/g;
+  const parts = text.split(urlRegex);
 
+  return parts.map((part, idx) => {
+    if (part.match(urlRegex)) {
+      return (
+        <a
+          key={idx}
+          href={part}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="underline text-slate-700 hover:text-slate-900"
+        >
+          {part}
+        </a>
+      );
+    }
+
+    return <React.Fragment key={idx}>{part}</React.Fragment>;
+  });
+}
 function SectionBody({ section }: { section: Section }) {
   return (
     <div className="px-4 pb-4 pt-2 sm:px-6">
@@ -435,10 +480,32 @@ function SectionBody({ section }: { section: Section }) {
       ))}
 
       {section.bullets?.length ? (
-        <ul className="mt-3 list-disc space-y-1 pl-5 text-sm leading-6 text-slate-700">
-          {section.bullets.map((item) => (
-            <li key={item}>{item}</li>
-          ))}
+      <ul className="mt-3 list-disc space-y-2 pl-5 text-xs leading-5 text-slate-700 break-words">
+         {section.bullets.map((item) => {
+  const urlMatch = item.match(/https?:\/\/\S+/);
+
+  if (!urlMatch) {
+    return <li key={item}>{item}</li>;
+  }
+
+  const url = urlMatch[0];
+  const text = item.replace(url, "").trim();
+
+  return (
+    <li key={item}>
+      <span>{text} </span>
+      <a
+        href={url}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="text-blue-600 underline break-all hover:text-blue-800"
+      >
+        {url}
+      </a>
+    </li>
+  );
+})}
+
         </ul>
       ) : null}
 
@@ -601,7 +668,6 @@ export default function SolaCheckInfoPage() {
             />
           ))}
         </section>
-
         <footer className="mt-10 rounded-2xl border border-slate-200 bg-white p-4 text-xs leading-5 text-slate-600 shadow-sm sm:p-6">
           <p className="font-semibold text-slate-900">Hinweis</p>
           <p className="mt-1">
