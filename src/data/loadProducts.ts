@@ -25,6 +25,7 @@ interface GeminiEnrichment {
   moduleCount: number;
   includesInverter: boolean;
   inverterACPower?: number;
+  storageCapacity?: number;
   description: string;
 }
 
@@ -136,7 +137,8 @@ export function loadScrapedProducts(): BKWProduct[] {
     const inverterACPower = gemini?.inverterACPower ?? 800; // Default to legal max
     const description = gemini?.description ?? p.specs.description ?? "";
     const warrantyYears = p.specs.warranty ?? 10;
-    const storageCapacity = p.specs.storageCapacity;
+    // Use scraped storageCapacity first, fall back to Gemini enrichment
+    const storageCapacity = p.specs.storageCapacity ?? (gemini?.storageCapacity && gemini.storageCapacity > 0 ? gemini.storageCapacity : undefined);
 
     const product: BKWProduct = {
       id: p.id,

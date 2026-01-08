@@ -67,6 +67,13 @@ export const BASE_YIELD_KWH_PER_WP = 0.95;
  */
 export const BIFACIAL_GAIN = 0.08; // 8% extra yield
 
+/**
+ * Battery round-trip efficiency
+ * Typical lithium batteries have 85-95% round-trip efficiency
+ * We use 90% as a conservative estimate
+ */
+export const BATTERY_EFFICIENCY = 0.90;
+
 // === ORIENTATION FACTORS ===
 // Based on documentation and PVGIS data
 

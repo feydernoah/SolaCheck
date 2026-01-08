@@ -273,7 +273,7 @@ export function calculateRecommendations(
       product,
       economics,
       ecological,
-      score: economics.amortizationYears, // Lower is better
+      score: ecological.paybackPeriodYears, // Lower CO₂ payback is better (app focus on sustainability)
       matchReasons: generateMatchReasons(product, economics, answers),
       warnings: generateWarnings(product, economics, answers),
       ecologicalReasons,
@@ -281,7 +281,7 @@ export function calculateRecommendations(
     };
   });
   
-  // Sort by amortization time (shortest first)
+  // Sort by CO₂ payback period (shortest first) - prioritizing environmental impact
   rankings.sort((a, b) => a.score - b.score);
   
   // Assign ranks
