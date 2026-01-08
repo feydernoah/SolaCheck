@@ -1,16 +1,24 @@
 "use client";
 
-import { useEffect, useCallback } from "react";
+import { useEffect, useCallback, ReactNode } from "react";
 import { MdClose } from "react-icons/md";
 import { QuestionInfo } from "@/data/questionInfoData";
 
 interface InfoModalProps {
-  isOpen: boolean;
+  isOpen?: boolean;
   onClose: () => void;
-  info: QuestionInfo | undefined;
+  info?: QuestionInfo | undefined;
+  title?: string;
+  content?: ReactNode;
+  sources?: string;
 }
 
-export function InfoModal({ isOpen, onClose, info }: InfoModalProps) {
+export function InfoModal({ isOpen, onClose, info, title, content, sources }: InfoModalProps) {
+  // Use provided title/content or fallback to info prop
+  const displayTitle = title ?? info?.title ?? '';
+  const displayContent = content ?? info?.content ?? '';
+  const shouldBeOpen = isOpen ?? !!title; // If title prop is provided, modal is open
+
   // Close on Escape key
   const handleKeyDown = useCallback(
     (e: KeyboardEvent) => {
@@ -22,7 +30,7 @@ export function InfoModal({ isOpen, onClose, info }: InfoModalProps) {
   );
 
   useEffect(() => {
-    if (isOpen) {
+    if (shouldBeOpen) {
       document.addEventListener("keydown", handleKeyDown);
       // Prevent body scroll when modal is open
       document.body.style.overflow = "hidden";
@@ -31,9 +39,9 @@ export function InfoModal({ isOpen, onClose, info }: InfoModalProps) {
       document.removeEventListener("keydown", handleKeyDown);
       document.body.style.overflow = "unset";
     };
-  }, [isOpen, handleKeyDown]);
+  }, [shouldBeOpen, handleKeyDown]);
 
-  if (!isOpen || !info) return null;
+  if (!shouldBeOpen) return null;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
@@ -52,7 +60,7 @@ export function InfoModal({ isOpen, onClose, info }: InfoModalProps) {
             <div className="w-10 h-10 rounded-full bg-yellow-400 flex items-center justify-center">
               <span className="text-xl font-bold text-white">?</span>
             </div>
-            <h2 className="text-lg font-bold text-gray-800 pr-8">{info.title}</h2>
+            <h2 className="text-lg font-bold text-gray-800 pr-8">{displayTitle}</h2>
           </div>
           <button
             onClick={onClose}
@@ -65,11 +73,16 @@ export function InfoModal({ isOpen, onClose, info }: InfoModalProps) {
 
         {/* Body */}
         <div className="p-5 overflow-y-auto max-h-[60vh]">
-          <div className="text-gray-700 leading-relaxed">{info.content}</div>
+          <div className="text-gray-700 leading-relaxed">{displayContent}</div>
         </div>
 
-        {/* Footer */}
+        {/* Footer with sources */}
         <div className="p-4 border-t border-gray-200 bg-gray-50">
+          {sources && (
+            <p className="text-sm text-gray-600 mb-3">
+              {sources}
+            </p>
+          )}
           <button
             onClick={onClose}
             className="w-full py-3 px-4 bg-yellow-400 hover:bg-yellow-500 text-gray-800 font-semibold rounded-lg transition-colors"
