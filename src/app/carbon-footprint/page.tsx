@@ -5,11 +5,15 @@ import Link from 'next/link';
 import { BurgerMenu } from '@/components/BurgerMenu';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
+import { InfoButton } from '@/components/InfoButton';
+import { InfoModal } from '@/components/InfoModal';
+import { getEcologicalInfo } from '@/data/questionInfoData';
 import { ProductRanking } from '@/types/economic';
 
 export default function CarbonFootprintPage() {
   const [ranking, setRanking] = useState<ProductRanking | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [selectedInfo, setSelectedInfo] = useState<'manufacturing' | 'payback' | 'lifecycle' | null>(null);
 
   useEffect(() => {
     // Ranking data is stored in sessionStorage
@@ -93,7 +97,10 @@ export default function CarbonFootprintPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
             {/* Manufacturing CO2 Section */}
             <div className="bg-gradient-to-br from-orange-50 to-orange-100 border border-orange-200 rounded-lg p-6">
-              <h2 className="text-heading-2 font-bold text-orange-900 mb-4" style={{ fontSize: '1.875rem', lineHeight: '1.2' }}>Herstellung</h2>
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-heading-2 font-bold text-orange-900" style={{ fontSize: '1.875rem', lineHeight: '1.2' }}>Herstellung</h2>
+                <InfoButton onClick={() => setSelectedInfo('manufacturing')} />
+              </div>
               <div className="space-y-4">
                 <div className="flex justify-between items-center p-3 bg-white rounded-lg shadow-md">
                   <span className="text-body-sm text-gray-700 font-bold">CO₂-Emissionen</span>
@@ -130,7 +137,10 @@ export default function CarbonFootprintPage() {
                 ? 'from-yellow-50 to-yellow-100 border-yellow-200'
                 : 'from-orange-50 to-orange-100 border-orange-200'
             }`}>
-              <h2 className="text-heading-2 font-bold mb-4" style={{ fontSize: '1.875rem', lineHeight: '1.2' }}>CO₂-Amortisation</h2>
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-heading-2 font-bold" style={{ fontSize: '1.875rem', lineHeight: '1.2' }}>CO₂-Amortisation</h2>
+                <InfoButton onClick={() => setSelectedInfo('payback')} />
+              </div>
               <div className="space-y-4">
                 <div className={`flex justify-between items-center p-4 rounded-lg shadow-md font-semibold text-white ${
                   getPaybackColor(ecological.paybackPeriodYears).includes('green')
@@ -158,7 +168,10 @@ export default function CarbonFootprintPage() {
 
           {/* Lifecycle Section */}
           <div className="bg-gradient-to-br from-green-50 to-green-100 border border-green-200 rounded-lg p-6 mb-8">
-            <h2 className="font-bold text-green-900 mb-4" style={{ fontSize: '1.875rem', lineHeight: '1.2' }}>Lebenszyklusanalyse</h2>
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="font-bold text-green-900" style={{ fontSize: '1.875rem', lineHeight: '1.2' }}>Lebenszyklusanalyse</h2>
+              <InfoButton onClick={() => setSelectedInfo('lifecycle')} />
+            </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="bg-white rounded-lg p-4 shadow-md">
                 <p className="text-body-sm text-gray-600 font-bold mb-2">CO₂-Bilanz über die Garantiezeit von {product.warrantyYears} Jahren:</p>
@@ -248,6 +261,16 @@ export default function CarbonFootprintPage() {
           </div>
         </Card>
       </div>
+
+      {/* Info Modal */}
+      {selectedInfo && (
+        <InfoModal
+          title={getEcologicalInfo(selectedInfo)?.title ?? ''}
+          content={getEcologicalInfo(selectedInfo)?.content ?? ''}
+          sources={getEcologicalInfo(selectedInfo)?.sources}
+          onClose={() => setSelectedInfo(null)}
+        />
+      )}
     </div>
   );
 }

@@ -267,7 +267,86 @@ export const questionInfoData: QuestionInfo[] = [
   },
 ];
 
+// Info content for ecological/CO2 sections on carbon-footprint page
+export interface EcologicalInfo {
+  id: string;
+  title: string;
+  content: ReactNode;
+  sources?: string;
+}
+
+export const ecologicalInfoData: EcologicalInfo[] = [
+  {
+    id: 'manufacturing',
+    title: 'CO₂-Emissionen bei der Herstellung',
+    content: (
+      <div className="space-y-3">
+        <p>
+          Die Herstellung eines Balkonkraftwerks verursacht <strong>CO₂-Emissionen</strong> durch:
+        </p>
+        <ul className="list-disc list-inside space-y-1 text-sm">
+          <li><strong>Rohstoffgewinnung:</strong> Bergbau und Aufbereitung von Silizium und Metallen (~60%)</li>
+          <li><strong>Produktion:</strong> Fabrikprozesse zur Herstellung von Modulen, Inverter und Komponenten (~35%)</li>
+          <li><strong>Transport:</strong> Versand vom Herstellungsort bis nach Deutschland (~5%)</li>
+        </ul>
+        <p className="text-sm text-gray-700 mt-3">
+          Der Ort der Herstellung ist wichtig: Produkte aus Deutschland oder Europa haben einen geringeren 
+          Transportfußabdruck als solche aus Asien oder China.
+        </p>
+      </div>
+    ),
+    sources: 'Quellen: Fraunhofer ISE, PVGIS, Datenbank ecoinvent',
+  },
+  {
+    id: 'payback',
+    title: 'Was ist CO₂-Amortisation?',
+    content: (
+      <div className="space-y-3">
+        <p>
+          Die <strong>CO₂-Amortisationszeit</strong> ist die Zeitspanne, in der dein Balkonkraftwerk 
+          durch die Stromerzeugung genau so viel CO₂ einspart, wie bei der Herstellung ausgestoßen wurde.
+        </p>
+        <p className="text-sm">
+          <strong>Beispiel:</strong> Ein Produkt mit 200 kg Herstellungs-CO₂ und 464 kg/Jahr CO₂-Einsparung 
+          amortisiert sich in: 200 ÷ 464 = <strong>0,43 Jahren</strong> (ca. 5 Monate).
+        </p>
+        <p className="text-sm text-gray-700">
+          Nach dieser Zeit ist das System CO₂-positiv: Jeder weitere Tag erzeugt eine &quot;Guthaben&quot; statt Schulden.
+        </p>
+      </div>
+    ),
+    sources: 'Berechnung basierend auf: Herstellungs-CO₂ ÷ jährliche CO₂-Einsparung',
+  },
+  {
+    id: 'lifecycle',
+    title: 'Lebenszyklusanalyse (LCA)',
+    content: (
+      <div className="space-y-3">
+        <p>
+          Die <strong>Lebenszyklusanalyse</strong> zeigt die gesamte CO₂-Bilanz über die Garantiezeit:
+        </p>
+        <p className="text-sm">
+          <strong>Berechnung:</strong> CO₂-Einsparung über X Jahre = (jährliche Einsparung) × (Anzahl Jahre) - (Herstellungs-CO₂)
+        </p>
+        <p className="text-sm">
+          <strong>Beispiel (10 Jahre):</strong> (464 kg/Jahr × 10) - 200 kg = 4.440 kg CO₂ Gesamteinsparung
+        </p>
+        <p className="text-sm text-gray-700">
+          Ein negativer Wert (z.B. -150 kg) würde bedeuten, dass das System seine Schulden noch nicht amortisiert hat. 
+          Ein positiver Wert zeigt die geleistete Umweltarbeit.
+        </p>
+      </div>
+    ),
+    sources: 'Quelle: Produktgarantie und PVGIS-Ertragsdaten',
+  },
+];
+
 // Helper function to get info for a specific question
 export function getQuestionInfo(questionId: number): QuestionInfo | undefined {
   return questionInfoData.find((info) => info.questionId === questionId);
+}
+
+// Helper function to get eco info
+export function getEcologicalInfo(id: string): EcologicalInfo | undefined {
+  return ecologicalInfoData.find((info) => info.id === id);
 }
