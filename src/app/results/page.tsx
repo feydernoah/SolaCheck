@@ -500,16 +500,34 @@ export default function ResultsPage() {
                 >
                   Neues Quiz starten
                 </Button>
+                <Button
+                  variant="secondary"
+                  size="lg"
+                  className="px-12"
+                  onClick={() => router.push('/quiz')}
+                >
+                  Zurück zum Quiz
+                </Button>
               </>
             ) : (
-              <Button
-                variant="primary"
-                size="lg"
-                className="px-12"
-                onClick={handleNewQuiz}
-              >
-                Zur Startseite
-              </Button>
+              <>
+                <Button
+                  variant="primary"
+                  size="lg"
+                  className="px-12"
+                  onClick={handleNewQuiz}
+                >
+                  Zur Startseite
+                </Button>
+                <Button
+                  variant="secondary"
+                  size="lg"
+                  className="px-12"
+                  onClick={() => router.push('/quiz')}
+                >
+                  Zurück zum Quiz
+                </Button>
+              </>
             )}
           </div>
 
