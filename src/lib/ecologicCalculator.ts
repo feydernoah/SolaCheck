@@ -189,39 +189,43 @@ function calculateTotalManufacturingCo2(
 /**
  * Calculate CO2 payback period (time until production offsets manufacturing emissions)
  *
- * IMPORTANT: The annual yield (and thus CO₂ savings) must be the AC-limited value
- * as determined by the economic calculator, in compliance with the legal 800 W AC cap.
+ * IMPORTANT: Based on actual annual CO2 savings (kg/year), not economic amortization.
+ * 
+ * Formula: CO2 payback [years] = Manufacturing CO2 [kg] / Annual CO2 Savings [kg/year]
+ * 
+ * This is the physically and ecologically correct metric:
+ * - If a product has 200 kg manufacturing CO2 and saves 464 kg/year,
+ *   then CO2 is amortized in: 200 / 464 = 0.43 years
  */
 function calculateCo2PaybackPeriod(
   manufacturingCo2Kg: number,
-  annualYieldKwh: number
+  annualCo2SavingsKg: number
 ): number {
-  // Annual CO2 savings from produced electricity (using grid CO2 intensity)
-  // This must use the AC-limited annual yield (see LEGAL_AC_LIMIT_W)
-  const annualCo2SavingsKg = (annualYieldKwh * GRID_CO2_GRAMS_PER_KWH) / 1000;
-  if (annualCo2SavingsKg <= 0) return Infinity;
-  // Years until manufacturing CO2 is offset
+  // Avoid division by zero
+  if (annualCo2SavingsKg <= 0) {
+    return Infinity;
+  }
   return manufacturingCo2Kg / annualCo2SavingsKg;
 }
 
 /**
  * Calculate lifecycle CO2 emissions
  *
- * IMPORTANT: The annual yield (and thus CO₂ savings) must be the AC-limited value
- * as determined by the economic calculator, in compliance with the legal 800 W AC cap.
+ * IMPORTANT: Uses actual annual CO2 savings from economics, not derived values.
+ * This ensures consistency: lifecycle CO2 is based on the real yield and self-consumption rates.
  */
 function calculateLifecycleCo2(
   manufacturingCo2Kg: number,
-  annualYieldKwh: number,
+  annualCo2SavingsKg: number,
   lifetimeYears: number = PRODUCT_LIFETIME_YEARS
 ): number {
   // Manufacturing emissions (one-time)
   let lifecycleEmissions = manufacturingCo2Kg;
+  
   // Operational CO2 (avoided through production)
-  // Negative impact = CO2 saved
-  // This must use the AC-limited annual yield (see LEGAL_AC_LIMIT_W)
-  const annualCo2SavingsKg = (annualYieldKwh * GRID_CO2_GRAMS_PER_KWH) / 1000;
+  // Uses the actual annual CO2 savings from economic calculation
   const totalOperationalSavingsKg = annualCo2SavingsKg * lifetimeYears;
+  
   // Net lifecycle emissions = manufacturing CO2 minus operational savings
   // Negative value = net CO2 savings (environmental benefit)
   lifecycleEmissions = manufacturingCo2Kg - totalOperationalSavingsKg;
@@ -358,8 +362,11 @@ function generateEcologicalWarnings(
 /**
  * Calculate complete ecological impact for a BKW product
  * 
- * IMPORTANT: CO2 amortisation and lifecycle calculations are based on warranty years,
- * not the default 25-year product lifetime.
+ * IMPORTANT: All calculations use actual annual CO2 savings from economics.
+ * This ensures consistency:
+ * - CO2 payback = manufacturingCo2Kg / co2SavingsKgPerYear
+ * - Lifecycle CO2 = manufacturingCo2Kg - (co2SavingsKgPerYear * lifespan)
+ * - All values are derived from the same base (real annual yield)
  */
 export function calculateProductEcological(
   product: BKWProduct,
@@ -369,20 +376,20 @@ export function calculateProductEcological(
   const manufacturingCo2Data = calculateTotalManufacturingCo2(product);
   const manufacturingCo2Kg = manufacturingCo2Data.total;
 
-  // Use warranty years for CO2 calculations (not fixed 25 years)
+  // Use warranty years for lifecycle (not fixed 25 years)
   const lifespan = product.warrantyYears;
 
-  // Calculate CO2 payback period
+  // Calculate CO2 payback period using actual annual CO2 savings
+  // This is the physically correct metric: time until CO2 savings equal manufacturing emissions
   const co2PaybackYears = calculateCo2PaybackPeriod(
     manufacturingCo2Kg,
-    economics.annualYieldKwh
+    economics.co2SavingsKgPerYear
   );
 
-  // Calculate lifecycle CO2 (operational savings minus manufacturing)
-  // Uses warranty years as the lifespan for calculation
+  // Calculate lifecycle CO2 using actual annual CO2 savings from economics
   const lifecycleEmissionsKg = calculateLifecycleCo2(
     manufacturingCo2Kg,
-    economics.annualYieldKwh,
+    economics.co2SavingsKgPerYear,
     lifespan
   );
 
