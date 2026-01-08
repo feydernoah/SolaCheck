@@ -61,8 +61,7 @@ const questions: Question[] = [
       { value: '35-49', label: '35–49 Jahre' },
       { value: '50-64', label: '50–64 Jahre' },
       { value: '65+', label: '65+ Jahre' },
-    ],
-  },
+    ],},
   {
     id: 2,
     category: 'Über dich & deine Wohnsituation',
