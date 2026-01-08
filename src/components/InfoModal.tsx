@@ -3,6 +3,8 @@
 import { useEffect, useCallback } from "react";
 import { MdClose } from "react-icons/md";
 import { QuestionInfo } from "@/data/questionInfoData";
+import { useRouter } from "next/navigation";
+
 
 interface InfoModalProps {
   isOpen: boolean;
@@ -10,7 +12,8 @@ interface InfoModalProps {
   info: QuestionInfo | undefined;
 }
 
-export function InfoModal({ isOpen, onClose, info }: InfoModalProps) {
+export function InfoModal({ isOpen, onClose, info}: InfoModalProps) {
+  const router = useRouter();
   // Close on Escape key
   const handleKeyDown = useCallback(
     (e: KeyboardEvent) => {
@@ -69,14 +72,26 @@ export function InfoModal({ isOpen, onClose, info }: InfoModalProps) {
         </div>
 
         {/* Footer */}
-        <div className="p-4 border-t border-gray-200 bg-gray-50">
-          <button
-            onClick={onClose}
-            className="w-full py-3 px-4 bg-yellow-400 hover:bg-yellow-500 text-gray-800 font-semibold rounded-lg transition-colors"
-          >
-            Verstanden
-          </button>
-        </div>
+     <div className="p-4 border-t border-gray-200 bg-gray-50">
+  <button
+    type="button"
+    onClick={() => {
+      onClose();
+      router.push("/info-page");
+    }}
+    className="w-full mb-3 text-sm font-medium text-blue-700 hover:underline"
+  >
+    Für mehr Infos klicke hier.
+  </button>
+
+  <button
+    onClick={onClose}
+    className="w-full py-3 px-4 bg-yellow-400 hover:bg-yellow-500 text-gray-800 font-semibold rounded-lg transition-colors"
+  >
+    Verstanden
+  </button>
+</div>
+
       </div>
     </div>
   );
