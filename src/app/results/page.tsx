@@ -63,12 +63,6 @@ export default function ResultsPage() {
   // Show error only if user has typed something and it's invalid
   const showEmailError = emailInput.length > 0 && !isEmailValid;
 
-  // Email validation regex
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  const isEmailValid = emailRegex.test(emailInput);
-  // Show error only if user has typed something and it's invalid
-  const showEmailError = emailInput.length > 0 && !isEmailValid;
-
   useEffect(() => { initEmailJS(); }, []);
 
   useEffect(() => {

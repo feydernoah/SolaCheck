@@ -1,18 +1,15 @@
 "use client";
 
-import { useEffect, useCallback, ReactNode } from "react";
+import { useEffect, useCallback } from "react";
 import { MdClose } from "react-icons/md";
 import { QuestionInfo } from "@/data/questionInfoData";
 import { useRouter } from "next/navigation";
 
 
 interface InfoModalProps {
-  isOpen?: boolean;
+  isOpen: boolean;
   onClose: () => void;
-  info?: QuestionInfo | undefined;
-  title?: string;
-  content?: ReactNode;
-  sources?: string;
+  info: QuestionInfo | undefined;
 }
 
 export function InfoModal({ isOpen, onClose, info}: InfoModalProps) {
@@ -28,7 +25,7 @@ export function InfoModal({ isOpen, onClose, info}: InfoModalProps) {
   );
 
   useEffect(() => {
-    if (shouldBeOpen) {
+    if (isOpen) {
       document.addEventListener("keydown", handleKeyDown);
       // Prevent body scroll when modal is open
       document.body.style.overflow = "hidden";
@@ -37,9 +34,9 @@ export function InfoModal({ isOpen, onClose, info}: InfoModalProps) {
       document.removeEventListener("keydown", handleKeyDown);
       document.body.style.overflow = "unset";
     };
-  }, [shouldBeOpen, handleKeyDown]);
+  }, [isOpen, handleKeyDown]);
 
-  if (!shouldBeOpen) return null;
+  if (!isOpen || !info) return null;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
@@ -58,7 +55,7 @@ export function InfoModal({ isOpen, onClose, info}: InfoModalProps) {
             <div className="w-10 h-10 rounded-full bg-yellow-400 flex items-center justify-center">
               <span className="text-xl font-bold text-white">?</span>
             </div>
-            <h2 className="text-lg font-bold text-gray-800 pr-8">{displayTitle}</h2>
+            <h2 className="text-lg font-bold text-gray-800 pr-8">{info.title}</h2>
           </div>
           <button
             onClick={onClose}
@@ -71,7 +68,7 @@ export function InfoModal({ isOpen, onClose, info}: InfoModalProps) {
 
         {/* Body */}
         <div className="p-5 overflow-y-auto max-h-[60vh]">
-          <div className="text-gray-700 leading-relaxed">{displayContent}</div>
+          <div className="text-gray-700 leading-relaxed">{info.content}</div>
         </div>
 
         {/* Footer */}
