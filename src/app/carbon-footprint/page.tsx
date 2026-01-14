@@ -270,9 +270,8 @@ export default function CarbonFootprintPage() {
       {/* Info Modal */}
       {selectedInfo && (
         <InfoModal
-          title={getEcologicalInfo(selectedInfo)?.title ?? ''}
-          content={getEcologicalInfo(selectedInfo)?.content ?? ''}
-          sources={getEcologicalInfo(selectedInfo)?.sources}
+          isOpen={!!selectedInfo}
+          info={getEcologicalInfo(selectedInfo)}
           onClose={() => setSelectedInfo(null)}
         />
       )}
