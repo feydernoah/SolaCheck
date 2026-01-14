@@ -311,7 +311,7 @@ export const ecologicalInfoData: EcologicalInfo[] = [
           amortisiert sich in: 200 ÷ 464 = <strong>0,43 Jahren</strong> (ca. 5 Monate).
         </p>
         <p className="text-sm text-gray-700">
-          Nach dieser Zeit ist das System CO₂-positiv: Jeder weitere Tag erzeugt eine &quot;Guthaben&quot; statt Schulden.
+          Nach dieser Zeit ist das System CO₂-positiv: Jeder weitere Tag erzeugt ein &quot;Guthaben&quot; anstatt Schulden.
         </p>
       </div>
     ),
@@ -332,8 +332,8 @@ export const ecologicalInfoData: EcologicalInfo[] = [
           <strong>Beispiel (10 Jahre):</strong> (464 kg/Jahr × 10) - 200 kg = 4.440 kg CO₂ Gesamteinsparung
         </p>
         <p className="text-sm text-gray-700">
-          Ein negativer Wert (z.B. -150 kg) würde bedeuten, dass das System seine Schulden noch nicht amortisiert hat. 
-          Ein positiver Wert zeigt die geleistete Umweltarbeit.
+          Ein negativer Wert (z.B. -150 kg) würde bedeuten, dass das System seine ökologischen Schulden noch nicht amortisiert hat. 
+          Ein positiver Wert zeigt die Gesamteinsparung an CO₂.
         </p>
       </div>
     ),
