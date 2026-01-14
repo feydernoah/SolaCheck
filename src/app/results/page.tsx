@@ -385,7 +385,7 @@ export default function ResultsPage() {
                   <div className="text-2xl">💡</div>
                   <div>
                     <h3 className="text-heading-3 font-bold text-gray-800 mb-2">
-                      Noch Fragen?
+                      Übrigens..
                     </h3>
                     <p className="text-body text-gray-700">
                       Alle gezeigten Modelle sind nach bester CO₂-Bilanz sortiert. 
@@ -500,7 +500,7 @@ export default function ResultsPage() {
                   className="px-12"
                   onClick={() => router.push('/quiz')}
                 >
-                  Zurück zum Quiz
+                  Zurück zu deinem Quiz
                 </Button>
               </>
             ) : (
