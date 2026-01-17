@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { BurgerMenu } from '@/components/BurgerMenu';
+import { useResetConfirmation } from '@/components/ResetConfirmDialog';
 import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
 import { LoadingScreen } from '@/components/LoadingScreen';
@@ -41,7 +42,8 @@ function extractCoordinatesFromAnswers(answers: Record<number, string | string[]
 
 export default function ResultsPage() {
   const router = useRouter();
-  const { answers, resetWithConfirmation, isLoaded } = useQuizProgress();
+  const { answers, isLoaded } = useQuizProgress();
+  const { confirmAndReset } = useResetConfirmation();
   const { fetchSolarData, getSolarDataFromCookie } = useSolarData();
   const [recommendation, setRecommendation] = useState<RecommendationResponse | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -126,9 +128,7 @@ export default function ResultsPage() {
   }, [answers, router, isLoaded, hasFetched, fetchSolarData, getSolarDataFromCookie]);
 
   const handleNewQuiz = () => {
-    if (resetWithConfirmation()) {
-      router.push('/');
-    }
+    confirmAndReset({ navigateTo: '/' });
   };
 
   const handleSendEmail = async () => {
@@ -215,7 +215,7 @@ export default function ResultsPage() {
   return (
     <div className="min-h-screen bg-white relative overflow-hidden">
       {/* Burger Menu */}
-      <BurgerMenu showHome showQuiz={false} onHomeClick={resetWithConfirmation} />
+      <BurgerMenu showHome showQuiz={false} confirmOnHome />
 
       {/* Main Content */}
       <div className="flex flex-col items-center justify-center min-h-screen px-4 py-8 md:py-16">

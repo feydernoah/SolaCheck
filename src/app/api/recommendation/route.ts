@@ -175,6 +175,7 @@ export async function POST(request: NextRequest): Promise<NextResponse<Recommend
             estimatedAnnualConsumptionKwh: 0,
             co2PerKwhGrams: 0,
             usedPvgisData: false,
+            usedUserProvidedConsumption: false,
           },
           quizSummary: {
             location: '',
@@ -231,6 +232,7 @@ export async function POST(request: NextRequest): Promise<NextResponse<Recommend
           estimatedAnnualConsumptionKwh: 0,
           co2PerKwhGrams: 0,
           usedPvgisData: false,
+          usedUserProvidedConsumption: false,
         },
         quizSummary: {
           location: '',

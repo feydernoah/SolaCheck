@@ -84,9 +84,9 @@ test.describe('Burger Menu - Home Reset', () => {
 
     // Use expect.poll to wait for dialog to be processed
     await expect.poll(() => dialogMessage, {
-      message: 'Dialog should contain Quiz and Fortschritt',
+      message: 'Dialog should contain Startseite and Fortschritt',
       timeout: 5000,
-    }).toContain('Quiz');
+    }).toContain('Startseite');
     
     expect(dialogMessage).toContain('Fortschritt');
   });

@@ -9,6 +9,8 @@ import { BurgerMenu } from "@/components/BurgerMenu";
 import { InfoButton } from "@/components/InfoButton";
 import { InfoModal } from "@/components/InfoModal";
 import { AddressInput } from "@/components/AddressInput";
+import { NumberInput } from "@/components/NumberInput";
+import { CompassSelector } from "@/components/CompassSelector";
 import { useQuizProgress } from "@/hooks/useQuizProgress";
 import { getQuestionInfo } from "@/data/questionInfoData";
 import { 
@@ -29,7 +31,7 @@ interface Question {
   id: number;
   category: string;
   question: string;
-  type: 'tile' | 'button' | 'text' | 'multiselect' | 'slider';
+  type: 'tile' | 'button' | 'text' | 'number' | 'multiselect' | 'slider' | 'compass';
   options?: QuestionOption[];
   infoHint?: string;
   placeholder?: string;
@@ -133,17 +135,8 @@ const questions: Question[] = [
     id: 7,
     category: 'Balkon & Installationsort',
     question: 'In welche Richtung zeigt dein Balkon bzw. der geplante Montageort?',
-    type: 'button',
-    options: [
-      { value: 'sueden', label: 'Süden' },
-      { value: 'suedost', label: 'Südost' },
-      { value: 'suedwest', label: 'Südwest' },
-      { value: 'westen', label: 'Westen' },
-      { value: 'osten', label: 'Osten' },
-      { value: 'norden', label: 'Norden' },
-      { value: 'weiss-nicht', label: 'Weiß ich nicht' },
-    ],
-    infoHint: 'Du kannst die Himmelsrichtung z. B. mit dem Kompass am Smartphone herausfinden. Eine grobe Angabe ist vollkommen ausreichend: Sonne morgens = eher Osten, Sonne nachmittags/abends = eher Westen, Sonne mittags = eher Süden.',
+    type: 'compass',
+    infoHint: 'Klicke auf die Himmelsrichtung im Kompass. Die Farben zeigen dir, wie gut die jeweilige Ausrichtung für Solarertrag ist. Süden ist optimal!',
     dependencies: [
       {
         questionId: 6,
@@ -217,6 +210,15 @@ const questions: Question[] = [
       { value: 'sonstige', label: 'Sonstige starke Verbraucher' },
     ],
     infoHint: 'Diese Info hilft uns nur grob einzuschätzen, wie hoch dein Stromverbrauch tagsüber ist. Du musst nichts exakt ausrechnen, eine ehrliche Einschätzung reicht.',
+  },
+  {
+    id: 13,
+    category: 'Geräte & Nutzungsmuster',
+    question: 'Kennst du deinen jährlichen Stromverbrauch?',
+    type: 'number',
+    placeholder: 'z.B. 2500',
+    unit: 'kWh/Jahr',
+    infoHint: 'Du findest deinen Jahresverbrauch auf der Stromrechnung oder im Kundenportal deines Anbieters. Wenn du ihn nicht kennst, überspringe diese Frage einfach – wir schätzen dann anhand deiner Haushaltsgröße.',
   },
 
   // Kategorie 4: Budget & Investitionsbereitschaft
@@ -317,8 +319,7 @@ export default function Home() {
     currentQuestion, 
     answers, 
     setCurrentQuestion, 
-    updateAnswer, 
-    resetWithConfirmation,
+    updateAnswer,
   } = useQuizProgress();
 
   // Safety fallback: ensure currentQuestion is always within valid bounds
@@ -391,6 +392,10 @@ export default function Home() {
     if (currentQ.type === 'slider') {
       return true;
     }
+    // For number type (electricity consumption), it's optional so always allow proceeding
+    if (currentQ.type === 'number') {
+      return true;
+    }
     return !!currentAnswer;
   };
 
@@ -399,7 +404,7 @@ export default function Home() {
       {/* Burger Menu and Info Button */}
       <div className="fixed top-4 right-4 sm:top-5 sm:right-5 md:top-6 md:right-6 z-40 flex items-center gap-4">
         <InfoButton onClick={() => setIsInfoModalOpen(true)} />
-        <BurgerMenu showHome showQuiz={false} onHomeClick={resetWithConfirmation} inline />
+        <BurgerMenu showHome showQuiz={false} confirmOnHome inline />
       </div>
 
       {/* Info Modal */}
@@ -496,16 +501,14 @@ export default function Home() {
                       onValidationChange={setIsAddressValid}
                     />
                   ) : (
-                    /* Normaler Text/Number Input für andere Fragen */
+                    /* Normaler Text Input für andere Fragen */
                     <div className="max-w-md">
                       <div className="flex items-center gap-2">
                         <input
-                          type={currentQ.unit ? 'number' : 'text'}
+                          type="text"
                           value={currentTextAnswer}
                           onChange={(e) => handleTextAnswer(e.target.value)}
                           placeholder={currentQ.placeholder}
-                          step={currentQ.unit === '€/kWh' ? '0.01' : '1'}
-                          min="0"
                           className="flex-1 p-4 border-2 border-gray-200 rounded-lg focus:border-yellow-400 focus:outline-none transition-colors text-lg"
                         />
                         {currentQ.unit && (
@@ -515,6 +518,27 @@ export default function Home() {
                     </div>
                   )}
                 </>
+              )}
+
+              {/* Number Input Type (optional, can be skipped) */}
+              {currentQ.type === 'number' && (
+                <NumberInput
+                  value={currentTextAnswer}
+                  onChange={handleTextAnswer}
+                  placeholder={currentQ.placeholder}
+                  unit={currentQ.unit}
+                  min={0}
+                  optional={true}
+                />
+              )}
+
+              {/* Compass Selector Type */}
+              {currentQ.type === 'compass' && (
+                <CompassSelector
+                  value={currentTextAnswer}
+                  onChange={handleAnswer}
+                  showUnknownOption={true}
+                />
               )}
 
               {/* Multiselect Type */}
