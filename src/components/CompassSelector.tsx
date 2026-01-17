@@ -156,13 +156,6 @@ export function CompassSelector({
                   onMouseLeave={() => setHoveredDirection(null)}
                   role="button"
                   aria-label={direction.fullLabel}
-                  tabIndex={0}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter' || e.key === ' ') {
-                      e.preventDefault();
-                      onChange(direction.value);
-                    }
-                  }}
                 />
                 
                 {/* Direction label */}

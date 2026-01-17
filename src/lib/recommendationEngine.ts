@@ -139,7 +139,9 @@ function generateWarnings(
   
   // Low consumption warning (500-1500 kWh range)
   if (annualConsumption < 1500 && annualConsumption >= 500) {
-    const selfConsumptionPercent = Math.round((economics.selfConsumptionKwh / economics.annualYieldKwh) * 100);
+    const selfConsumptionPercent = economics.annualYieldKwh > 0
+      ? Math.round((economics.selfConsumptionKwh / economics.annualYieldKwh) * 100)
+      : 0;
     warnings.push(`Niedriger Verbrauch (${String(annualConsumption)} kWh/Jahr) - nur ${String(selfConsumptionPercent)}% Eigenverbrauch möglich`);
   }
   
@@ -192,12 +194,14 @@ function determineRecommendation(
   }
   
   // Check self-consumption ratio - if less than 20% of yield is self-consumed, warn
-  const selfConsumptionRatio = bestProduct.economics.selfConsumptionKwh / bestProduct.economics.annualYieldKwh;
-  if (selfConsumptionRatio < 0.20) {
-    return {
-      isRecommended: false,
-      reason: `Bei deinem Verbrauchsprofil würdest du nur etwa ${String(Math.round(selfConsumptionRatio * 100))}% des erzeugten Stroms selbst nutzen können. Der Rest würde zu niedrigen Tarifen eingespeist. Ein Balkonkraftwerk lohnt sich wirtschaftlich erst bei höherem Eigenverbrauch.`,
-    };
+  if (bestProduct.economics.annualYieldKwh > 0) {
+    const selfConsumptionRatio = bestProduct.economics.selfConsumptionKwh / bestProduct.economics.annualYieldKwh;
+    if (selfConsumptionRatio < 0.20) {
+      return {
+        isRecommended: false,
+        reason: `Bei deinem Verbrauchsprofil würdest du nur etwa ${String(Math.round(selfConsumptionRatio * 100))}% des erzeugten Stroms selbst nutzen können. Der Rest würde zu niedrigen Tarifen eingespeist. Ein Balkonkraftwerk lohnt sich wirtschaftlich erst bei höherem Eigenverbrauch.`,
+      };
+    }
   }
 
   // Good conditions - recommend!
