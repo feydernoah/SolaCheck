@@ -103,7 +103,7 @@ export function getSelfConsumptionRate(
  */
 export function getAnnualConsumption(
   householdSize: string | undefined,
-  userProvidedConsumption?: string | undefined
+  userProvidedConsumption?: string
 ): number {
   // If user provided their consumption, use it
   if (userProvidedConsumption) {

@@ -1,6 +1,5 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { BurgerMenu } from '@/components/BurgerMenu';
@@ -9,7 +8,6 @@ import { Button } from '@/components/ui/Button';
 import { ProductRanking } from '@/types/economic';
 
 export default function CarbonFootprintPage() {
-  const router = useRouter();
   const [ranking, setRanking] = useState<ProductRanking | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 

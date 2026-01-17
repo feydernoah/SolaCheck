@@ -23,6 +23,7 @@ interface BurgerMenuProps {
 export function BurgerMenu({ 
   showHome = true, 
   showQuiz = true,
+  // eslint-disable-next-line @typescript-eslint/no-deprecated
   onHomeClick,
   confirmOnHome = false,
   additionalItems = [],
