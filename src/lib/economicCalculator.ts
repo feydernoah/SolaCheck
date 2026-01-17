@@ -86,9 +86,11 @@ export function getSelfConsumptionRate(
   }
   
   // West/East orientation increases self-consumption (afternoon/morning generation)
-  // as per documentation notes
+  // as per documentation notes - these orientations align with typical usage patterns
   if (orientation === 'westen' || orientation === 'osten') {
     rate += 0.05; // +5% for better alignment with usage patterns
+  } else if (orientation === 'nordwest' || orientation === 'nordost') {
+    rate += 0.03; // +3% for partial alignment (has some east/west component)
   }
   
   // Cap at 75% - very high self-consumption is unrealistic
@@ -97,8 +99,21 @@ export function getSelfConsumptionRate(
 
 /**
  * Get estimated annual household consumption
+ * If user provides their own consumption value, use it; otherwise estimate from household size
  */
-export function getAnnualConsumption(householdSize: string | undefined): number {
+export function getAnnualConsumption(
+  householdSize: string | undefined,
+  userProvidedConsumption?: string | undefined
+): number {
+  // If user provided their consumption, use it
+  if (userProvidedConsumption) {
+    const parsed = parseInt(userProvidedConsumption, 10);
+    if (!isNaN(parsed) && parsed > 0) {
+      return parsed;
+    }
+  }
+  
+  // Fall back to household size estimate
   const size = (householdSize && householdSize in ANNUAL_CONSUMPTION_KWH)
     ? householdSize as HouseholdSize
     : '2';

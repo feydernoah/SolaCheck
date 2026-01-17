@@ -83,6 +83,8 @@ export const ORIENTATION_FACTORS: Record<Orientation, number> = {
   'suedwest': 0.95,   // 95%
   'westen': 0.80,     // 80% (doc says 85% but evening peak is lower)
   'osten': 0.80,      // 80%
+  'nordost': 0.65,    // 65% - between east and north
+  'nordwest': 0.65,   // 65% - between west and north
   'norden': 0.55,     // 55% (significantly reduced)
   'weiss-nicht': 0.85, // Assume average
 };
@@ -130,6 +132,8 @@ export const ORIENTATION_LABELS: Record<Orientation, string> = {
   'suedwest': 'Südwest',
   'westen': 'Westen',
   'osten': 'Osten',
+  'nordost': 'Nordost',
+  'nordwest': 'Nordwest',
   'norden': 'Norden',
   'weiss-nicht': 'Unbekannt',
 };

@@ -229,8 +229,8 @@ test.describe('Quiz Dependencies', () => {
     const q7Text = await getCurrentQuestionText(page);
     expect(q7Text).toContain('Richtung');
 
-    // Answer Q7 to continue
-    await page.locator('button').filter({ hasText: /Süden/i }).first().click();
+    // Answer Q7 to continue (compass selector uses role=button with aria-label)
+    await page.getByRole('button', { name: /Süden/i }).click();
     await page.getByRole('button', { name: 'Weiter' }).click();
 
     // Now Question 8 should be shown (balkon size)
@@ -259,8 +259,8 @@ test.describe('Quiz Dependencies', () => {
     let questionText = await getCurrentQuestionText(page);
     expect(questionText).toContain('Richtung');
 
-    // Answer Q7
-    await page.locator('button').filter({ hasText: /Süden/i }).first().click();
+    // Answer Q7 (compass selector uses role=button with aria-label)
+    await page.getByRole('button', { name: /Süden/i }).click();
     await page.getByRole('button', { name: 'Weiter' }).click();
 
     // Question 8 should be shown for Balkonboden (not in skip list)
@@ -293,8 +293,8 @@ test.describe('Quiz Dependencies', () => {
     let questionText = await getCurrentQuestionText(page);
     expect(questionText).toContain('Richtung');
 
-    // Answer Q7
-    await page.locator('button').filter({ hasText: /Süden/i }).first().click();
+    // Answer Q7 (compass selector uses role=button with aria-label)
+    await page.getByRole('button', { name: /Süden/i }).click();
     await page.getByRole('button', { name: 'Weiter' }).click();
 
     // Question 8 should be shown
@@ -374,7 +374,7 @@ test.describe('Quiz Dependencies', () => {
     // Q7: Direction should be shown (Q6 is Balkonbrüstung, not in ['flachdach', 'weiss-nicht'])
     let questionText = await getCurrentQuestionText(page);
     expect(questionText).toContain('Richtung');
-    await page.locator('button').filter({ hasText: /Süden/i }).first().click();
+    await page.getByRole('button', { name: /Süden/i }).click();
     await page.getByRole('button', { name: 'Weiter' }).click();
 
     // Q8: Balkon size should be shown (Q6 is not in ['hauswand', 'flachdach', 'weiss-nicht'])

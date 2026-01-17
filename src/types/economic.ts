@@ -43,6 +43,7 @@ export interface QuizAnswers {
   10?: string[]; // Appliances (multiselect)
   11?: string; // Budget
   12?: string; // CO2 importance
+  13?: string; // Yearly electricity consumption in kWh (optional, user-provided)
   // Location coordinates for PVGIS API
   coordinates?: Coordinates;
 }
@@ -103,6 +104,8 @@ export type Orientation =
   | 'westen'
   | 'osten'
   | 'norden'
+  | 'nordost'
+  | 'nordwest'
   | 'weiss-nicht';
 
 // Shading levels from quiz
@@ -153,6 +156,7 @@ export interface CalculationAssumptions {
   shadingFactor: number; // Yield reduction due to shading
   selfConsumptionRate: number; // Percentage of self-consumption
   estimatedAnnualConsumptionKwh: number; // Estimated household consumption
+  usedUserProvidedConsumption: boolean; // Whether user provided their own consumption value
   co2PerKwhGrams: number; // CO2 emissions per kWh from grid
   // PVGIS-based yield data
   pvgisYieldKwhPerKwp?: number; // Yield from PVGIS API (if available)

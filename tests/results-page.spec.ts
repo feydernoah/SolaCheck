@@ -169,7 +169,7 @@ test.describe('Results Page - Positive Recommendation', () => {
     
     // Handle the confirmation dialog
     page.on('dialog', async dialog => {
-      expect(dialog.message()).toContain('Möchtest du das Quiz wirklich zurücksetzen');
+      expect(dialog.message()).toContain('Möchtest du wirklich zur Startseite zurückkehren');
       await dialog.accept();
     });
     
@@ -238,7 +238,7 @@ test.describe('Results Page - Negative Recommendation', () => {
     
     // Handle the confirmation dialog
     page.on('dialog', async dialog => {
-      expect(dialog.message()).toContain('Möchtest du das Quiz wirklich zurücksetzen');
+      expect(dialog.message()).toContain('Möchtest du wirklich zur Startseite zurückkehren');
       await dialog.accept();
     });
     
