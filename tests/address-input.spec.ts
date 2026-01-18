@@ -396,7 +396,7 @@ test.describe('Address Input - Weiter Button Validation', () => {
     // Wait for Weiter to be enabled and click
     await expect(page.getByRole('button', { name: 'Weiter' })).toBeEnabled({ timeout: 10000 });
     const progressLocator = page.locator('div.flex.justify-end span').first();
-    const prevProgress = (await progressLocator.textContent()) || '';
+    const prevProgress = (await progressLocator.textContent()) ?? '';
     await page.getByRole('button', { name: 'Weiter' }).click();
     // Wait for progress indicator to update (robust against changed total question counts)
     await expect(progressLocator).not.toHaveText(prevProgress, { timeout: 5000 });
