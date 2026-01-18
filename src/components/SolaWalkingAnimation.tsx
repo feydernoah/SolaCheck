@@ -93,7 +93,7 @@ export function SolaWalkingAnimation({ onComplete, fromPage, toPage }: SolaWalki
 
       {/* Sola walking - starts from bottom left */}
       <div 
-        className="absolute bottom-1"
+        className="absolute bottom-1 pointer-events-none"
         style={{ 
           left: `${solaPosition.toString()}px`,
         }}

@@ -12,16 +12,7 @@ test.describe('Quiz Dependencies', () => {
   });
 
   /**
-   * Helper: Click age button (Question 1)
-   */
-  async function selectAge(page: Page) {
-    const ageButton = page.getByRole('button', { name: /Jahre/i }).first();
-    await ageButton.click();
-    await expect(page.getByRole('button', { name: 'Weiter' })).toBeEnabled();
-  }
-
-  /**
-   * Helper: Fill in address using autocomplete search (Question 2)
+   * Helper: Fill in address using autocomplete search (Question 1)
    */
   async function fillInAddress(page: Page) {
     // Type in the search box and select a suggestion
@@ -31,15 +22,17 @@ test.describe('Quiz Dependencies', () => {
     // Wait for suggestions and click the first one
     const suggestion = page.locator('button').filter({ hasText: /Berlin/i }).first();
     await expect(suggestion).toBeVisible({ timeout: 3000 });
-    await suggestion.click();
+    // Wait for element to stabilize before clicking
+    await page.waitForTimeout(500);
+    await suggestion.click({ force: true });
     
     // Wait for location to be selected (green success card)
     await expect(page.locator('.bg-green-50')).toBeVisible({ timeout: 5000 });
-    await expect(page.getByRole('button', { name: 'Weiter' })).toBeEnabled();
+    await expect(page.getByRole('button', { name: 'Weiter' })).toBeEnabled({ timeout: 5000 });
   }
 
   /**
-   * Helper: Click household size button (Question 3)
+   * Helper: Click household size button (Question 2)
    */
   async function selectHouseholdSize(page: Page, size = '2') {
     const button = page.getByRole('button', { name: new RegExp(`${size}.*Person`, 'i') });
@@ -48,7 +41,7 @@ test.describe('Quiz Dependencies', () => {
   }
 
   /**
-   * Helper: Select housing type with tile (Question 4)
+   * Helper: Select housing type with tile (Question 3)
    */
   async function selectHousingType(page: Page, type: 'mietwohnung' | 'eigentumswohnung' | 'einfamilienhaus' | 'reihenhaus') {
     const typeMap: Record<string, RegExp> = {
@@ -74,26 +67,24 @@ test.describe('Quiz Dependencies', () => {
   }
 
   // =======================
-  // TEST 1: Question 6 depends on Question 4
+  // TEST 1: Question 5 depends on Question 3
   // =======================
-  test('Question 6 - Exclude Flachdach option for renters (Mietwohnung)', async ({ page }) => {
-    // Navigate to question 6 by answering questions 1-5
-    await selectAge(page);
-    await page.getByRole('button', { name: 'Weiter' }).click();
-
-    // Question 2: Fill address
+  test('Question 5 - Exclude Flachdach option for renters (Mietwohnung)', async ({ page }) => {
+    // Navigate to question 5 by answering questions 1-4
+    
+    // Question 1: Fill address
     await fillInAddress(page);
     await page.getByRole('button', { name: 'Weiter' }).click();
 
-    // Question 3: Select household size
+    // Question 2: Select household size
     await selectHouseholdSize(page);
     await page.getByRole('button', { name: 'Weiter' }).click();
 
-    // Question 4: Select "Mietwohnung" (renter)
+    // Question 3: Select "Mietwohnung" (renter)
     await selectHousingType(page, 'mietwohnung');
     await page.getByRole('button', { name: 'Weiter' }).click();
 
-    // Question 5: Select apartment size - "Unter 40 m²"
+    // Question 4: Select apartment size - "Unter 40 m²"
     await page.getByRole('button', { name: /Unter 40/i }).click();
     await expect(page.getByRole('button', { name: 'Weiter' })).toBeEnabled();
     await page.getByRole('button', { name: 'Weiter' }).click();
@@ -109,26 +100,27 @@ test.describe('Quiz Dependencies', () => {
     await expect(page.locator('button').filter({ hasText: /Weiß ich noch nicht/i })).toBeVisible();
   });
 
-  test('Question 6 - Include Flachdach option for homeowners (Einfamilienhaus)', async ({ page }) => {
-    // Navigate to question 6 by answering questions 1-5
-    await selectAge(page);
-    await page.getByRole('button', { name: 'Weiter' }).click();
+  test('Question 5 - Include Flachdach option for homeowners (Einfamilienhaus)', async ({ page }) => {
+    // Navigate to question 5 by answering questions 1-4
 
+    // Question 1: Fill address
     await fillInAddress(page);
     await page.getByRole('button', { name: 'Weiter' }).click();
 
+    // Question 2: Select household size
     await selectHouseholdSize(page);
     await page.getByRole('button', { name: 'Weiter' }).click();
 
-    // Question 4: Select "Einfamilienhaus" (homeowner)
+    // Question 3: Select "Einfamilienhaus" (homeowner)
     await selectHousingType(page, 'einfamilienhaus');
     await page.getByRole('button', { name: 'Weiter' }).click();
 
+    // Question 4: Select apartment size
     await page.getByRole('button', { name: /Unter 40/i }).click();
     await expect(page.getByRole('button', { name: 'Weiter' })).toBeEnabled();
     await page.getByRole('button', { name: 'Weiter' }).click();
 
-    // Question 6: Verify "Flachdach" IS available for homeowners
+    // Question 5: Verify "Flachdach" IS available for homeowners
     const flachdachOption = page.locator('button').filter({ hasText: /Flachdach/i });
     await expect(flachdachOption).toBeVisible();
   });
@@ -138,8 +130,6 @@ test.describe('Quiz Dependencies', () => {
   // =======================
   test('Question 7 - Shown when Question 6 is Balkonbrüstung (not flachdach/weiss-nicht)', async ({ page }) => {
     // Navigate to question 6
-    await selectAge(page);
-    await page.getByRole('button', { name: 'Weiter' }).click();
     await fillInAddress(page);
     await page.getByRole('button', { name: 'Weiter' }).click();
     await selectHouseholdSize(page);
@@ -161,8 +151,6 @@ test.describe('Quiz Dependencies', () => {
 
   test('Question 7 - Hidden when Question 6 is Flachdach', async ({ page }) => {
     // Navigate to question 6
-    await selectAge(page);
-    await page.getByRole('button', { name: 'Weiter' }).click();
     await fillInAddress(page);
     await page.getByRole('button', { name: 'Weiter' }).click();
     await selectHouseholdSize(page);
@@ -184,8 +172,6 @@ test.describe('Quiz Dependencies', () => {
 
   test('Question 7 - Hidden when Question 6 is Weiß-ich-noch-nicht', async ({ page }) => {
     // Navigate to question 6
-    await selectAge(page);
-    await page.getByRole('button', { name: 'Weiter' }).click();
     await fillInAddress(page);
     await page.getByRole('button', { name: 'Weiter' }).click();
     await selectHouseholdSize(page);
@@ -210,8 +196,6 @@ test.describe('Quiz Dependencies', () => {
   // =======================
   test('Question 8 - Shown for Balkonbrüstung and Balkonboden', async ({ page }) => {
     // Navigate to question 6
-    await selectAge(page);
-    await page.getByRole('button', { name: 'Weiter' }).click();
     await fillInAddress(page);
     await page.getByRole('button', { name: 'Weiter' }).click();
     await selectHouseholdSize(page);
@@ -240,8 +224,6 @@ test.describe('Quiz Dependencies', () => {
 
   test('Question 8 - Hidden for Hauswand (shown for other install locations)', async ({ page }) => {
     // Navigate to question 6
-    await selectAge(page);
-    await page.getByRole('button', { name: 'Weiter' }).click();
     await fillInAddress(page);
     await page.getByRole('button', { name: 'Weiter' }).click();
     await selectHouseholdSize(page);
@@ -274,8 +256,6 @@ test.describe('Quiz Dependencies', () => {
   // =======================
   test('Question 9 - Shown when Question 6 is "Balkonbrüstung" (not weiss-nicht)', async ({ page }) => {
     // Navigate to question 6
-    await selectAge(page);
-    await page.getByRole('button', { name: 'Weiter' }).click();
     await fillInAddress(page);
     await page.getByRole('button', { name: 'Weiter' }).click();
     await selectHouseholdSize(page);
@@ -312,8 +292,6 @@ test.describe('Quiz Dependencies', () => {
 
   test('Question 9 - Hidden when Question 6 is "Weiß-ich-noch-nicht"', async ({ page }) => {
     // Navigate to question 6
-    await selectAge(page);
-    await page.getByRole('button', { name: 'Weiter' }).click();
     await fillInAddress(page);
     await page.getByRole('button', { name: 'Weiter' }).click();
     await selectHouseholdSize(page);
@@ -347,19 +325,15 @@ test.describe('Quiz Dependencies', () => {
   // TEST 5: Complete flow with all dependencies
   // =======================
   test('Complete quiz flow with dependency chain', async ({ page }) => {
-    // Q1: Age
-    await selectAge(page);
-    await page.getByRole('button', { name: 'Weiter' }).click();
-
-    // Q2: Address
+    // Q1: Address
     await fillInAddress(page);
     await page.getByRole('button', { name: 'Weiter' }).click();
 
-    // Q3: Household size
+    // Q2: Household size
     await selectHouseholdSize(page);
     await page.getByRole('button', { name: 'Weiter' }).click();
 
-    // Q4: Housing type
+    // Q3: Housing type
     await selectHousingType(page, 'einfamilienhaus');
     await page.getByRole('button', { name: 'Weiter' }).click();
 
@@ -391,12 +365,8 @@ test.describe('Quiz Dependencies', () => {
   // =======================
   // TEST 6: Address field must be filled to proceed
   // =======================
-  test('Cannot proceed from Question 2 without valid address', async ({ page }) => {
-    // Q1: Answer age
-    await selectAge(page);
-    await page.getByRole('button', { name: 'Weiter' }).click();
-
-    // Q2: Try to click Weiter without entering address
+  test('Cannot proceed from Question 1 without valid address', async ({ page }) => {
+    // Q1: Try to click Weiter without entering address
     const weiterButton = page.getByRole('button', { name: 'Weiter' });
     
     // Button should be disabled

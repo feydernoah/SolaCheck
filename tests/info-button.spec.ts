@@ -1,4 +1,5 @@
 import { test, expect, type Page } from '@playwright/test';
+import { setupPhotonMock } from './utils/photon-mock';
 
 /**
  * Wait for quiz to be ready - uses web-first assertions with auto-retry
@@ -10,9 +11,13 @@ async function waitForQuizReady(page: Page) {
 /**
  * Click an age button and wait for "Weiter" to become enabled
  */
-async function clickAgeButton(page: Page) {
-  const ageButton = page.getByRole('button', { name: /Jahre/i }).first();
-  await ageButton.click();
+async function fillAddress(page: Page) {
+  const searchInput = page.getByPlaceholder(/Stadt, Adresse oder PLZ/i);
+  await searchInput.fill('Berlin');
+  const suggestion = page.locator('button').filter({ hasText: /Berlin/i }).first();
+  await expect(suggestion).toBeVisible({ timeout: 3000 });
+  await suggestion.click();
+  await expect(page.locator('.bg-green-50')).toBeVisible({ timeout: 5000 });
   await expect(page.getByRole('button', { name: 'Weiter' })).toBeEnabled();
 }
 
@@ -48,6 +53,7 @@ async function closeInfoModalWithButton(page: Page) {
 test.describe('Info Button Feature', () => {
   test.beforeEach(async ({ page }) => {
     await page.context().clearCookies();
+    await setupPhotonMock(page);
   });
 
   test('info button is visible on quiz page', async ({ page }) => {
@@ -101,38 +107,38 @@ test.describe('Info Button Feature', () => {
     await openInfoModal(page);
 
     // Modal should contain a title - use the modal-specific heading
-    const modalTitle = page.getByRole('heading', { name: 'Alter & Energieprofil' });
+    const modalTitle = page.getByRole('heading', { name: 'Warum ist dein Standort wichtig?' });
     await expect(modalTitle).toBeVisible();
   });
 
-  test('modal displays correct info for question 1 (age)', async ({ page }) => {
+  test('modal displays correct info for question 1 (location)', async ({ page }) => {
     await page.goto('/solacheck/quiz');
     await waitForQuizReady(page);
 
     // Verify we're on question 1
-    await expect(page.locator('h2').first()).toContainText(/Wie alt bist du/i);
-
-    await openInfoModal(page);
-
-    // Check for question 1 specific content about Energieprofil - use exact match
-    await expect(page.getByRole('heading', { name: 'Alter & Energieprofil' })).toBeVisible();
-  });
-
-  test('modal displays correct info for question 2 (location)', async ({ page }) => {
-    await page.goto('/solacheck/quiz');
-    await waitForQuizReady(page);
-
-    // Answer question 1 and go to question 2
-    await clickAgeButton(page);
-    await clickNextButton(page);
-
-    // Verify we're on question 2
     await expect(page.locator('h2').first()).toContainText(/Wo wohnst du/i);
 
     await openInfoModal(page);
 
-    // Check for question 2 specific content - use modal heading
+    // Check for question 1 specific content - use modal heading
     await expect(page.getByRole('heading', { name: 'Warum ist dein Standort wichtig?' })).toBeVisible();
+  });
+
+  test('modal displays correct info for question 2 (household)', async ({ page }) => {
+    await page.goto('/solacheck/quiz');
+    await waitForQuizReady(page);
+
+    // Answer question 1 and go to question 2
+    await fillAddress(page);
+    await clickNextButton(page);
+
+    // Verify we're on question 2
+    await expect(page.locator('h2').first()).toContainText(/Wie viele Personen/i);
+
+    await openInfoModal(page);
+
+    // Check for question 2 specific content - use modal heading
+    await expect(page.getByRole('heading', { name: 'Warum die Anzahl Personen wichtig ist' })).toBeVisible();
   });
 
   test('modal can be closed with "Verstanden" button', async ({ page }) => {
@@ -201,7 +207,7 @@ test.describe('Info Button Feature', () => {
     await closeInfoModalWithButton(page);
 
     // Navigate to question 2
-    await clickAgeButton(page);
+    await fillAddress(page);
     await clickNextButton(page);
 
     // Open info on question 2
@@ -217,7 +223,7 @@ test.describe('Info Button Feature', () => {
     await waitForQuizReady(page);
 
     // Answer question 1
-    await clickAgeButton(page);
+    await fillAddress(page);
 
     // Verify "Weiter" is enabled
     await expect(page.getByRole('button', { name: 'Weiter' })).toBeEnabled();
@@ -262,9 +268,10 @@ test.describe('Info Button Feature', () => {
 test.describe('Info Button - Question Specific Content', () => {
   test.beforeEach(async ({ page }) => {
     await page.context().clearCookies();
+    await setupPhotonMock(page);
   });
 
-  test('question 1 info modal shows Energieprofil content', async ({ page }) => {
+  test('question 1 info modal shows Standort content', async ({ page }) => {
     await page.goto('/solacheck/quiz');
     await waitForQuizReady(page);
 
@@ -272,33 +279,34 @@ test.describe('Info Button - Question Specific Content', () => {
     await openInfoModal(page);
     
     // Check for the modal heading
-    await expect(page.getByRole('heading', { name: 'Alter & Energieprofil' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Warum ist dein Standort wichtig?' })).toBeVisible();
     
-    // Check for specific content about energy profiles
-    await expect(page.getByText(/Verbrauchsmuster/i)).toBeVisible();
+    // Check for specific content about solar radiation
+    await expect(page.getByText(/Sonneneinstrahlung/i)).toBeVisible();
   });
 
-  test('question 2 info modal shows Standort content', async ({ page }) => {
+  test('question 2 info modal shows Haushalt content', async ({ page }) => {
     await page.goto('/solacheck/quiz');
     await waitForQuizReady(page);
 
     // Navigate to question 2
-    await clickAgeButton(page);
+    await fillAddress(page);
     await clickNextButton(page);
 
     // Verify we're on question 2
-    await expect(page.locator('h2').first()).toContainText(/Wo wohnst du/i);
+    await expect(page.locator('h2').first()).toContainText(/Wie viele Personen/i);
 
     // Open info modal and verify content
     await openInfoModal(page);
-    await expect(page.getByRole('heading', { name: 'Warum ist dein Standort wichtig?' })).toBeVisible();
-    await expect(page.getByText(/Sonneneinstrahlung/i)).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Warum die Anzahl Personen wichtig ist' })).toBeVisible();
+    await expect(page.getByText(/Verbrauch/i)).toBeVisible();
   });
 });
 
 test.describe('Info Button - Accessibility', () => {
   test.beforeEach(async ({ page }) => {
     await page.context().clearCookies();
+    await setupPhotonMock(page);
   });
 
   test('info button has proper aria-label', async ({ page }) => {

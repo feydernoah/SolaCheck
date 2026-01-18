@@ -1,4 +1,5 @@
 import { test, expect, type Page } from '@playwright/test';
+import { setupPhotonMock } from './utils/photon-mock';
 
 const COOKIE_NAME = 'solacheck_quiz_progress';
 
@@ -10,12 +11,22 @@ async function waitForQuizReady(page: Page) {
 }
 
 /**
- * Click an age button and wait for "Weiter" to become enabled
- * This proves the click was registered - no manual timeouts needed
+ * Enter address in the first question and wait for "Weiter" to become enabled
  */
-async function clickAgeButton(page: Page) {
-  const ageButton = page.getByRole('button', { name: /Jahre/i }).first();
-  await ageButton.click();
+async function enterAddress(page: Page) {
+  const input = page.getByPlaceholder(/Stadt, Adresse oder PLZ/i);
+  await input.fill('Bern');
+  
+  // Wait for autocomplete suggestions
+  const suggestion = page.locator('button').filter({ hasText: /Bern/i }).first();
+  await expect(suggestion).toBeVisible({ timeout: 3000 });
+  
+  // Wait for element to stabilize before clicking
+  await page.waitForTimeout(500);
+  await suggestion.click();
+  
+  // Wait for location to be selected (green success card)
+  await expect(page.locator('.bg-green-50')).toBeVisible({ timeout: 5000 });
   await expect(page.getByRole('button', { name: 'Weiter' })).toBeEnabled();
 }
 
@@ -45,6 +56,7 @@ async function openMenuAndClickHome(page: Page) {
 test.describe('Burger Menu - Home Reset', () => {
   test.beforeEach(async ({ page }) => {
     await page.context().clearCookies();
+    await setupPhotonMock(page);
   });
 
   test('burger menu is visible on quiz page', async ({ page }) => {
@@ -70,7 +82,7 @@ test.describe('Burger Menu - Home Reset', () => {
     await waitForQuizReady(page);
 
     // Answer question 1
-    await clickAgeButton(page);
+    await enterAddress(page);
 
     // Setup dialog handler before clicking home
     let dialogMessage = '';
@@ -96,12 +108,12 @@ test.describe('Burger Menu - Home Reset', () => {
     await waitForQuizReady(page);
 
     // Answer question 1 and advance to question 2
-    await clickAgeButton(page);
+    await enterAddress(page);
     await clickNextButton(page);
 
     // Verify we're on question 2 by checking the heading
     const heading = page.locator('h2').first();
-    await expect(heading).toContainText(/Wo wohnst du|Wie viele Personen/i);
+    await expect(heading).toContainText(/Wie viele Personen/i);
 
     // Setup dialog handler - dismiss means "Cancel"
     page.on('dialog', dialog => dialog.dismiss());
@@ -111,7 +123,7 @@ test.describe('Burger Menu - Home Reset', () => {
 
     // When canceled, user stays on quiz page with progress preserved
     await expect(page).toHaveURL(/\/quiz/);
-    await expect(heading).toContainText(/Wo wohnst du|Wie viele Personen/i);
+    await expect(heading).toContainText(/Wie viele Personen/i);
   });
 
   test('confirming dialog navigates to home and resets progress', async ({ page }) => {
@@ -119,12 +131,12 @@ test.describe('Burger Menu - Home Reset', () => {
     await waitForQuizReady(page);
 
     // Answer question 1 and advance
-    await clickAgeButton(page);
+    await enterAddress(page);
     await clickNextButton(page);
 
     // Verify we're on question 2 by checking the heading
     const heading = page.locator('h2').first();
-    await expect(heading).toContainText(/Wo wohnst du|Wie viele Personen/i);
+    await expect(heading).toContainText(/Wie viele Personen/i);
 
     // Verify we have a cookie with progress
     let cookies = await page.context().cookies();
@@ -151,12 +163,12 @@ test.describe('Burger Menu - Home Reset', () => {
     await waitForQuizReady(page);
 
     // Make some progress
-    await clickAgeButton(page);
+    await enterAddress(page);
     await clickNextButton(page);
 
     // Verify we're on question 2 by checking the heading
     let heading = page.locator('h2').first();
-    await expect(heading).toContainText(/Wo wohnst du|Wie viele Personen/i);
+    await expect(heading).toContainText(/Wie viele Personen/i);
 
     // Setup dialog handler
     page.on('dialog', dialog => dialog.accept());
@@ -173,7 +185,7 @@ test.describe('Burger Menu - Home Reset', () => {
 
     // Should be at question 1
     heading = page.locator('h2').first();
-    await expect(heading).toContainText(/Wie alt bist du/i);
+    await expect(heading).toContainText(/Wo wohnst du/i);
   });
 
   test('menu behavior when dialog is canceled', async ({ page }) => {

@@ -2,16 +2,12 @@ import { test, expect, type Page } from '@playwright/test';
 import { setupPhotonMock } from './utils/photon-mock';
 
 /**
- * Navigate to the location question (question 2)
- * Uses web-first assertions for reliable waiting
+ * Navigate to the location question (question 1)
+ * Since location is now the first question, no navigation needed
  */
 async function navigateToLocationQuestion(page: Page): Promise<boolean> {
-  const ageButton = page.getByRole('button', { name: /Jahre/i }).first();
-  
   try {
-    await ageButton.click();
-    await expect(page.getByRole('button', { name: 'Weiter' })).toBeEnabled();
-    await page.getByRole('button', { name: 'Weiter' }).click();
+    // Location question is now first, so just verify it's visible
     await expect(page.getByRole('button', { name: /Standort nutzen/i })).toBeVisible();
     return true;
   } catch {

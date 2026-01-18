@@ -529,7 +529,7 @@ export function AddressInput({ value, onChange, onValidationChange }: AddressInp
           {showSuggestions && suggestions.length > 0 && (
             <div
               ref={suggestionsRef}
-              className="absolute z-50 w-full mt-1 bg-white border-2 border-gray-200 rounded-lg shadow-lg overflow-hidden"
+              className="absolute z-[100] w-full mt-1 bg-white border-2 border-gray-200 rounded-lg shadow-lg overflow-hidden"
             >
               {suggestions.map((suggestion, index) => (
                 <button
@@ -561,7 +561,7 @@ export function AddressInput({ value, onChange, onValidationChange }: AddressInp
 
           {/* No results message */}
           {showSuggestions && debouncedQuery.length >= 2 && !isSearching && suggestions.length === 0 && (
-            <div className="absolute z-50 w-full mt-1 bg-white border-2 border-gray-200 rounded-lg shadow-lg p-4 text-center text-gray-500">
+            <div className="absolute z-[100] w-full mt-1 bg-white border-2 border-gray-200 rounded-lg shadow-lg p-4 text-center text-gray-500">
               Keine Ergebnisse gefunden
             </div>
           )}
