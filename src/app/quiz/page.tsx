@@ -61,7 +61,7 @@ const questions: Question[] = [
     question: 'Wo wohnst du?',
     type: 'text',
     placeholder: 'PLZ oder Stadt eingeben',
-    infoHint: 'Wir nutzen deinen Wohnort nur, um Sonnenstunden und Strahlung für deinen Standort zu berechnen. Die Daten werden nicht gespeichert.',
+    infoHint: 'Wir nutzen deinen Wohnort nur, um Sonnenstunden und Strahlung für deinen Standort zu berechnen. Die Daten werden nicht gespeichert. \nFür mehr Informationen klicke auf das Fragezeichen oben rechts.',
   },
   {
     id: 2,
@@ -348,12 +348,15 @@ export default function Home() {
 
   // Timer für initialen Sola Hint (nach 10 Sekunden)
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setShowInitialSolaHint(true);
-    }, 10000);
+    // Timer nur starten wenn Sprechblase nicht sichtbar ist
+    if (!solaSpeechBubbleVisible) {
+      const timer = setTimeout(() => {
+        setShowInitialSolaHint(true);
+      }, 10000);
 
-    return () => clearTimeout(timer);
-  }, [safeCurrentQuestion]); // Reset bei neuer Frage
+      return () => clearTimeout(timer);
+    }
+  }, [safeCurrentQuestion, solaSpeechBubbleVisible]); // Reset bei neuer Frage oder wenn Sprechblase geschlossen wird
 
   const handleNext = () => {
     let nextQuestion = safeCurrentQuestion + 1;
@@ -558,7 +561,7 @@ export default function Home() {
                 {(solaSpeechBubbleVisible || showInitialSolaHint) && (
                   <div className="absolute -top-8 right-28 md:-top-12 md:right-40 bg-white p-4 md:p-5 rounded-2xl rounded-tr-none shadow-lg border border-gray-200 max-w-[240px] md:max-w-sm z-20 animate-fade-in">
                     {solaSpeechBubbleVisible && currentQ.infoHint ? (
-                      <p className="text-sm md:text-base text-gray-700">
+                      <p className="text-sm md:text-base text-gray-700 whitespace-pre-line">
                         <span className="font-semibold">💡 </span>
                         {currentQ.infoHint}
                       </p>
