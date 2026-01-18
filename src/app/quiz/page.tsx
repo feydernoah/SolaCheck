@@ -2,6 +2,7 @@
 
 import { useCallback, useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { OptionTile } from "@/components/ui/OptionTile";
@@ -305,6 +306,8 @@ export default function Home() {
   const router = useRouter();
   const [isInfoModalOpen, setIsInfoModalOpen] = useState(false);
   const [isAddressValid, setIsAddressValid] = useState(false);
+  const [solaSpeechBubbleVisible, setSolaSpeechBubbleVisible] = useState(false);
+  const [showInitialSolaHint, setShowInitialSolaHint] = useState(false);
   const { 
     currentQuestion, 
     answers, 
@@ -342,6 +345,15 @@ export default function Home() {
       setCurrentQuestion(0);
     }
   }, [isOutOfBounds, setCurrentQuestion]);
+
+  // Timer für initialen Sola Hint (nach 10 Sekunden)
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setShowInitialSolaHint(true);
+    }, 10000);
+
+    return () => clearTimeout(timer);
+  }, [safeCurrentQuestion]); // Reset bei neuer Frage
 
   const handleNext = () => {
     let nextQuestion = safeCurrentQuestion + 1;
@@ -504,7 +516,7 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-white relative overflow-hidden p-4">
       {/* Burger Menu and Info Button */}
-      <div className="fixed top-4 right-4 sm:top-5 sm:right-5 md:top-6 md:right-6 z-40 flex items-center gap-4">
+      <div className="fixed top-4 right-4 sm:top-5 sm:right-5 md:top-6 md:right-6 z-50 flex items-center gap-4">
         <InfoButton onClick={() => setIsInfoModalOpen(true)} />
         <BurgerMenu showHome showQuiz={false} confirmOnHome inline />
       </div>
@@ -520,7 +532,46 @@ export default function Home() {
       <div className="flex items-center justify-center min-h-screen">
         <div className="w-full max-w-4xl px-4">
           {/* Question Card */}
-          <Card padding="lg" className="animate-fade-in">
+          <Card padding="lg" className="animate-fade-in relative overflow-visible">
+            {/* Sola Buddy - nur für Frage 1 (Wohnort) */}
+            {currentQ.id === 1 && (
+              <>
+                <button
+                  onClick={() => {
+                    setSolaSpeechBubbleVisible(!solaSpeechBubbleVisible);
+                    setShowInitialSolaHint(false);
+                  }}
+                  className="absolute -top-17 right-2 md:-top-25 md:right-4 w-24 h-24 md:w-36 md:h-36 z-20 cursor-pointer hover:scale-105 transition-transform"
+                  aria-label="Sola für Hilfe anklicken"
+                >
+                  <Image 
+                    src="/solacheck/SolaQuizPages/Sola_chillt_winkend.png" 
+                    alt="Sola winkt"
+                    width={144}
+                    height={144}
+                    className="w-full h-full object-contain"
+                    unoptimized
+                  />
+                </button>
+
+                {/* Sola Sprechblase mit Info oder Initial Hint */}
+                {(solaSpeechBubbleVisible || showInitialSolaHint) && (
+                  <div className="absolute -top-8 right-28 md:-top-12 md:right-40 bg-white p-4 md:p-5 rounded-2xl rounded-tr-none shadow-lg border border-gray-200 max-w-[240px] md:max-w-sm z-20 animate-fade-in">
+                    {solaSpeechBubbleVisible && currentQ.infoHint ? (
+                      <p className="text-sm md:text-base text-gray-700">
+                        <span className="font-semibold">💡 </span>
+                        {currentQ.infoHint}
+                      </p>
+                    ) : (
+                      <p className="text-sm md:text-base text-gray-700">
+                        Wenn du Hilfe brauchst, klick mich an! 👋
+                      </p>
+                    )}
+                  </div>
+                )}
+              </>
+            )}
+            
             {/* Category Badge */}
             <div className="mb-4">
               <span className="inline-block bg-yellow-100 text-yellow-800 text-sm font-medium px-3 py-1 rounded-full">
@@ -545,16 +596,6 @@ export default function Home() {
             <h2 className="text-heading-2 md:text-heading-1 font-bold text-gray-800 mb-8">
               {currentQ.question}
             </h2>
-
-            {/* Info Hint */}
-            {currentQ.infoHint && (
-              <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-                <p className="text-sm text-gray-700">
-                  <span className="font-semibold">💡 Info: </span>
-                  {currentQ.infoHint}
-                </p>
-              </div>
-            )}
 
             {/* Answer Input */}
             <div className="mb-8">
