@@ -302,6 +302,35 @@ const isQuestionVisible = (question: Question, answers: Record<number, string | 
   return true;
 };
 
+// Sola Buddy Konfiguration für jede Frage
+interface SolaBuddyConfig {
+  image: string;
+  buddyPosition: string; // Tailwind classes für Position des Buddys
+  bubblePosition: string; // Tailwind classes für Position der Sprechblase
+  bubbleCorner: string; // z.B. 'rounded-tr-none' (Pfeil rechts) oder 'rounded-tl-none' (Pfeil links)
+}
+
+const solaBuddyConfig: Record<number, SolaBuddyConfig> = {
+  1: { 
+    image: 'Sola_chillt_winkend.png',
+    buddyPosition: 'absolute -top-17 right-2 md:-top-25 md:right-4 w-24 h-24 md:w-36 md:h-36 z-20 cursor-pointer hover:scale-105 transition-transform',
+    bubblePosition: 'absolute -top-8 right-28 md:-top-12 md:right-40 bg-white p-4 md:p-5 rounded-2xl shadow-lg border border-gray-200 max-w-[240px] md:max-w-sm z-20 animate-fade-in',
+    bubbleCorner: 'rounded-tr-none'
+  },
+  2: { 
+    image: 'Sola_nachdenklich.png',
+    buddyPosition: 'absolute -top-22 left-2 md:-top-33 md:left-4 w-24 h-24 md:w-36 md:h-36 z-20 cursor-pointer hover:scale-105 transition-transform',
+    bubblePosition: 'absolute -top-11 left-28 md:-top-16 md:left-40 bg-white p-4 md:p-5 rounded-2xl shadow-lg border border-gray-200 max-w-[240px] md:max-w-sm z-20 animate-fade-in',
+    bubbleCorner: 'rounded-tl-none'
+  },
+  3: { 
+    image: 'Sola_auf_Fragezeichen.png',
+    buddyPosition: 'absolute -top-16 right-2 md:-top-20 md:right-4 w-34 h-34 md:w-49 md:h-49 z-20 cursor-pointer hover:scale-105 transition-transform',
+    bubblePosition: 'absolute -top-4 right-32 md:-top-5 md:right-48 bg-white p-4 md:p-5 rounded-2xl shadow-lg border border-gray-200 max-w-[240px] md:max-w-sm z-20 animate-fade-in',
+    bubbleCorner: 'rounded-tr-none'
+  },
+};
+
 export default function Home() {
   const router = useRouter();
   const [isInfoModalOpen, setIsInfoModalOpen] = useState(false);
@@ -517,7 +546,7 @@ export default function Home() {
   }
 
   return (
-    <div className="min-h-screen bg-white relative overflow-hidden p-4">
+    <div className="min-h-screen bg-white relative overflow-visible p-4">
       {/* Burger Menu and Info Button */}
       <div className="fixed top-4 right-4 sm:top-5 sm:right-5 md:top-6 md:right-6 z-50 flex items-center gap-4">
         <InfoButton onClick={() => setIsInfoModalOpen(true)} />
@@ -532,79 +561,62 @@ export default function Home() {
       />
 
       {/* Main Content */}
-      <div className="flex items-center justify-center min-h-screen">
+      <div className="flex items-center justify-center min-h-screen pt-30 pb-8">
         <div className="w-full max-w-4xl px-4">
           {/* Question Card */}
           <Card padding="lg" className="animate-fade-in relative overflow-visible">
-            {/* Sola Buddy - nur für Frage 1 (Wohnort) */}
-            {currentQ.id === 1 && (
-              <>
-                <button
-                  onClick={() => {
-                    setSolaSpeechBubbleVisible(!solaSpeechBubbleVisible);
-                    setShowInitialSolaHint(false);
-                  }}
-                  className="absolute -top-17 right-2 md:-top-25 md:right-4 w-24 h-24 md:w-36 md:h-36 z-20 cursor-pointer hover:scale-105 transition-transform"
-                  aria-label="Sola für Hilfe anklicken"
-                >
-                  <Image 
-                    src="/solacheck/SolaQuizPages/Sola_chillt_winkend.png" 
-                    alt="Sola winkt"
-                    width={144}
-                    height={144}
-                    className="w-full h-full object-contain"
-                    unoptimized
-                  />
-                </button>
+            {/* Sola Buddy - dynamisch basierend auf Config */}
+            {currentQ.id in solaBuddyConfig && (() => {
+              const config = solaBuddyConfig[currentQ.id];
+              const hasInfoHint = !!currentQ.infoHint;
 
-                {/* Sola Sprechblase mit Info oder Initial Hint */}
-                {(solaSpeechBubbleVisible || showInitialSolaHint) && (
-                  <div className="absolute -top-8 right-28 md:-top-12 md:right-40 bg-white p-4 md:p-5 rounded-2xl rounded-tr-none shadow-lg border border-gray-200 max-w-[240px] md:max-w-sm z-20 animate-fade-in">
-                    {solaSpeechBubbleVisible && currentQ.infoHint ? (
-                      <p className="text-sm md:text-base text-gray-700 whitespace-pre-line">
-                        <span className="font-semibold">💡 </span>
-                        {currentQ.infoHint}
-                      </p>
-                    ) : (
-                      <p className="text-sm md:text-base text-gray-700">
-                        Wenn du Hilfe brauchst, klick mich an! 👋
-                      </p>
-                    )}
-                  </div>
-                )}
-              </>
-            )}
-            
-            {/* Sola Buddy - nur für Frage 2 (Haushaltsgröße) */}
-            {currentQ.id === 2 && (
-              <>
-                <button
-                  onClick={() => {
-                    setShowInitialSolaHint(!showInitialSolaHint);
-                  }}
-                  className="absolute -top-22 left-2 md:-top-33 md:left-4 w-24 h-24 md:w-36 md:h-36 z-20 cursor-pointer hover:scale-105 transition-transform"
-                  aria-label="Hinweis ein-/ausblenden"
-                >
-                  <Image 
-                    src="/solacheck/SolaQuizPages/Sola_nachdenklich.png" 
-                    alt="Sola nachdenklich"
-                    width={135}
-                    height={135}
-                    className="w-full h-full object-contain"
-                    unoptimized
-                  />
-                </button>
+              return (
+                <>
+                  <button
+                    onClick={() => {
+                      if (hasInfoHint) {
+                        setSolaSpeechBubbleVisible(!solaSpeechBubbleVisible);
+                        setShowInitialSolaHint(false);
+                      } else {
+                        setShowInitialSolaHint(!showInitialSolaHint);
+                      }
+                    }}
+                    className={config.buddyPosition}
+                    aria-label={hasInfoHint ? "Sola für Hilfe anklicken" : "Hinweis ein-/ausblenden"}
+                  >
+                    <Image 
+                      src={`/solacheck/SolaQuizPages/${config.image}`}
+                      alt="Sola Buddy"
+                      width={144}
+                      height={144}
+                      className="w-full h-full object-contain"
+                      unoptimized
+                    />
+                  </button>
 
-                {/* Sola Sprechblase mit Hinweis auf Info-Button */}
-                {showInitialSolaHint && (
-                  <div className="absolute -top-11 left-28 md:-top-16 md:left-40 bg-white p-4 md:p-5 rounded-2xl rounded-tl-none shadow-lg border border-gray-200 max-w-[240px] md:max-w-sm z-20 animate-fade-in">
-                    <p className="text-sm md:text-base text-gray-700">
-                      Für mehr Informationen klicke oben rechts auf den Info-Button! ℹ️
-                    </p>
-                  </div>
-                )}
-              </>
-            )}
+                  {/* Sola Sprechblase */}
+                  {((hasInfoHint && (solaSpeechBubbleVisible || showInitialSolaHint)) || 
+                    (!hasInfoHint && showInitialSolaHint)) && (
+                    <div className={`${config.bubblePosition} ${config.bubbleCorner}`}>
+                      {hasInfoHint && solaSpeechBubbleVisible ? (
+                        <p className="text-sm md:text-base text-gray-700 whitespace-pre-line">
+                          <span className="font-semibold">💡 </span>
+                          {currentQ.infoHint}
+                        </p>
+                      ) : hasInfoHint ? (
+                        <p className="text-sm md:text-base text-gray-700">
+                          Wenn du Hilfe brauchst, klick mich an! 👋
+                        </p>
+                      ) : (
+                        <p className="text-sm md:text-base text-gray-700">
+                          Für mehr Informationen klicke oben rechts auf den Info-Button! ℹ️
+                        </p>
+                      )}
+                    </div>
+                  )}
+                </>
+              );
+            })()}
             
             {/* Category Badge */}
             <div className="mb-4">
