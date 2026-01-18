@@ -57,25 +57,13 @@ const questions: Question[] = [
   {
     id: 1,
     category: 'Über dich & deine Wohnsituation',
-    question: 'Wie alt bist du?',
-    type: 'button',
-    options: [
-      { value: '18-24', label: '18–24 Jahre' },
-      { value: '25-34', label: '25–34 Jahre' },
-      { value: '35-49', label: '35–49 Jahre' },
-      { value: '50-64', label: '50–64 Jahre' },
-      { value: '65+', label: '65+ Jahre' },
-    ],},
-  {
-    id: 2,
-    category: 'Über dich & deine Wohnsituation',
     question: 'Wo wohnst du?',
     type: 'text',
     placeholder: 'PLZ oder Stadt eingeben',
     infoHint: 'Wir nutzen deinen Wohnort nur, um Sonnenstunden und Strahlung für deinen Standort zu berechnen. Die Daten werden nicht gespeichert.',
   },
   {
-    id: 3,
+    id: 2,
     category: 'Über dich & deine Wohnsituation',
     question: 'Wie viele Personen leben in deinem Haushalt?',
     type: 'button',
@@ -87,7 +75,7 @@ const questions: Question[] = [
     ],
   },
   {
-    id: 4,
+    id: 3,
     category: 'Über dich & deine Wohnsituation',
     question: 'Wie wohnst du aktuell?',
     type: 'tile',
@@ -99,7 +87,7 @@ const questions: Question[] = [
     ],
   },
   {
-    id: 5,
+    id: 4,
     category: 'Über dich & deine Wohnsituation',
     question: 'Wie groß ist deine Wohnung / dein Haus ungefähr?',
     type: 'button',
@@ -114,7 +102,7 @@ const questions: Question[] = [
   
   // Kategorie 2: Balkon & Installationsort
   {
-    id: 6,
+    id: 5,
     category: 'Balkon & Installationsort',
     question: 'Wo würdest du das Balkonkraftwerk am ehesten montieren?',
     type: 'tile',
@@ -127,28 +115,28 @@ const questions: Question[] = [
     ],
     dependencies: [
       {
-        questionId: 4,
+        questionId: 3,
         answerValue: 'mietwohnung',
         excludeOptions: ['flachdach'],
       },
     ],
   },
   {
-    id: 7,
+    id: 6,
     category: 'Balkon & Installationsort',
     question: 'In welche Richtung zeigt dein Balkon bzw. der geplante Montageort?',
     type: 'compass',
     infoHint: 'Klicke auf die Himmelsrichtung im Kompass. Die Farben zeigen dir, wie gut die jeweilige Ausrichtung für Solarertrag ist. Süden ist optimal!',
     dependencies: [
       {
-        questionId: 6,
+        questionId: 5,
         answerValue: ['flachdach', 'weiss-nicht'],
         excludeOptions: [],
       },
     ],
   },
   {
-    id: 8,
+    id: 7,
     category: 'Balkon & Installationsort',
     question: 'Wie groß ist dein Balkon ungefähr?',
     type: 'button',
@@ -160,14 +148,14 @@ const questions: Question[] = [
     infoHint: 'Es reicht eine grobe Einschätzung, wir wollen nur einschätzen, ob ein oder zwei Module Platz haben könnten.',
     dependencies: [
       {
-        questionId: 6,
+        questionId: 5,
         answerValue: ['hauswand', 'flachdach', 'weiss-nicht'],
         excludeOptions: [],
       },
     ],
   },
   {
-    id: 9,
+    id: 8,
     category: 'Balkon & Installationsort',
     question: 'Wie stark ist dein Balkon / Montageort normalerweise beschattet?',
     type: 'button',
@@ -179,7 +167,7 @@ const questions: Question[] = [
     ],
     dependencies: [
       {
-        questionId: 6,
+        questionId: 5,
         answerValue: 'weiss-nicht',
       },
     ],
@@ -187,7 +175,7 @@ const questions: Question[] = [
 
   // Kategorie 3: Geräte & Nutzungsmuster
   {
-    id: 10,
+    id: 9,
     category: 'Geräte & Nutzungsmuster',
     question: 'Welche dieser Geräte nutzt du regelmäßig (mehrmals pro Woche)?',
     type: 'multiselect',
@@ -214,7 +202,7 @@ const questions: Question[] = [
     infoHint: 'Diese Info hilft uns nur grob einzuschätzen, wie hoch dein Stromverbrauch tagsüber ist. Du musst nichts exakt ausrechnen, eine ehrliche Einschätzung reicht.',
   },
   {
-    id: 13,
+    id: 10,
     category: 'Geräte & Nutzungsmuster',
     question: 'Kennst du deinen jährlichen Stromverbrauch?',
     type: 'number',
@@ -430,17 +418,19 @@ export default function Home() {
           <div className="min-h-screen bg-white relative overflow-hidden p-4">
             <div className="fixed top-4 right-4 sm:top-5 sm:right-5 md:top-6 md:right-6 z-40 flex items-center gap-4">
               <InfoButton onClick={() => setIsInfoModalOpen(true)} />
-              <BurgerMenu showHome showQuiz={false} onHomeClick={resetWithConfirmation} inline />
+              <BurgerMenu showHome showQuiz={false} confirmOnHome inline />
             </div>
             <div className="flex items-center justify-center min-h-screen">
               <div className="w-full max-w-4xl px-4">
                 <Card padding="lg" className="animate-fade-in">
+                  {/* Category Badge */}
                   <div className="mb-4">
                     <span className="inline-block bg-yellow-100 text-yellow-800 text-sm font-medium px-3 py-1 rounded-full">
                       {firstQuestion.category}
                     </span>
                   </div>
                   
+                  {/* Progress Indicator */}
                   <div className="mb-8">
                     <div className="flex justify-end text-sm text-gray-600 mb-2">
                       <span>{Math.round((1 / questions.length) * 100)}%</span>
@@ -453,21 +443,45 @@ export default function Home() {
                     </div>
                   </div>
 
+                  {/* Question */}
                   <h2 className="text-heading-2 md:text-heading-1 font-bold text-gray-800 mb-8">
                     {firstQuestion.question}
                   </h2>
 
-                  <div className="mb-8">
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                      {firstQuestion.options?.map((option) => (
-                        <button
-                          key={option.value}
-                          className="p-4 rounded-lg border-2 border-gray-200 bg-white text-gray-700 hover:border-yellow-200 hover:bg-yellow-50 transition-all duration-200 text-left font-medium"
-                        >
-                          {option.label}
-                        </button>
-                      ))}
+                  {/* Info Hint */}
+                  {firstQuestion.infoHint && (
+                    <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                      <p className="text-sm text-gray-700">
+                        <span className="font-semibold">💡 Info: </span>
+                        {firstQuestion.infoHint}
+                      </p>
                     </div>
+                  )}
+
+                  {/* Answer Input */}
+                  <div className="mb-8">
+                    {firstQuestion.type === 'text' && (
+                      <AddressInput
+                        value=""
+                        onChange={() => { /* disabled */ }}
+                        onValidationChange={() => { /* disabled */ }}
+                      />
+                    )}
+                    {firstQuestion.type === 'button' && (
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        {firstQuestion.options?.map((option) => (
+                          <Button
+                            key={option.value}
+                            variant="outline"
+                            size="lg"
+                            className="w-full"
+                            disabled
+                          >
+                            {option.label}
+                          </Button>
+                        ))}
+                      </div>
+                    )}
                   </div>
 
                   <div className="flex justify-between items-center pt-6 border-t border-gray-200">
@@ -581,8 +595,8 @@ export default function Home() {
               {/* Text Input Type */}
               {currentQ.type === 'text' && (
                 <>
-                  {/* Spezielle AddressInput für Frage 2 (Wohnort) */}
-                  {currentQ.id === 2 ? (
+                  {/* Spezielle AddressInput für Frage 1 (Wohnort) */}
+                  {currentQ.id === 1 ? (
                     <AddressInput
                       value={currentTextAnswer}
                       onChange={handleTextAnswer}
