@@ -439,7 +439,7 @@ export default function Home() {
 
       return () => clearTimeout(timer);
     }
-  }, [safeCurrentQuestion, solaSpeechBubbleVisible]); // Reset bei neuer Frage oder wenn Sprechblase geschlossen wird
+  }, [currentQuestion, solaSpeechBubbleVisible]); // Reset bei neuer Frage oder wenn Sprechblase geschlossen wird
 
   const handleNext = () => {
     let nextQuestion = safeCurrentQuestion + 1;
