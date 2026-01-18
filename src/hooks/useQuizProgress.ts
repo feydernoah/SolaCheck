@@ -3,9 +3,9 @@ import { useState, useEffect, useCallback } from 'react';
 const COOKIE_NAME = 'solacheck_quiz_progress';
 const COOKIE_MAX_AGE = 60 * 60 * 24 * 7; // 7 days
 
-const TOTAL_QUESTIONS = 13;
+const TOTAL_QUESTIONS = 12;
 
-const VALID_QUESTION_IDS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13];
+const VALID_QUESTION_IDS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
 
 interface QuizProgress {
   currentQuestion: number;
@@ -80,7 +80,7 @@ function isProgressValid(progress: unknown): progress is QuizProgress {
   return true;
 }
 
-// Default preselected appliances for question 10 (devices)
+// Default preselected appliances for question 9 (devices)
 const DEFAULT_DEVICES = ['kuehlschrank', 'waschmaschine', 'herd', 'fernseher'];
 
 function getProgressFromCookie(): QuizProgress {
@@ -99,7 +99,7 @@ function getProgressFromCookie(): QuizProgress {
     }
   }
   // Return default progress with preselected devices
-  return { currentQuestion: 0, answers: { 10: DEFAULT_DEVICES } };
+  return { currentQuestion: 0, answers: { 9: DEFAULT_DEVICES } };
 }
 
 export function useQuizProgress(): UseQuizProgressReturn {

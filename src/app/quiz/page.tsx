@@ -127,7 +127,7 @@ const questions: Question[] = [
     category: 'Balkon & Installationsort',
     question: 'In welche Richtung zeigt dein Balkon bzw. der geplante Montageort?',
     type: 'compass',
-    infoHint: 'Klicke auf die Himmelsrichtung im Kompass. Die Farben zeigen dir, wie gut die jeweilige Ausrichtung für Solarertrag ist. Süden ist optimal!',
+    infoHint: 'Klicke auf die Himmelsrichtung im Kompass. Die Farben zeigen dir, wie gut die jeweilige Ausrichtung für Solarertrag ist. Süden ist optimal! \nFür mehr Informationen klicke auf das Fragezeichen oben rechts.',
     dependencies: [
       {
         questionId: 5,
@@ -146,7 +146,7 @@ const questions: Question[] = [
       { value: 'mittel', label: 'Mittel (2–3 m breit)' },
       { value: 'gross', label: 'Groß (mehr als 3 m)' },
     ],
-    infoHint: 'Es reicht eine grobe Einschätzung, wir wollen nur einschätzen, ob ein oder zwei Module Platz haben könnten.',
+    infoHint: 'Es reicht eine grobe Einschätzung, wir wollen nur einschätzen, ob ein oder zwei Module Platz haben könnten. \nFür mehr Informationen klicke auf das Fragezeichen oben rechts.',
     dependencies: [
       {
         questionId: 5,
@@ -200,7 +200,7 @@ const questions: Question[] = [
       { value: 'luftentfeuchter', label: 'Luftentfeuchter' },
       { value: 'sonstige', label: 'Sonstige starke Verbraucher' },
     ],
-    infoHint: 'Diese Info hilft uns nur grob einzuschätzen, wie hoch dein Stromverbrauch tagsüber ist. Du musst nichts exakt ausrechnen, eine ehrliche Einschätzung reicht.',
+    infoHint: 'Diese Info hilft uns nur grob einzuschätzen, wie hoch dein Stromverbrauch tagsüber ist. \nFür mehr Informationen klicke auf das Fragezeichen oben rechts.',
   },
   {
     id: 10,
@@ -209,7 +209,7 @@ const questions: Question[] = [
     type: 'number',
     placeholder: 'z.B. 2500',
     unit: 'kWh/Jahr',
-    infoHint: 'Du findest deinen Jahresverbrauch auf der Stromrechnung oder im Kundenportal deines Anbieters. Wenn du ihn nicht kennst, überspringe diese Frage einfach – wir schätzen dann anhand deiner Haushaltsgröße.',
+    infoHint: 'Du findest deinen Jahresverbrauch auf der Stromrechnung oder im Kundenportal deines Anbieters. Wenn du ihn nicht kennst, überspringe diese Frage einfach – wir schätzen dann anhand deiner Haushaltsgröße. \nFür mehr Informationen klicke auf das Fragezeichen oben rechts.',
   },
 
   // Kategorie 4: Budget & Investitionsbereitschaft
@@ -224,7 +224,7 @@ const questions: Question[] = [
       step: 10,
       unit: '€',
     },
-    infoHint: 'Stelle den Regler auf dein maximales Budget. Bei "Kein Limit" zeigen wir dir alle Produkte unabhängig vom Preis.',
+    infoHint: 'Stelle den Regler auf dein maximales Budget. Bei "Kein Limit" zeigen wir dir alle Produkte unabhängig vom Preis. \nFür mehr Informationen klicke auf das Fragezeichen oben rechts.',
   },
   {
     id: 12,
@@ -358,6 +358,30 @@ const solaBuddyConfig: Record<number, SolaBuddyConfig> = {
     buddyPosition: 'absolute -top-18 right-2 md:-top-27 md:right-4 w-24 h-24 md:w-36 md:h-36 z-20 cursor-pointer hover:scale-105 transition-transform',
     bubblePosition: 'absolute -top-6 right-28 md:-top-10 md:right-40 bg-white p-4 md:p-5 rounded-2xl shadow-lg border border-gray-200 max-w-[240px] md:max-w-sm z-20 animate-fade-in',
     bubbleCorner: 'rounded-tr-none'
+  },
+  9: { 
+    image: 'Sola_auf_Couch.png',
+    buddyPosition: 'absolute -top-22 left-2 md:-top-33 md:left-4 w-24 h-24 md:w-36 md:h-36 z-20 cursor-pointer hover:scale-105 transition-transform',
+    bubblePosition: 'absolute -top-11 left-28 md:-top-16 md:left-40 bg-white p-4 md:p-5 rounded-2xl shadow-lg border border-gray-200 max-w-[240px] md:max-w-sm z-20 animate-fade-in',
+    bubbleCorner: 'rounded-tl-none'
+  },
+  10: { 
+    image: 'Sola_mit_Notizblock.png',
+    buddyPosition: 'absolute -top-20 right-2 md:-top-30 md:right-4 w-24 h-24 md:w-36 md:h-36 z-20 cursor-pointer hover:scale-105 transition-transform',
+    bubblePosition: 'absolute -top-8 right-28 md:-top-10 md:right-40 bg-white p-4 md:p-5 rounded-2xl shadow-lg border border-gray-200 max-w-[240px] md:max-w-sm z-20 animate-fade-in',
+    bubbleCorner: 'rounded-tr-none'
+  },
+  11: { 
+    image: 'Sola_chillt.png',
+    buddyPosition: 'absolute -top-23 left-1/2 -translate-x-1/2 md:-top-33 w-35 h-35 md:w-49 md:h-49 z-20 cursor-pointer hover:scale-105 transition-transform',
+    bubblePosition: 'absolute -top-8 left-1/2 translate-x-12 md:-top-10 md:translate-x-20 bg-white p-4 md:p-5 rounded-2xl shadow-lg border border-gray-200 max-w-[240px] md:max-w-sm z-20 animate-fade-in',
+    bubbleCorner: 'rounded-tl-none'
+  },
+  12: { 
+    image: 'Sola_gibt_ok.png',
+    buddyPosition: 'absolute -top-22 left-2 md:-top-32 md:left-4 w-24 h-24 md:w-36 md:h-36 z-20 cursor-pointer hover:scale-105 transition-transform',
+    bubblePosition: 'absolute -top-10 left-28 md:-top-14 md:left-40 bg-white p-4 md:p-5 rounded-2xl shadow-lg border border-gray-200 max-w-[240px] md:max-w-sm z-20 animate-fade-in',
+    bubbleCorner: 'rounded-tl-none'
   },
 };
 
