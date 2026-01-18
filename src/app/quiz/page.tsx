@@ -575,6 +575,37 @@ export default function Home() {
               </>
             )}
             
+            {/* Sola Buddy - nur für Frage 2 (Haushaltsgröße) */}
+            {currentQ.id === 2 && (
+              <>
+                <button
+                  onClick={() => {
+                    setShowInitialSolaHint(!showInitialSolaHint);
+                  }}
+                  className="absolute -top-22 left-2 md:-top-33 md:left-4 w-24 h-24 md:w-36 md:h-36 z-20 cursor-pointer hover:scale-105 transition-transform"
+                  aria-label="Hinweis ein-/ausblenden"
+                >
+                  <Image 
+                    src="/solacheck/SolaQuizPages/Sola_nachdenklich.png" 
+                    alt="Sola nachdenklich"
+                    width={135}
+                    height={135}
+                    className="w-full h-full object-contain"
+                    unoptimized
+                  />
+                </button>
+
+                {/* Sola Sprechblase mit Hinweis auf Info-Button */}
+                {showInitialSolaHint && (
+                  <div className="absolute -top-11 left-28 md:-top-16 md:left-40 bg-white p-4 md:p-5 rounded-2xl rounded-tl-none shadow-lg border border-gray-200 max-w-[240px] md:max-w-sm z-20 animate-fade-in">
+                    <p className="text-sm md:text-base text-gray-700">
+                      Für mehr Informationen klicke oben rechts auf den Info-Button! ℹ️
+                    </p>
+                  </div>
+                )}
+              </>
+            )}
+            
             {/* Category Badge */}
             <div className="mb-4">
               <span className="inline-block bg-yellow-100 text-yellow-800 text-sm font-medium px-3 py-1 rounded-full">

@@ -12,29 +12,6 @@ export interface QuestionInfo {
 export const questionInfoData: QuestionInfo[] = [
   {
     questionId: 1,
-    title: 'Alter & Energieprofil',
-    content: (
-      <div className="space-y-3">
-        <p>
-          Dein Alter hilft uns, dein <strong>Energieprofil</strong> besser einzuschätzen.
-        </p>
-        <p>
-          Verschiedene Altersgruppen haben unterschiedliche Verbrauchsmuster:
-        </p>
-        <ul className="list-disc list-inside space-y-1 text-sm">
-          <li><strong>18–34 Jahre:</strong> Oft tagsüber außer Haus, höherer Abendverbrauch</li>
-          <li><strong>35–49 Jahre:</strong> Häufig Familien, Verbrauch über den Tag verteilt</li>
-          <li><strong>50–64 Jahre:</strong> Teilweise Homeoffice, mehr Tagverbrauch</li>
-          <li><strong>65+ Jahre:</strong> Meist tagsüber zu Hause, idealer Eigenverbrauch</li>
-        </ul>
-        <p className="text-sm text-gray-500">
-          Wir nutzen diese Info, um mit einem durchschnittlichen Energieprofil deiner Altersgruppe zu rechnen.
-        </p>
-      </div>
-    ),
-  },
-  {
-    questionId: 2,
     title: 'Warum ist dein Standort wichtig?',
     content: (
       <div className="space-y-3">
@@ -53,7 +30,7 @@ export const questionInfoData: QuestionInfo[] = [
     ),
   },
   {
-    questionId: 3,
+    questionId: 2,
     title: 'Haushaltsgröße & Stromverbrauch',
     content: (
       <div className="space-y-3">
@@ -73,7 +50,7 @@ export const questionInfoData: QuestionInfo[] = [
     ),
   },
   {
-    questionId: 4,
+    questionId: 3,
     title: 'Wohnsituation & Montagemöglichkeiten',
     content: (
       <div className="space-y-3">
@@ -98,7 +75,7 @@ export const questionInfoData: QuestionInfo[] = [
     ),
   },
   {
-    questionId: 5,
+    questionId: 4,
     title: 'Wohnfläche & Verbrauch',
     content: (
       <div className="space-y-3">
@@ -114,7 +91,7 @@ export const questionInfoData: QuestionInfo[] = [
     ),
   },
   {
-    questionId: 6,
+    questionId: 5,
     title: 'Der richtige Montageort',
     content: (
       <div className="space-y-3">
@@ -132,7 +109,7 @@ export const questionInfoData: QuestionInfo[] = [
     ),
   },
   {
-    questionId: 7,
+    questionId: 6,
     title: 'Ausrichtung & Ertrag',
     content: (
       <div className="space-y-3">
@@ -152,7 +129,7 @@ export const questionInfoData: QuestionInfo[] = [
     ),
   },
   {
-    questionId: 8,
+    questionId: 7,
     title: 'Balkongröße & Modulanzahl',
     content: (
       <div className="space-y-3">
@@ -171,7 +148,7 @@ export const questionInfoData: QuestionInfo[] = [
     ),
   },
   {
-    questionId: 9,
+    questionId: 8,
     title: 'Verschattung verstehen',
     content: (
       <div className="space-y-3">
@@ -191,7 +168,7 @@ export const questionInfoData: QuestionInfo[] = [
     ),
   },
   {
-    questionId: 10,
+    questionId: 9,
     title: 'Geräte & Eigenverbrauch',
     content: (
       <div className="space-y-3">
@@ -218,7 +195,7 @@ export const questionInfoData: QuestionInfo[] = [
     ),
   },
   {
-    questionId: 11,
+    questionId: 10,
     title: 'Budget & Qualität',
     content: (
       <div className="space-y-3">
@@ -238,7 +215,7 @@ export const questionInfoData: QuestionInfo[] = [
     ),
   },
   {
-    questionId: 12,
+    questionId: 11,
     title: 'CO₂-Einsparung',
     content: (
       <div className="space-y-3">
@@ -260,7 +237,7 @@ export const questionInfoData: QuestionInfo[] = [
     ),
   },
   {
-    questionId: 13,
+    questionId: 12,
     title: 'Dein tatsächlicher Stromverbrauch',
     content: (
       <div className="space-y-3">
