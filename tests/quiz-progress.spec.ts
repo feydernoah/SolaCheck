@@ -18,6 +18,8 @@ async function getQuizCookie(page: Page) {
 async function waitForQuizReady(page: Page) {
   // Web-first assertion - auto-retries until progress percentage is visible
   await expect(page.locator('text=/\\d+%/')).toBeVisible();
+  // Wait for SolaWalkingAnimation to complete (2500ms + buffer)
+  await page.waitForTimeout(3000);
 }
 
 /**
@@ -125,8 +127,8 @@ test.describe('Quiz Progress Persistence', () => {
     // Verify we're on question 1
     await expect(page.locator('h2').first()).toContainText(/Wo wohnst du/i);
     
-    // Verify address input is still visible
-    await expect(page.getByPlaceholder(/PLZ oder Stadt/i)).toBeVisible();
+    // Verify address is still selected (green card should be visible)
+    await expect(page.locator('text=/Standort ausgewählt/i')).toBeVisible();
   });
 
   test('starts fresh when no cookie exists', async ({ page }) => {

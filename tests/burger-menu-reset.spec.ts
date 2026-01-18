@@ -7,8 +7,8 @@ const COOKIE_NAME = 'solacheck_quiz_progress';
  * Wait for quiz to be ready - uses web-first assertions with auto-retry
  */
 async function waitForQuizReady(page: Page) {
-  await expect(page.locator('text=/\\d+%/')).toBeVisible();
-}
+  await expect(page.locator('text=/\\d+%/')).toBeVisible();  // Wait for SolaWalkingAnimation to complete (2500ms + buffer)
+  await page.waitForTimeout(3000);}
 
 /**
  * Enter address in the first question and wait for "Weiter" to become enabled

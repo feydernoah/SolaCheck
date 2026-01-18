@@ -6,6 +6,8 @@ import { setupPhotonMock } from './utils/photon-mock';
  */
 async function waitForQuizReady(page: Page) {
   await expect(page.locator('text=/\\d+%/')).toBeVisible();
+  // Wait for SolaWalkingAnimation to complete (2500ms + buffer)
+  await page.waitForTimeout(3000);
 }
 
 /**
@@ -138,7 +140,7 @@ test.describe('Info Button Feature', () => {
     await openInfoModal(page);
 
     // Check for question 2 specific content - use modal heading
-    await expect(page.getByRole('heading', { name: 'Warum die Anzahl Personen wichtig ist' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Haushaltsgröße & Stromverbrauch' })).toBeVisible();
   });
 
   test('modal can be closed with "Verstanden" button', async ({ page }) => {
@@ -298,8 +300,8 @@ test.describe('Info Button - Question Specific Content', () => {
 
     // Open info modal and verify content
     await openInfoModal(page);
-    await expect(page.getByRole('heading', { name: 'Warum die Anzahl Personen wichtig ist' })).toBeVisible();
-    await expect(page.getByText(/Verbrauch/i)).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Haushaltsgröße & Stromverbrauch' })).toBeVisible();
+    await expect(page.getByText(/Grundverbrauch/i)).toBeVisible();
   });
 });
 

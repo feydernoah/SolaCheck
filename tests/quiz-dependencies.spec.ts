@@ -9,6 +9,8 @@ test.describe('Quiz Dependencies', () => {
     await page.goto('/solacheck/quiz');
     // Wait for quiz to be ready
     await expect(page.locator('text=/\\d+%/')).toBeVisible();
+    // Wait for SolaWalkingAnimation to complete (2500ms + buffer)
+    await page.waitForTimeout(3000);
   });
 
   /**

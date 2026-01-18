@@ -6,8 +6,8 @@ test.describe('Cursor behaviour', () => {
     await setupPhotonMock(page);
     await page.goto('/solacheck/quiz');
     // Wait for quiz to be ready (progress percent visible)
-    await expect(page.locator('text=/\\d+%/')).toBeVisible();
-  });
+    await expect(page.locator('text=/\\d+%/')).toBeVisible();    // Wait for SolaWalkingAnimation to complete (2500ms + buffer)
+    await page.waitForTimeout(3000);  });
 
   test('disabled Weiter shows not-allowed cursor', async ({ page }) => {
     const next = page.getByRole('button', { name: 'Weiter' });
