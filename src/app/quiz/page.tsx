@@ -98,7 +98,7 @@ const questions: Question[] = [
       { value: '70-100', label: '70–100 m²' },
       { value: '>100', label: 'Über 100 m²' },
     ],
-    infoHint: 'Die Wohnfläche findest du meist im Mietvertrag oder in der Hausdokumentation. Wenn du unsicher bist, schätze einfach grob.',
+    infoHint: 'Die Wohnfläche findest du meist im Mietvertrag oder in der Hausdokumentation. Wenn du unsicher bist, schätze einfach grob. \nFür mehr Informationen klicke auf das Fragezeichen oben rechts.',
   },
   
   // Kategorie 2: Balkon & Installationsort
@@ -328,6 +328,12 @@ const solaBuddyConfig: Record<number, SolaBuddyConfig> = {
     buddyPosition: 'absolute -top-16 right-2 md:-top-20 md:right-4 w-34 h-34 md:w-49 md:h-49 z-20 cursor-pointer hover:scale-105 transition-transform',
     bubblePosition: 'absolute -top-4 right-32 md:-top-5 md:right-48 bg-white p-4 md:p-5 rounded-2xl shadow-lg border border-gray-200 max-w-[240px] md:max-w-sm z-20 animate-fade-in',
     bubbleCorner: 'rounded-tr-none'
+  },
+  4: { 
+    image: 'Sola_chillt.png',
+    buddyPosition: 'absolute -top-23 left-1/2 -translate-x-1/2 md:-top-33 w-35 h-35 md:w-49 md:h-49 z-20 cursor-pointer hover:scale-105 transition-transform',
+    bubblePosition: 'absolute -top-8 left-1/2 translate-x-12 md:-top-10 md:translate-x-20 bg-white p-4 md:p-5 rounded-2xl shadow-lg border border-gray-200 max-w-[240px] md:max-w-sm z-20 animate-fade-in',
+    bubbleCorner: 'rounded-tl-none'
   },
 };
 
