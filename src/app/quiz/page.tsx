@@ -353,6 +353,12 @@ const solaBuddyConfig: Record<number, SolaBuddyConfig> = {
     bubblePosition: 'absolute -top-11 left-1/2 translate-x-12 md:-top-16 md:translate-x-20 bg-white p-4 md:p-5 rounded-2xl shadow-lg border border-gray-200 max-w-[240px] md:max-w-sm z-20 animate-fade-in',
     bubbleCorner: 'rounded-tl-none'
   },
+  8: { 
+    image: 'Sola_chillt_verwirrt.png',
+    buddyPosition: 'absolute -top-18 right-2 md:-top-27 md:right-4 w-24 h-24 md:w-36 md:h-36 z-20 cursor-pointer hover:scale-105 transition-transform',
+    bubblePosition: 'absolute -top-6 right-28 md:-top-10 md:right-40 bg-white p-4 md:p-5 rounded-2xl shadow-lg border border-gray-200 max-w-[240px] md:max-w-sm z-20 animate-fade-in',
+    bubbleCorner: 'rounded-tr-none'
+  },
 };
 
 export default function Home() {
@@ -585,7 +591,7 @@ export default function Home() {
       />
 
       {/* Main Content */}
-      <div className="flex items-center justify-center min-h-screen pt-30 pb-8">
+      <div className="flex items-center justify-center min-h-screen pt-36 pb-8">
         <div className="w-full max-w-4xl px-4">
           {/* Question Card */}
           <Card padding="lg" className="animate-fade-in relative overflow-visible">
