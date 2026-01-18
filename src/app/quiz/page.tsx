@@ -546,15 +546,7 @@ export default function Home() {
                     {firstQuestion.question}
                   </h2>
 
-                  {/* Info Hint */}
-                  {firstQuestion.infoHint && (
-                    <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-                      <p className="text-sm text-gray-700">
-                        <span className="font-semibold">💡 Info: </span>
-                        {firstQuestion.infoHint}
-                      </p>
-                    </div>
-                  )}
+                  {/* Info Hint intentionally hidden during animated transition to match buddy layout */}
 
                   {/* Answer Input */}
                   <div className="mb-8">
