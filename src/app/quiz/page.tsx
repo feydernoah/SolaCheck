@@ -335,6 +335,12 @@ const solaBuddyConfig: Record<number, SolaBuddyConfig> = {
     bubblePosition: 'absolute -top-8 left-1/2 translate-x-12 md:-top-10 md:translate-x-20 bg-white p-4 md:p-5 rounded-2xl shadow-lg border border-gray-200 max-w-[240px] md:max-w-sm z-20 animate-fade-in',
     bubbleCorner: 'rounded-tl-none'
   },
+  5: { 
+    image: 'Sola_mit_Solarpanel.png',
+    buddyPosition: 'absolute -top-19 left-2 md:-top-28 md:left-4 w-24 h-24 md:w-36 md:h-36 z-20 cursor-pointer hover:scale-105 transition-transform',
+    bubblePosition: 'absolute -top-9 left-28 md:-top-14 md:left-40 bg-white p-4 md:p-5 rounded-2xl shadow-lg border border-gray-200 max-w-[240px] md:max-w-sm z-20 animate-fade-in',
+    bubbleCorner: 'rounded-tl-none'
+  },
 };
 
 export default function Home() {
