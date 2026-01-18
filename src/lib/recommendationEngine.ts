@@ -108,7 +108,8 @@ function generateMatchReasons(
 function generateWarnings(
   product: BKWProduct,
   economics: ProductEconomics,
-  answers: QuizAnswers
+  answers: QuizAnswers,
+  annualConsumption: number
 ): string[] {
   const warnings: string[] = [];
   
@@ -121,6 +122,8 @@ function generateWarnings(
   const orientation = answers[7];
   if (orientation === 'norden') {
     warnings.push('Nordausrichtung reduziert den Ertrag erheblich');
+  } else if (orientation === 'nordost' || orientation === 'nordwest') {
+    warnings.push('Nordost/Nordwest-Ausrichtung reduziert den Ertrag spürbar');
   }
   
   // Heavy shading
@@ -134,6 +137,14 @@ function generateWarnings(
     warnings.push('Mehr Einspeisung als Eigenverbrauch - Speicher könnte sich lohnen');
   }
   
+  // Low consumption warning (500-1500 kWh range)
+  if (annualConsumption < 1500 && annualConsumption >= 500) {
+    const selfConsumptionPercent = economics.annualYieldKwh > 0
+      ? Math.round((economics.selfConsumptionKwh / economics.annualYieldKwh) * 100)
+      : 0;
+    warnings.push(`Niedriger Verbrauch (${String(annualConsumption)} kWh/Jahr) - nur ${String(selfConsumptionPercent)}% Eigenverbrauch möglich`);
+  }
+  
   return warnings;
 }
 
@@ -143,13 +154,24 @@ function generateWarnings(
 function determineRecommendation(
   rankings: ProductRanking[],
   orientationFactor: number,
-  shadingFactor: number
+  shadingFactor: number,
+  annualConsumption: number
 ): { isRecommended: boolean; reason: string } {
   // No products available in budget
   if (rankings.length === 0) {
     return {
       isRecommended: false,
       reason: 'Leider haben wir in deinem Budget kein passendes Balkonkraftwerk gefunden. Erwäge ein höheres Budget für mehr Optionen.',
+    };
+  }
+
+  // Very low consumption - BKW doesn't make economic sense
+  // A typical BKW produces 600-800 kWh/year, if consumption is below 500 kWh,
+  // almost all energy would be fed in at low tariffs
+  if (annualConsumption < 500) {
+    return {
+      isRecommended: false,
+      reason: `Mit einem Jahresverbrauch von nur ${String(annualConsumption)} kWh ist ein Balkonkraftwerk wirtschaftlich nicht sinnvoll. Du würdest fast den gesamten erzeugten Strom ins Netz einspeisen und nur 8,2 ct/kWh erhalten – deutlich weniger als der Kaufpreis von ~40 ct/kWh. Ein BKW lohnt sich erst ab ca. 1.000 kWh Jahresverbrauch.`,
     };
   }
 
@@ -169,6 +191,17 @@ function determineRecommendation(
       isRecommended: false,
       reason: `Mit einer Amortisationszeit von über ${Math.round(bestProduct.economics.amortizationYears).toString()} Jahren ist ein Balkonkraftwerk für deine Situation aktuell nicht wirtschaftlich sinnvoll.`,
     };
+  }
+  
+  // Check self-consumption ratio - if less than 20% of yield is self-consumed, warn
+  if (bestProduct.economics.annualYieldKwh > 0) {
+    const selfConsumptionRatio = bestProduct.economics.selfConsumptionKwh / bestProduct.economics.annualYieldKwh;
+    if (selfConsumptionRatio < 0.20) {
+      return {
+        isRecommended: false,
+        reason: `Bei deinem Verbrauchsprofil würdest du nur etwa ${String(Math.round(selfConsumptionRatio * 100))}% des erzeugten Stroms selbst nutzen können. Der Rest würde zu niedrigen Tarifen eingespeist. Ein Balkonkraftwerk lohnt sich wirtschaftlich erst bei höherem Eigenverbrauch.`,
+      };
+    }
   }
 
   // Good conditions - recommend!
@@ -205,11 +238,12 @@ export function calculateRecommendations(
   const orientation = answers[7] as Orientation | undefined;
   const shading = answers[9] as ShadingLevel | undefined;
   const budget = answers[11];
+  const userProvidedConsumption = answers[13]; // User's actual yearly consumption
   
   // Calculate factors
   const orientationFactor = getOrientationFactor(orientation);
   const shadingFactor = getShadingFactor(shading);
-  const annualConsumption = getAnnualConsumption(householdSize);
+  const annualConsumption = getAnnualConsumption(householdSize, userProvidedConsumption);
   
   // Get PVGIS yield if available
   const pvgisYieldKwhPerKwp = solarData?.annualYieldKwhPerKwp;
@@ -275,7 +309,7 @@ export function calculateRecommendations(
       ecological,
       score: ecological.paybackPeriodYears, // Lower CO₂ payback is better (app focus on sustainability)
       matchReasons: generateMatchReasons(product, economics, answers),
-      warnings: generateWarnings(product, economics, answers),
+      warnings: generateWarnings(product, economics, answers, annualConsumption),
       ecologicalReasons,
       ecologicalWarnings,
     };
@@ -293,10 +327,12 @@ export function calculateRecommendations(
   const { isRecommended, reason: recommendationReason } = determineRecommendation(
     rankings,
     orientationFactor,
-    shadingFactor
+    shadingFactor,
+    annualConsumption
   );
   
   // Build assumptions object
+  const usedUserProvidedConsumption = !!(userProvidedConsumption && typeof userProvidedConsumption === 'string' && parseInt(userProvidedConsumption, 10) > 0);
   const assumptions: CalculationAssumptions = {
     electricityPriceCentPerKwh: ELECTRICITY_PRICE_CT_PER_KWH,
     feedInTariffCentPerKwh: FEED_IN_TARIFF_CT_PER_KWH,
@@ -304,6 +340,7 @@ export function calculateRecommendations(
     shadingFactor,
     selfConsumptionRate: getSelfConsumptionRate(householdSize, false, orientation),
     estimatedAnnualConsumptionKwh: annualConsumption,
+    usedUserProvidedConsumption,
     co2PerKwhGrams: CO2_GRAMS_PER_KWH,
     pvgisYieldKwhPerKwp,
     usedPvgisData,

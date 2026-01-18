@@ -259,6 +259,35 @@ export const questionInfoData: QuestionInfo[] = [
       </div>
     ),
   },
+  {
+    questionId: 13,
+    title: 'Dein tatsächlicher Stromverbrauch',
+    content: (
+      <div className="space-y-3">
+        <p>
+          Wenn du deinen <strong>genauen Jahresverbrauch</strong> kennst, können wir deine 
+          Einsparpotenziale präziser berechnen.
+        </p>
+        <p>
+          <strong>Wo findest du diese Zahl?</strong>
+        </p>
+        <ul className="list-disc list-inside space-y-1 text-sm">
+          <li>Auf deiner <strong>letzten Stromrechnung</strong></li>
+          <li>Im <strong>Kundenportal</strong> deines Stromanbieters</li>
+          <li>Auf dem <strong>Jahresabrechnungsschreiben</strong></li>
+        </ul>
+        <div className="mt-3 p-3 bg-green-50 border border-green-200 rounded-lg">
+          <p className="text-sm text-green-800">
+            <strong>💡 Keine Sorge:</strong> Wenn du die Zahl nicht kennst, überspringe 
+            einfach diese Frage. Wir schätzen dann anhand deiner Haushaltsgröße.
+          </p>
+        </div>
+        <p className="text-sm text-gray-500">
+          Typische Werte: 1-Person: ~1.500 kWh, 2-Personen: ~2.500 kWh, Familie: ~3.500 kWh
+        </p>
+      </div>
+    ),
+  },
 ];
 
 // Helper function to get info for a specific question

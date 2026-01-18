@@ -2,12 +2,15 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useResetConfirmation } from "@/components/ResetConfirmDialog";
 
 interface BurgerMenuProps {
   showHome?: boolean;
   showQuiz?: boolean;
+  /** @deprecated Use confirmOnHome instead */
   onHomeClick?: () => boolean;
+  /** Whether to show confirmation dialog when clicking Home */
+  confirmOnHome?: boolean;
   additionalItems?: {
     label: string;
     href: string;
@@ -20,23 +23,33 @@ interface BurgerMenuProps {
 export function BurgerMenu({ 
   showHome = true, 
   showQuiz = true,
+  // eslint-disable-next-line @typescript-eslint/no-deprecated
   onHomeClick,
+  confirmOnHome = false,
   additionalItems = [],
   inline = false,
 }: BurgerMenuProps) {
   const [menuOpen, setMenuOpen] = useState(false);
-  const router = useRouter();
+  const { confirmAndReset } = useResetConfirmation();
 
   const handleHomeClick = (e: React.MouseEvent) => {
+    // Support legacy onHomeClick prop
     if (onHomeClick) {
       const shouldNavigate = onHomeClick();
       if (!shouldNavigate) {
         e.preventDefault();
+        setMenuOpen(false);
+        return;
+      }
+    } else if (confirmOnHome) {
+      e.preventDefault();
+      const confirmed = confirmAndReset({ navigateTo: "/" });
+      if (!confirmed) {
+        setMenuOpen(false);
         return;
       }
     }
     setMenuOpen(false);
-    router.push('/');
   };
 
   const containerClasses = inline 
