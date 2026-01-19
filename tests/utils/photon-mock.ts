@@ -220,6 +220,40 @@ export const MOCK_RESPONSES: Record<string, object> = {
       },
     ],
   },
+  'bern': {
+    features: [
+      {
+        geometry: { coordinates: [7.447, 46.948] },
+        properties: {
+          osm_id: 1682248,
+          osm_type: 'relation',
+          name: 'Bern',
+          city: 'Bern',
+          postcode: '3011',
+          state: 'Bern',
+          countrycode: 'CH',
+          type: 'city',
+        },
+      },
+    ],
+  },
+  '3011': {
+    features: [
+      {
+        geometry: { coordinates: [7.447, 46.948] },
+        properties: {
+          osm_id: 1682248,
+          osm_type: 'relation',
+          name: 'Bern',
+          city: 'Bern',
+          postcode: '3011',
+          state: 'Bern',
+          countrycode: 'CH',
+          type: 'city',
+        },
+      },
+    ],
+  },
   // Empty response for invalid searches
   'qzqzqzqzqz99999zzz': {
     features: [],

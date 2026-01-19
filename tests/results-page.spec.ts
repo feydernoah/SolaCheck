@@ -8,18 +8,18 @@ test.describe('Results Page - UI Components', () => {
       value: encodeURIComponent(JSON.stringify({
         currentQuestion: 11, // Last question index (0-based)
         answers: {
-          1: '25-34',
-          2: '{"city":"München","postalCode":"80331","coordinates":{"lat":48.1351,"lon":11.5820}}',
-          3: '2',
-          4: 'eigentumswohnung',
-          5: '70-100',
-          6: 'balkonbruestung',
-          7: 'sueden',
-          8: 'mittel',
-          9: 'kaum',
-          10: ['kuehlschrank', 'waschmaschine'],
-          11: '400-700',
-          12: 'sehr-wichtig'
+          1: '{"city":"München","postalCode":"80331","coordinates":{"lat":48.1351,"lon":11.5820}}',
+          2: '2',
+          3: 'eigentumswohnung',
+          4: '70-100',
+          5: 'balkonbruestung',
+          6: 'sueden',
+          7: 'mittel',
+          8: 'kaum',
+          9: ['kuehlschrank', 'waschmaschine'],
+          10: '400-700',
+          11: 'sehr-wichtig',
+          12: '1000'
         }
       })),
       domain: 'localhost',

@@ -2,6 +2,7 @@
 
 import { useCallback, useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { OptionTile } from "@/components/ui/OptionTile";
@@ -11,6 +12,8 @@ import { InfoModal } from "@/components/InfoModal";
 import { AddressInput } from "@/components/AddressInput";
 import { NumberInput } from "@/components/NumberInput";
 import { CompassSelector } from "@/components/CompassSelector";
+import { SolaWalkingAnimation } from "@/components/SolaWalkingAnimation";
+import { LandingPageSnapshot } from "@/components/LandingPageSnapshot";
 import { useQuizProgress } from "@/hooks/useQuizProgress";
 import { getQuestionInfo } from "@/data/questionInfoData";
 import { 
@@ -55,25 +58,13 @@ const questions: Question[] = [
   {
     id: 1,
     category: 'Über dich & deine Wohnsituation',
-    question: 'Wie alt bist du?',
-    type: 'button',
-    options: [
-      { value: '18-24', label: '18–24 Jahre' },
-      { value: '25-34', label: '25–34 Jahre' },
-      { value: '35-49', label: '35–49 Jahre' },
-      { value: '50-64', label: '50–64 Jahre' },
-      { value: '65+', label: '65+ Jahre' },
-    ],},
-  {
-    id: 2,
-    category: 'Über dich & deine Wohnsituation',
     question: 'Wo wohnst du?',
     type: 'text',
     placeholder: 'PLZ oder Stadt eingeben',
-    infoHint: 'Wir nutzen deinen Wohnort nur, um Sonnenstunden und Strahlung für deinen Standort zu berechnen. Die Daten werden nicht gespeichert.',
+    infoHint: 'Wir nutzen deinen Wohnort nur, um Sonnenstunden und Strahlung für deinen Standort zu berechnen. Die Daten werden nicht gespeichert. \nFür mehr Informationen klicke auf das Fragezeichen oben rechts.',
   },
   {
-    id: 3,
+    id: 2,
     category: 'Über dich & deine Wohnsituation',
     question: 'Wie viele Personen leben in deinem Haushalt?',
     type: 'button',
@@ -85,7 +76,7 @@ const questions: Question[] = [
     ],
   },
   {
-    id: 4,
+    id: 3,
     category: 'Über dich & deine Wohnsituation',
     question: 'Wie wohnst du aktuell?',
     type: 'tile',
@@ -97,7 +88,7 @@ const questions: Question[] = [
     ],
   },
   {
-    id: 5,
+    id: 4,
     category: 'Über dich & deine Wohnsituation',
     question: 'Wie groß ist deine Wohnung / dein Haus ungefähr?',
     type: 'button',
@@ -107,12 +98,12 @@ const questions: Question[] = [
       { value: '70-100', label: '70–100 m²' },
       { value: '>100', label: 'Über 100 m²' },
     ],
-    infoHint: 'Die Wohnfläche findest du meist im Mietvertrag oder in der Hausdokumentation. Wenn du unsicher bist, schätze einfach grob.',
+    infoHint: 'Die Wohnfläche findest du meist im Mietvertrag oder in der Hausdokumentation. Wenn du unsicher bist, schätze einfach grob. \nFür mehr Informationen klicke auf das Fragezeichen oben rechts.',
   },
   
   // Kategorie 2: Balkon & Installationsort
   {
-    id: 6,
+    id: 5,
     category: 'Balkon & Installationsort',
     question: 'Wo würdest du das Balkonkraftwerk am ehesten montieren?',
     type: 'tile',
@@ -125,28 +116,28 @@ const questions: Question[] = [
     ],
     dependencies: [
       {
-        questionId: 4,
+        questionId: 3,
         answerValue: 'mietwohnung',
         excludeOptions: ['flachdach'],
       },
     ],
   },
   {
-    id: 7,
+    id: 6,
     category: 'Balkon & Installationsort',
     question: 'In welche Richtung zeigt dein Balkon bzw. der geplante Montageort?',
     type: 'compass',
-    infoHint: 'Klicke auf die Himmelsrichtung im Kompass. Die Farben zeigen dir, wie gut die jeweilige Ausrichtung für Solarertrag ist. Süden ist optimal!',
+    infoHint: 'Klicke auf die Himmelsrichtung im Kompass. Die Farben zeigen dir, wie gut die jeweilige Ausrichtung für Solarertrag ist. Süden ist optimal! \nFür mehr Informationen klicke auf das Fragezeichen oben rechts.',
     dependencies: [
       {
-        questionId: 6,
+        questionId: 5,
         answerValue: ['flachdach', 'weiss-nicht'],
         excludeOptions: [],
       },
     ],
   },
   {
-    id: 8,
+    id: 7,
     category: 'Balkon & Installationsort',
     question: 'Wie groß ist dein Balkon ungefähr?',
     type: 'button',
@@ -155,17 +146,17 @@ const questions: Question[] = [
       { value: 'mittel', label: 'Mittel (2–3 m breit)' },
       { value: 'gross', label: 'Groß (mehr als 3 m)' },
     ],
-    infoHint: 'Es reicht eine grobe Einschätzung, wir wollen nur einschätzen, ob ein oder zwei Module Platz haben könnten.',
+    infoHint: 'Es reicht eine grobe Einschätzung, wir wollen nur einschätzen, ob ein oder zwei Module Platz haben könnten. \nFür mehr Informationen klicke auf das Fragezeichen oben rechts.',
     dependencies: [
       {
-        questionId: 6,
+        questionId: 5,
         answerValue: ['hauswand', 'flachdach', 'weiss-nicht'],
         excludeOptions: [],
       },
     ],
   },
   {
-    id: 9,
+    id: 8,
     category: 'Balkon & Installationsort',
     question: 'Wie stark ist dein Balkon / Montageort normalerweise beschattet?',
     type: 'button',
@@ -177,7 +168,7 @@ const questions: Question[] = [
     ],
     dependencies: [
       {
-        questionId: 6,
+        questionId: 5,
         answerValue: 'weiss-nicht',
       },
     ],
@@ -185,7 +176,7 @@ const questions: Question[] = [
 
   // Kategorie 3: Geräte & Nutzungsmuster
   {
-    id: 10,
+    id: 9,
     category: 'Geräte & Nutzungsmuster',
     question: 'Welche dieser Geräte nutzt du regelmäßig (mehrmals pro Woche)?',
     type: 'multiselect',
@@ -209,16 +200,16 @@ const questions: Question[] = [
       { value: 'luftentfeuchter', label: 'Luftentfeuchter' },
       { value: 'sonstige', label: 'Sonstige starke Verbraucher' },
     ],
-    infoHint: 'Diese Info hilft uns nur grob einzuschätzen, wie hoch dein Stromverbrauch tagsüber ist. Du musst nichts exakt ausrechnen, eine ehrliche Einschätzung reicht.',
+    infoHint: 'Diese Info hilft uns nur grob einzuschätzen, wie hoch dein Stromverbrauch tagsüber ist. \nFür mehr Informationen klicke auf das Fragezeichen oben rechts.',
   },
   {
-    id: 13,
+    id: 10,
     category: 'Geräte & Nutzungsmuster',
     question: 'Kennst du deinen jährlichen Stromverbrauch?',
     type: 'number',
     placeholder: 'z.B. 2500',
     unit: 'kWh/Jahr',
-    infoHint: 'Du findest deinen Jahresverbrauch auf der Stromrechnung oder im Kundenportal deines Anbieters. Wenn du ihn nicht kennst, überspringe diese Frage einfach – wir schätzen dann anhand deiner Haushaltsgröße.',
+    infoHint: 'Du findest deinen Jahresverbrauch auf der Stromrechnung oder im Kundenportal deines Anbieters. Wenn du ihn nicht kennst, überspringe diese Frage einfach – wir schätzen dann anhand deiner Haushaltsgröße. \nFür mehr Informationen klicke auf das Fragezeichen oben rechts.',
   },
 
   // Kategorie 4: Budget & Investitionsbereitschaft
@@ -233,7 +224,7 @@ const questions: Question[] = [
       step: 10,
       unit: '€',
     },
-    infoHint: 'Stelle den Regler auf dein maximales Budget. Bei "Kein Limit" zeigen wir dir alle Produkte unabhängig vom Preis.',
+    infoHint: 'Stelle den Regler auf dein maximales Budget. Bei "Kein Limit" zeigen wir dir alle Produkte unabhängig vom Preis. \nFür mehr Informationen klicke auf das Fragezeichen oben rechts.',
   },
   {
     id: 12,
@@ -311,16 +302,119 @@ const isQuestionVisible = (question: Question, answers: Record<number, string | 
   return true;
 };
 
+// Sola Buddy Konfiguration für jede Frage
+interface SolaBuddyConfig {
+  image: string;
+  buddyPosition: string; // Tailwind classes für Position des Buddys
+  bubblePosition: string; // Tailwind classes für Position der Sprechblase
+  bubbleCorner: string; // z.B. 'rounded-tr-none' (Pfeil rechts) oder 'rounded-tl-none' (Pfeil links)
+}
+
+const solaBuddyConfig: Record<number, SolaBuddyConfig> = {
+  1: { 
+    image: 'Sola_chillt_winkend.png',
+    buddyPosition: 'absolute -top-17 right-2 md:-top-25 md:right-4 w-24 h-24 md:w-36 md:h-36 z-20 cursor-pointer hover:scale-105 transition-transform',
+    bubblePosition: 'absolute -top-8 right-28 md:-top-12 md:right-40 bg-white p-4 md:p-5 rounded-2xl shadow-lg border border-gray-200 max-w-[240px] md:max-w-sm z-20 animate-fade-in',
+    bubbleCorner: 'rounded-tr-none'
+  },
+  2: { 
+    image: 'Sola_nachdenklich.png',
+    buddyPosition: 'absolute -top-22 left-2 md:-top-33 md:left-4 w-24 h-24 md:w-36 md:h-36 z-20 cursor-pointer hover:scale-105 transition-transform',
+    bubblePosition: 'absolute -top-11 left-28 md:-top-16 md:left-40 bg-white p-4 md:p-5 rounded-2xl shadow-lg border border-gray-200 max-w-[240px] md:max-w-sm z-20 animate-fade-in',
+    bubbleCorner: 'rounded-tl-none'
+  },
+  3: { 
+    image: 'Sola_auf_Fragezeichen.png',
+    buddyPosition: 'absolute -top-16 right-2 md:-top-20 md:right-4 w-34 h-34 md:w-49 md:h-49 z-20 cursor-pointer hover:scale-105 transition-transform',
+    bubblePosition: 'absolute -top-4 right-32 md:-top-5 md:right-48 bg-white p-4 md:p-5 rounded-2xl shadow-lg border border-gray-200 max-w-[240px] md:max-w-sm z-20 animate-fade-in',
+    bubbleCorner: 'rounded-tr-none'
+  },
+  4: { 
+    image: 'Sola_chillt.png',
+    buddyPosition: 'absolute -top-23 left-1/2 -translate-x-1/2 md:-top-33 w-35 h-35 md:w-49 md:h-49 z-20 cursor-pointer hover:scale-105 transition-transform',
+    bubblePosition: 'absolute -top-8 left-1/2 translate-x-12 md:-top-10 md:translate-x-20 bg-white p-4 md:p-5 rounded-2xl shadow-lg border border-gray-200 max-w-[240px] md:max-w-sm z-20 animate-fade-in',
+    bubbleCorner: 'rounded-tl-none'
+  },
+  5: { 
+    image: 'Sola_mit_Solarpanel.png',
+    buddyPosition: 'absolute -top-19 left-2 md:-top-28 md:left-4 w-24 h-24 md:w-36 md:h-36 z-20 cursor-pointer hover:scale-105 transition-transform',
+    bubblePosition: 'absolute -top-9 left-28 md:-top-14 md:left-40 bg-white p-4 md:p-5 rounded-2xl shadow-lg border border-gray-200 max-w-[240px] md:max-w-sm z-20 animate-fade-in',
+    bubbleCorner: 'rounded-tl-none'
+  },
+  6: { 
+    image: 'Sola_zeigt.png',
+    buddyPosition: 'absolute -top-22 left-2 md:-top-33 md:left-4 w-24 h-24 md:w-36 md:h-36 z-20 cursor-pointer hover:scale-105 transition-transform',
+    bubblePosition: 'absolute -top-11 left-28 md:-top-16 md:left-40 bg-white p-4 md:p-5 rounded-2xl shadow-lg border border-gray-200 max-w-[240px] md:max-w-sm z-20 animate-fade-in',
+    bubbleCorner: 'rounded-tl-none'
+  },
+  7: { 
+    image: 'Sola_nachdenklich.png',
+    buddyPosition: 'absolute -top-22 left-1/2 -translate-x-1/2 md:-top-33 w-24 h-24 md:w-36 md:h-36 z-20 cursor-pointer hover:scale-105 transition-transform',
+    bubblePosition: 'absolute -top-11 left-1/2 translate-x-12 md:-top-16 md:translate-x-20 bg-white p-4 md:p-5 rounded-2xl shadow-lg border border-gray-200 max-w-[240px] md:max-w-sm z-20 animate-fade-in',
+    bubbleCorner: 'rounded-tl-none'
+  },
+  8: { 
+    image: 'Sola_chillt_verwirrt.png',
+    buddyPosition: 'absolute -top-18 right-2 md:-top-27 md:right-4 w-24 h-24 md:w-36 md:h-36 z-20 cursor-pointer hover:scale-105 transition-transform',
+    bubblePosition: 'absolute -top-6 right-28 md:-top-10 md:right-40 bg-white p-4 md:p-5 rounded-2xl shadow-lg border border-gray-200 max-w-[240px] md:max-w-sm z-20 animate-fade-in',
+    bubbleCorner: 'rounded-tr-none'
+  },
+  9: { 
+    image: 'Sola_auf_Couch.png',
+    buddyPosition: 'absolute -top-22 left-2 md:-top-33 md:left-4 w-24 h-24 md:w-36 md:h-36 z-20 cursor-pointer hover:scale-105 transition-transform',
+    bubblePosition: 'absolute -top-11 left-28 md:-top-16 md:left-40 bg-white p-4 md:p-5 rounded-2xl shadow-lg border border-gray-200 max-w-[240px] md:max-w-sm z-20 animate-fade-in',
+    bubbleCorner: 'rounded-tl-none'
+  },
+  10: { 
+    image: 'Sola_mit_Notizblock.png',
+    buddyPosition: 'absolute -top-20 right-2 md:-top-30 md:right-4 w-24 h-24 md:w-36 md:h-36 z-20 cursor-pointer hover:scale-105 transition-transform',
+    bubblePosition: 'absolute -top-8 right-28 md:-top-10 md:right-40 bg-white p-4 md:p-5 rounded-2xl shadow-lg border border-gray-200 max-w-[240px] md:max-w-sm z-20 animate-fade-in',
+    bubbleCorner: 'rounded-tr-none'
+  },
+  11: { 
+    image: 'Sola_chillt.png',
+    buddyPosition: 'absolute -top-23 left-1/2 -translate-x-1/2 md:-top-33 w-35 h-35 md:w-49 md:h-49 z-20 cursor-pointer hover:scale-105 transition-transform',
+    bubblePosition: 'absolute -top-8 left-1/2 translate-x-12 md:-top-10 md:translate-x-20 bg-white p-4 md:p-5 rounded-2xl shadow-lg border border-gray-200 max-w-[240px] md:max-w-sm z-20 animate-fade-in',
+    bubbleCorner: 'rounded-tl-none'
+  },
+  12: { 
+    image: 'Sola_gibt_ok.png',
+    buddyPosition: 'absolute -top-22 left-2 md:-top-32 md:left-4 w-24 h-24 md:w-36 md:h-36 z-20 cursor-pointer hover:scale-105 transition-transform',
+    bubblePosition: 'absolute -top-10 left-28 md:-top-14 md:left-40 bg-white p-4 md:p-5 rounded-2xl shadow-lg border border-gray-200 max-w-[240px] md:max-w-sm z-20 animate-fade-in',
+    bubbleCorner: 'rounded-tl-none'
+  },
+};
+
 export default function Home() {
   const router = useRouter();
   const [isInfoModalOpen, setIsInfoModalOpen] = useState(false);
   const [isAddressValid, setIsAddressValid] = useState(false);
+  const [solaSpeechBubbleVisible, setSolaSpeechBubbleVisible] = useState(false);
+  const [showInitialSolaHint, setShowInitialSolaHint] = useState(false);
   const { 
     currentQuestion, 
     answers, 
     setCurrentQuestion, 
     updateAnswer,
   } = useQuizProgress();
+
+  // Only show walking animation on absolute first visit (use sessionStorage to track)
+  const [showWalkingAnimation, setShowWalkingAnimation] = useState(() => {
+    if (typeof window !== 'undefined') {
+      const hasSeenAnimation = sessionStorage.getItem('hasSeenQuizAnimation');
+      const hasAnswers = Object.keys(answers).length > 0;
+      return !hasSeenAnimation && !hasAnswers;
+    }
+    return false;
+  });
+
+  // Mark animation as seen when it completes
+  const handleAnimationComplete = () => {
+    if (typeof window !== 'undefined') {
+      sessionStorage.setItem('hasSeenQuizAnimation', 'true');
+    }
+    setShowWalkingAnimation(false);
+  };
 
   // Safety fallback: ensure currentQuestion is always within valid bounds
   // The hook already validates cookies, but this guards against any edge cases
@@ -334,6 +428,18 @@ export default function Home() {
       setCurrentQuestion(0);
     }
   }, [isOutOfBounds, setCurrentQuestion]);
+
+  // Timer für initialen Sola Hint (nach 10 Sekunden)
+  useEffect(() => {
+    // Timer nur starten wenn Sprechblase nicht sichtbar ist
+    if (!solaSpeechBubbleVisible) {
+      const timer = setTimeout(() => {
+        setShowInitialSolaHint(true);
+      }, 10000);
+
+      return () => clearTimeout(timer);
+    }
+  }, [currentQuestion, solaSpeechBubbleVisible]); // Reset bei neuer Frage oder wenn Sprechblase geschlossen wird
 
   const handleNext = () => {
     let nextQuestion = safeCurrentQuestion + 1;
@@ -399,10 +505,96 @@ export default function Home() {
     return !!currentAnswer;
   };
 
+  // Show walking animation on first visit
+  if (showWalkingAnimation) {
+    const firstQuestion = questions[0];
+    return (
+      <SolaWalkingAnimation 
+        onComplete={handleAnimationComplete}
+        fromPage={<LandingPageSnapshot hideBuddy={true} />}
+        toPage={
+          <div className="min-h-screen bg-white relative overflow-hidden p-4">
+            <div className="fixed top-4 right-4 sm:top-5 sm:right-5 md:top-6 md:right-6 z-40 flex items-center gap-4">
+              <InfoButton onClick={() => setIsInfoModalOpen(true)} />
+              <BurgerMenu showHome showQuiz={false} confirmOnHome inline />
+            </div>
+            <div className="flex items-center justify-center min-h-screen">
+              <div className="w-full max-w-4xl px-4">
+                <Card padding="lg" className="animate-fade-in">
+                  {/* Category Badge */}
+                  <div className="mb-4">
+                    <span className="inline-block bg-yellow-100 text-yellow-800 text-sm font-medium px-3 py-1 rounded-full">
+                      {firstQuestion.category}
+                    </span>
+                  </div>
+                  
+                  {/* Progress Indicator */}
+                  <div className="mb-8">
+                    <div className="flex justify-end text-sm text-gray-600 mb-2">
+                      <span>{Math.round((1 / questions.length) * 100)}%</span>
+                    </div>
+                    <div className="w-full bg-gray-200 rounded-full h-2">
+                      <div
+                        className="bg-yellow-400 h-2 rounded-full transition-all duration-300"
+                        style={{ width: `${((1 / questions.length) * 100).toString()}%` }}
+                      ></div>
+                    </div>
+                  </div>
+
+                  {/* Question */}
+                  <h2 className="text-heading-2 md:text-heading-1 font-bold text-gray-800 mb-8">
+                    {firstQuestion.question}
+                  </h2>
+
+                  {/* Info Hint intentionally hidden during animated transition to match buddy layout */}
+
+                  {/* Answer Input */}
+                  <div className="mb-8">
+                    {firstQuestion.type === 'text' && (
+                      <AddressInput
+                        value=""
+                        onChange={() => { /* disabled */ }}
+                        onValidationChange={() => { /* disabled */ }}
+                      />
+                    )}
+                    {firstQuestion.type === 'button' && (
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        {firstQuestion.options?.map((option) => (
+                          <Button
+                            key={option.value}
+                            variant="outline"
+                            size="lg"
+                            className="w-full"
+                            disabled
+                          >
+                            {option.label}
+                          </Button>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="flex justify-between items-center pt-6 border-t border-gray-200">
+                    <Button variant="ghost" size="md" disabled>
+                      ← Zurück
+                    </Button>
+                    <Button variant="primary" size="lg" disabled>
+                      Weiter →
+                    </Button>
+                  </div>
+                </Card>
+              </div>
+            </div>
+          </div>
+        }
+      />
+    );
+  }
+
   return (
-    <div className="min-h-screen bg-white relative overflow-hidden p-4">
+    <div className="min-h-screen bg-white relative overflow-visible p-4">
       {/* Burger Menu and Info Button */}
-      <div className="fixed top-4 right-4 sm:top-5 sm:right-5 md:top-6 md:right-6 z-40 flex items-center gap-4">
+      <div className="fixed top-4 right-4 sm:top-5 sm:right-5 md:top-6 md:right-6 z-50 flex items-center gap-4">
         <InfoButton onClick={() => setIsInfoModalOpen(true)} />
         <BurgerMenu showHome showQuiz={false} confirmOnHome inline />
       </div>
@@ -415,10 +607,63 @@ export default function Home() {
       />
 
       {/* Main Content */}
-      <div className="flex items-center justify-center min-h-screen">
+      <div className="flex items-center justify-center min-h-screen pt-36 pb-8">
         <div className="w-full max-w-4xl px-4">
           {/* Question Card */}
-          <Card padding="lg" className="animate-fade-in">
+          <Card padding="lg" className="animate-fade-in relative overflow-visible">
+            {/* Sola Buddy - dynamisch basierend auf Config */}
+            {currentQ.id in solaBuddyConfig && (() => {
+              const config = solaBuddyConfig[currentQ.id];
+              const hasInfoHint = !!currentQ.infoHint;
+
+              return (
+                <>
+                  <button
+                    onClick={() => {
+                      if (hasInfoHint) {
+                        setSolaSpeechBubbleVisible(!solaSpeechBubbleVisible);
+                        setShowInitialSolaHint(false);
+                      } else {
+                        setShowInitialSolaHint(!showInitialSolaHint);
+                      }
+                    }}
+                    className={config.buddyPosition}
+                    aria-label={hasInfoHint ? "Sola für Hilfe anklicken" : "Hinweis ein-/ausblenden"}
+                  >
+                    <Image 
+                      src={`/solacheck/SolaQuizPages/${config.image}`}
+                      alt="Sola Buddy"
+                      width={144}
+                      height={144}
+                      className="w-full h-full object-contain"
+                      unoptimized
+                    />
+                  </button>
+
+                  {/* Sola Sprechblase */}
+                  {((hasInfoHint && (solaSpeechBubbleVisible || showInitialSolaHint)) || 
+                    (!hasInfoHint && showInitialSolaHint)) && (
+                    <div className={`${config.bubblePosition} ${config.bubbleCorner}`}>
+                      {hasInfoHint && solaSpeechBubbleVisible ? (
+                        <p className="text-sm md:text-base text-gray-700 whitespace-pre-line">
+                          <span className="font-semibold">💡 </span>
+                          {currentQ.infoHint}
+                        </p>
+                      ) : hasInfoHint ? (
+                        <p className="text-sm md:text-base text-gray-700">
+                          Wenn du Hilfe brauchst, klick mich an! 👋
+                        </p>
+                      ) : (
+                        <p className="text-sm md:text-base text-gray-700">
+                          Für mehr Informationen klicke oben rechts auf den Info-Button! ℹ️
+                        </p>
+                      )}
+                    </div>
+                  )}
+                </>
+              );
+            })()}
+            
             {/* Category Badge */}
             <div className="mb-4">
               <span className="inline-block bg-yellow-100 text-yellow-800 text-sm font-medium px-3 py-1 rounded-full">
@@ -443,16 +688,6 @@ export default function Home() {
             <h2 className="text-heading-2 md:text-heading-1 font-bold text-gray-800 mb-8">
               {currentQ.question}
             </h2>
-
-            {/* Info Hint */}
-            {currentQ.infoHint && (
-              <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-                <p className="text-sm text-gray-700">
-                  <span className="font-semibold">💡 Info: </span>
-                  {currentQ.infoHint}
-                </p>
-              </div>
-            )}
 
             {/* Answer Input */}
             <div className="mb-8">
@@ -493,8 +728,8 @@ export default function Home() {
               {/* Text Input Type */}
               {currentQ.type === 'text' && (
                 <>
-                  {/* Spezielle AddressInput für Frage 2 (Wohnort) */}
-                  {currentQ.id === 2 ? (
+                  {/* Spezielle AddressInput für Frage 1 (Wohnort) */}
+                  {currentQ.id === 1 ? (
                     <AddressInput
                       value={currentTextAnswer}
                       onChange={handleTextAnswer}
