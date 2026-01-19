@@ -490,8 +490,8 @@ export default function Home() {
     if (currentQ.type === 'multiselect') {
       return currentMultiSelectAnswers.length > 0;
     }
-    // For address question (id 2), check validation state
-    if (currentQ.id === 2) {
+    // For address question (id 1), check validation state
+    if (currentQ.id === 1) {
       return isAddressValid;
     }
     // For slider type (budget), default state (no limit) should be considered answered

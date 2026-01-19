@@ -203,8 +203,8 @@ export async function POST(request: NextRequest): Promise<NextResponse<Recommend
       solarData = await fetchPVGISData(
         answers.coordinates.lat,
         answers.coordinates.lon,
-        answers[7], // orientation
-        answers[6]  // mounting
+        answers[6], // orientation
+        answers[5]  // mounting
       );
     }
     
@@ -280,8 +280,8 @@ export async function GET(): Promise<NextResponse<RecommendationResponse>> {
     ? await fetchPVGISData(
         coords.lat,
         coords.lon,
-        sampleAnswers[7],
-        sampleAnswers[6]
+        sampleAnswers[6],
+        sampleAnswers[5]
       )
     : null;
   

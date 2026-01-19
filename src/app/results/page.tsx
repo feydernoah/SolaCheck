@@ -18,7 +18,7 @@ import { initEmailJS, sendRecommendationEmail } from '@/lib/emailService';
  * Extract coordinates from the address answer (stored as JSON string)
  */
 function extractCoordinatesFromAnswers(answers: Record<number, string | string[]>): Coordinates | undefined {
-  const addressAnswer = answers[2];
+  const addressAnswer = answers[1];
   if (typeof addressAnswer !== 'string') return undefined;
   
   try {
@@ -94,8 +94,8 @@ export default function ResultsPage() {
         
         // If we have coordinates but no cached data, fetch PVGIS data
         if (coordinates && !cachedSolarData) {
-          const orientation = answers[7] as string | undefined;
-          const mounting = answers[6] as string | undefined;
+          const orientation = answers[6] as string | undefined;
+          const mounting = answers[5] as string | undefined;
           cachedSolarData = await fetchSolarData(coordinates, orientation, mounting);
         }
         
