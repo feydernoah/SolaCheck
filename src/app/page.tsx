@@ -43,7 +43,11 @@ export default function LandingPage() {
             unoptimized
           />
         </div>
-
+{/* Intro Text */}
+<p className="mt-8 mb-12 max-w-xl text-center text-sm sm:text-base md:text-lg text-slate-700 leading-relaxed">
+  SolaCheck hilft dir, schnell und unkompliziert zu verstehen,  
+  ob ein Balkonkraftwerk für dich die richtige Lösung ist.
+</p>
         {/* Start Button */}
         <Link href="/quiz">
           <Button size="lg" className="mb-24 sm:mb-32 md:mb-32 lg:mb-32 xl:mb-0 px-10 py-4 sm:px-12 sm:py-4 md:px-12 md:py-4 lg:px-16 lg:py-6 xl:px-16 xl:py-6 text-lg sm:text-xl md:text-xl lg:text-2xl xl:text-2xl">
@@ -83,7 +87,7 @@ export default function LandingPage() {
           {/* Speech Bubble */}
           {speechBubbleVisible && (
             <div className="bg-white p-3 min-[375px]:p-3.5 sm:p-4 md:p-6 lg:p-6 xl:p-6 rounded-2xl rounded-bl-none shadow-lg border border-gray-200 max-w-[160px] min-[375px]:max-w-[180px] sm:max-w-[200px] md:max-w-md lg:max-w-md xl:max-w-[280px] min-[1330px]:!max-w-[305px] min-[1380px]:!max-w-[330px] min-[1430px]:!max-w-[355px] min-[1480px]:!max-w-[380px] min-[1530px]:!max-w-[405px] min-[1580px]:!max-w-[430px] min-[1605px]:!max-w-md -mt-2 min-[375px]:-mt-3 sm:-mt-4 md:-mt-8">
-              <p className="text-gray-800 text-[10px] min-[375px]:text-xs sm:text-xs md:text-lg lg:text-lg xl:text-lg leading-snug">
+              <p className="text-gray-800 text-[10px] sm:text-xs md:text-sm leading-snug">
                 {chatMessages[currentMessageIndex]}
               </p>
             </div>

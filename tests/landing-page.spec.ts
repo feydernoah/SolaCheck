@@ -88,4 +88,13 @@ test.describe('Landing Page', () => {
     await expect(burgerMenuContainer).toHaveClass(/top-/);
     await expect(burgerMenuContainer).toHaveClass(/right-/);
   });
+
+  test('displays intro text explaining the app', async ({ page }) => {
+  const introText = page.locator('p').filter({ hasText: 'SolaCheck hilft dir' });
+
+  await expect(introText).toBeVisible();
+  await expect(introText).toContainText('Balkonkraftwerk');
+  await expect(introText).toContainText('richtige Lösung');
+  });
+
 });
