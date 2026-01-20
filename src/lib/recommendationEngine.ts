@@ -85,7 +85,7 @@ function generateMatchReasons(
   }
   
   // Mounting type match
-  const mountingType = answers[6];
+  const mountingType = answers[5];
   if (mountingType && mountingType !== 'weiss-nicht') {
     reasons.push(`Passend für ${MOUNTING_LABELS[mountingType] ?? mountingType}`);
   }
@@ -119,7 +119,7 @@ function generateWarnings(
   }
   
   // Low yield due to orientation
-  const orientation = answers[7];
+  const orientation = answers[6];
   if (orientation === 'norden') {
     warnings.push('Nordausrichtung reduziert den Ertrag erheblich');
   } else if (orientation === 'nordost' || orientation === 'nordwest') {
@@ -127,7 +127,7 @@ function generateWarnings(
   }
   
   // Heavy shading
-  const shading = answers[9];
+  const shading = answers[8];
   if (shading === 'ganzen-tag') {
     warnings.push('Starke Verschattung reduziert den Ertrag deutlich');
   }
@@ -233,12 +233,12 @@ export function calculateRecommendations(
   solarData?: SolarData
 ): RecommendationResponse {
   // Extract relevant answers
-  const householdSize = answers[3] as HouseholdSize | undefined;
-  const mountingLocation = answers[6] as MountingType | undefined;
-  const orientation = answers[7] as Orientation | undefined;
-  const shading = answers[9] as ShadingLevel | undefined;
+  const householdSize = answers[2] as HouseholdSize | undefined;
+  const mountingLocation = answers[5] as MountingType | undefined;
+  const orientation = answers[6] as Orientation | undefined;
+  const shading = answers[8] as ShadingLevel | undefined;
   const budget = answers[11];
-  const userProvidedConsumption = answers[13]; // User's actual yearly consumption
+  const userProvidedConsumption = answers[12]; // User's actual yearly consumption
   
   // Calculate factors
   const orientationFactor = getOrientationFactor(orientation);
@@ -373,7 +373,7 @@ function buildQuizSummary(
 ): RecommendationResponse['quizSummary'] {
   // Check if we have coordinates (new format stores only coordinates)
   let locationDisplay = 'Nicht angegeben';
-  const addressAnswer = answers[2];
+  const addressAnswer = answers[1];
   if (addressAnswer) {
     try {
       const parsed = JSON.parse(addressAnswer) as { lat?: number; lon?: number; city?: string; postalCode?: string };
