@@ -250,6 +250,10 @@ test.describe('Results Page - Negative Recommendation', () => {
     const quizCookie = cookies.find(c => c.name === 'solacheck_quiz_progress');
     expect(quizCookie).toBeUndefined();
   });
+ test('shows info link when no recommendation', async ({ page }) => {
+  const infoLink = page.locator('a[href$="/info-page"]');
+  await expect(infoLink).toBeVisible();
+});
 });
 
 test.describe('Results Page - Redirect Logic', () => {
@@ -301,3 +305,4 @@ test.describe('Results Page - Responsive Design', () => {
     await expect(contentContainer).toBeVisible();
   });
 });
+
