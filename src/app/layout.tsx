@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import { Logo } from "@/components/Logo";
+import { Footer } from "@/components/Footer";
 
 export const metadata: Metadata = {
   title: "SolaCheck",
@@ -31,8 +32,13 @@ export default function RootLayout({
         <div className="fixed top-4 left-4 sm:top-5 sm:left-5 md:top-6 md:left-6 z-50 h-14 flex items-center">
           <Logo size={80} resetOnClick />
         </div>
+        {/* Main Content */}
+        <main className="flex-grow">
+          {children}
+        </main>
 
-        {children}
+        {/* Global Footer */}
+        <Footer />
       </body>
     </html>
   );

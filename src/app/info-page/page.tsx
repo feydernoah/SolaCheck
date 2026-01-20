@@ -389,16 +389,6 @@ const SECTIONS = [
       },
     ],
   },
-  {
-    id: "datenschutz",
-    title: "Datenschutz in SolaCheck",
-    paragraphs: ["Unser Prinzip: so wenig Daten wie möglich."],
-    bullets: [
-      "Keine Speicherung personenbezogener Daten",
-      "Standort nur nach Einwilligung oder alternativ per Stadt/PLZ",
-      "Standort wird nur zur Berechnung genutzt und danach verworfen",
-    ],
-  },
 {
   id: "quellen",
   title: "Quellen & weiterführende Informationen",
