@@ -281,8 +281,8 @@ export default function ResultsPage() {
                   // Feature-based badges with distinct colors
                   const badges: { text: string; color: 'yellow' | 'blue' | 'green' }[] = [
                     { text: '🌱 Beste CO₂-Bilanz', color: 'green' },
-                    { text: '✅ Gute Alternative', color: 'blue' },
-                    { text: '✅ Solide Option', color: 'yellow' },
+                    { text: '✅  Weitere empfehlenswerte Option', color: 'blue' },
+                    { text: '✅  Weitere empfehlenswerte Option', color: 'blue' },
                   ];
                   
                   const badge = badges[index] ?? badges[2];
