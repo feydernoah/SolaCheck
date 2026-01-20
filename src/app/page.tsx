@@ -43,24 +43,29 @@ export default function LandingPage() {
             unoptimized
           />
         </div>
-{/* Intro Text */}
-<p className="mt-8 mb-12 max-w-xl text-center text-sm sm:text-base md:text-lg text-slate-700 leading-relaxed">
-  SolaCheck hilft dir, schnell und unkompliziert zu verstehen,  
-  ob ein Balkonkraftwerk für dich die richtige Lösung ist.
-</p>
-        {/* Start Button */}
-        <Link href="/quiz">
-          <Button size="lg" className="mb-24 sm:mb-32 md:mb-32 lg:mb-32 xl:mb-0 px-10 py-4 sm:px-12 sm:py-4 md:px-12 md:py-4 lg:px-16 lg:py-6 xl:px-16 xl:py-6 text-lg sm:text-xl md:text-xl lg:text-2xl xl:text-2xl">
-            Start
-          </Button>
-        </Link>
+        {/* Intro Text */}
+        <p className="mt-8 mb-12 max-w-xl text-center text-sm sm:text-base md:text-lg text-slate-700 leading-relaxed">
+          SolaCheck hilft dir, schnell und unkompliziert zu verstehen,
+          ob ein Balkonkraftwerk für dich die richtige Lösung ist.
+        </p>
+        {/* Buttons */}
+        <div className="mt-6 flex flex-col items-center gap-3">
+          <Link href="/quiz">
+            <Button
+              size="lg"
+              className="px-10 py-4 sm:px-12 sm:py-4 md:px-12 md:py-4 lg:px-16 lg:py-6 text-lg sm:text-xl md:text-xl lg:text-2xl"
+            >
+              Start
+            </Button>
+          </Link>
 
-        {/* Info Button */}
-        <Link href="/info-page">
-          <Button className="mt-6 sola-secondary-button">
-            Mehr Infos
-          </Button>
-        </Link>
+          <Link href="/info-page">
+            <Button className="sola-secondary-button">
+              Mehr Infos
+            </Button>
+          </Link>
+        </div>
+
       </div>
 
       {/* Chat Buddy - Bottom Left */}
