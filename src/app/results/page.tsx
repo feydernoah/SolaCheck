@@ -13,6 +13,7 @@ import { useQuizProgress } from '@/hooks/useQuizProgress';
 import { useSolarData } from '@/hooks/useSolarData';
 import { RecommendationResponse, QuizAnswers, Coordinates } from '@/types/economic';
 import { initEmailJS, sendRecommendationEmail } from '@/lib/emailService';
+import Link from 'next/link';
 
 /**
  * Extract coordinates from the address answer (stored as JSON string)
@@ -259,6 +260,81 @@ export default function ResultsPage() {
             <p className="text-body-lg text-gray-700 max-w-2xl mx-auto">
               {recommendation.recommendationReason}
             </p>
+            {!recommendation.isRecommended && (
+    <div className="mt-10 max-w-2xl mx-auto text-gray-700 text-sm sm:text-base leading-relaxed">
+                <p className="mb-5">
+                  Auch wenn ein Balkonkraftwerk aktuell nicht ideal für dich ist, gibt es weitere sinnvolle Möglichkeiten,
+                  den eigenen Stromverbrauch nachhaltig zu gestalten und grünen Strom zu beziehen:
+                </p>
+
+                <ul className="space-y-4 pl-4 border-l-2 border-yellow-300">
+                  <li>
+                    <strong className="text-gray-800">Ökostrom-Tarif wählen:</strong>{' '}
+                    Viele Stromanbieter in Deutschland bieten zertifizierte Ökostrom-Tarife an, z.B.
+                    <a
+                      href="https://www.naturstrom.de"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-yellow-600 hover:underline ml-1"
+                    >
+                      naturstrom
+                    </a>,
+                    <a
+                      href="https://www.lichtblick.de"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-yellow-600 hover:underline ml-1"
+                    >
+                      LichtBlick
+                    </a>{' '}
+                    oder
+                    <a
+                      href="https://www.green-planet-energy.de"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-yellow-600 hover:underline ml-1"
+                    >
+                      Green Planet Energy
+                    </a>.
+                  </li>
+
+                  <li>
+                    <strong className="text-gray-800">Stromverbrauch senken:</strong>{' '}
+                    LED-Beleuchtung, Standby-Verbrauch reduzieren oder smarte Steckdosen helfen,
+                    Kosten und CO₂-Ausstoß sofort zu senken.
+                  </li>
+
+                  <li>
+                    <strong className="text-gray-800">Unabhängige Beratung nutzen:</strong>{' '}
+                    Die
+                    <a
+                      href="https://www.verbraucherzentrale.de"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-yellow-600 hover:underline ml-1"
+                    >
+                      Verbraucherzentrale
+                    </a>{' '}
+                    bietet neutrale Energieberatung und Informationen zu möglichen Förderungen.
+                  </li>
+                </ul>
+
+                <p className="mt-5 text-xs text-gray-500">
+                  Hinweis: Verfügbarkeit und Preise von Stromtarifen unterscheiden sich je nach Region.
+                </p>
+
+                {/* Link to Info Page */}
+                <div className="mt-6 text-center">
+                  <Link
+                    href="/info-page"
+                    className="text-yellow-600 font-medium hover:underline"
+                  >
+                    Mehr Informationen findest du hier →
+                  </Link>
+                </div>
+
+              </div>
+            )}
           </div>
 
           {/* AC Limit Disclaimer */}
