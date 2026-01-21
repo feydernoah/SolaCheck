@@ -195,8 +195,8 @@ test.describe('Results Page - Negative Recommendation', () => {
         answers: {
           1: '25-34',
           2: '{"city":"Berlin","postalCode":"10115"}',
-          7: 'norden',
-          9: 'ganzen-tag',
+          6: 'norden',
+          8: 'ganzen-tag',
           11: '400-700'
         }
       })),
