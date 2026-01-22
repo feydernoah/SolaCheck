@@ -1,15 +1,36 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { useState, useEffect } from "react";
 import { useResetConfirmation } from "@/components/ResetConfirmDialog";
+
+const COOKIE_NAME = 'solacheck_quiz_progress';
+
+/**
+ * Check if there's quiz progress in the cookie
+ */
+function hasQuizProgress(): boolean {
+  if (typeof document === 'undefined') return false;
+  const regex = new RegExp('(^| )' + COOKIE_NAME + '=([^;]+)');
+  const match = regex.exec(document.cookie);
+  if (!match) return false;
+  
+  try {
+    const progress = JSON.parse(decodeURIComponent(match[2])) as { answers?: Record<string, unknown> };
+    // Check if there are any answers saved
+    return progress.answers && Object.keys(progress.answers).length > 0;
+  } catch {
+    return false;
+  }
+}
 
 interface BurgerMenuProps {
   showHome?: boolean;
   showQuiz?: boolean;
   /** @deprecated Use confirmOnHome instead */
   onHomeClick?: () => boolean;
-  /** Whether to show confirmation dialog when clicking Home */
+  /** Whether to show confirmation dialog when clicking Home (auto-detects quiz progress if not set) */
   confirmOnHome?: boolean;
   additionalItems?: {
     label: string;
@@ -25,31 +46,46 @@ export function BurgerMenu({
   showQuiz = true,
   // eslint-disable-next-line @typescript-eslint/no-deprecated
   onHomeClick,
-  confirmOnHome = false,
+  confirmOnHome,
   additionalItems = [],
   inline = false,
 }: BurgerMenuProps) {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [quizInProgress, setQuizInProgress] = useState(false);
   const { confirmAndReset } = useResetConfirmation();
+  const router = useRouter();
+
+  // Check for quiz progress on mount and when menu opens
+  useEffect(() => {
+    if (menuOpen) {
+      setQuizInProgress(hasQuizProgress());
+    }
+  }, [menuOpen]);
+
+  // Determine if we should confirm: explicit prop or auto-detect quiz progress
+  const shouldConfirm = confirmOnHome ?? quizInProgress;
 
   const handleHomeClick = (e: React.MouseEvent) => {
+    e.preventDefault();
     // Support legacy onHomeClick prop
     if (onHomeClick) {
       const shouldNavigate = onHomeClick();
       if (!shouldNavigate) {
-        e.preventDefault();
         setMenuOpen(false);
         return;
       }
-    } else if (confirmOnHome) {
-      e.preventDefault();
+    } else if (shouldConfirm) {
       const confirmed = confirmAndReset({ navigateTo: "/" });
       if (!confirmed) {
         setMenuOpen(false);
         return;
       }
+      // confirmAndReset handles navigation
+      return;
     }
+    // Navigate to home
     setMenuOpen(false);
+    router.push("/");
   };
 
   const containerClasses = inline 
@@ -72,12 +108,22 @@ export function BurgerMenu({
       {menuOpen && (
         <div className="absolute right-0 mt-2 w-48 md:w-56 lg:w-64 xl:w-64 bg-white rounded-lg shadow-xl p-2 border border-gray-200">
           {showHome && (
-            <button
-              onClick={handleHomeClick}
-              className="block w-full text-left px-4 py-3 md:py-3 lg:py-4 xl:py-4 text-sm md:text-base lg:text-lg xl:text-lg active:bg-gray-100 md:hover:bg-gray-100 rounded transition-colors text-gray-800"
-            >
-              Home
-            </button>
+            shouldConfirm ? (
+              <button
+                onClick={handleHomeClick}
+                className="block w-full text-left px-4 py-3 md:py-3 lg:py-4 xl:py-4 text-sm md:text-base lg:text-lg xl:text-lg active:bg-gray-100 md:hover:bg-gray-100 rounded transition-colors text-gray-800"
+              >
+                Home
+              </button>
+            ) : (
+              <Link
+                href="/"
+                className="block w-full text-left px-4 py-3 md:py-3 lg:py-4 xl:py-4 text-sm md:text-base lg:text-lg xl:text-lg active:bg-gray-100 md:hover:bg-gray-100 rounded transition-colors text-gray-800"
+                onClick={() => setMenuOpen(false)}
+              >
+                Home
+              </Link>
+            )
           )}
           
           {showQuiz && (
