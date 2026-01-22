@@ -137,20 +137,17 @@ test.describe("Info Page", () => {
     ).toBeVisible();
   });
 
-  test("clicking the info buddy cycles the message", async ({ page }) => {
-    const buddyButton = page.getByRole("button", {
-      name: "Info-Hilfe anzeigen",
-    });
-
-    // Read the current bubble text
+  test("clicking the info buddy hides the speech bubble", async ({ page }) => {
+    // The speech bubble should be visible initially
     const bubble = page.locator("p.text-gray-800").first();
-    const before = await bubble.textContent();
+    await expect(bubble).toBeVisible();
 
-    // Click the buddy to cycle the message
-    await buddyButton.click();
+    // Click the buddy image to hide the speech bubble
+    const buddyImage = page.getByAltText("Sola liest und erklärt");
+    await buddyImage.click();
 
-    const after = await bubble.textContent();
-    expect(after).not.toBe(before);
+    // The bubble should no longer be visible
+    await expect(bubble).not.toBeVisible();
   });
 
   test("page has a white background container", async ({ page }) => {

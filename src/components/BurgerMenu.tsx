@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState, useEffect } from "react";
+import { useState, useMemo } from "react";
 import { useResetConfirmation } from "@/components/ResetConfirmDialog";
 
 const COOKIE_NAME = 'solacheck_quiz_progress';
@@ -51,15 +51,13 @@ export function BurgerMenu({
   inline = false,
 }: BurgerMenuProps) {
   const [menuOpen, setMenuOpen] = useState(false);
-  const [quizInProgress, setQuizInProgress] = useState(false);
   const { confirmAndReset } = useResetConfirmation();
   const router = useRouter();
 
-  // Check for quiz progress on mount and when menu opens
-  useEffect(() => {
-    if (menuOpen) {
-      setQuizInProgress(hasQuizProgress());
-    }
+  // Check for quiz progress when menu is open (computed during render, not in effect)
+  const quizInProgress = useMemo(() => {
+    if (!menuOpen) return false;
+    return hasQuizProgress();
   }, [menuOpen]);
 
   // Determine if we should confirm: explicit prop or auto-detect quiz progress
