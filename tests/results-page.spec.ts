@@ -142,7 +142,7 @@ test.describe('Results Page - Positive Recommendation', () => {
   });
 
   test('displays info box with additional information', async ({ page }) => {
-    const infoBox = page.locator('text=Noch Fragen?');
+    const infoBox = page.locator('text=Übrigens..');
     await expect(infoBox).toBeVisible();
     
     // Info text mentions CO2 sorting (current implementation)
