@@ -19,7 +19,7 @@ function hasQuizProgress(): boolean {
   try {
     const progress = JSON.parse(decodeURIComponent(match[2])) as { answers?: Record<string, unknown> };
     // Check if there are any answers saved
-    return progress.answers && Object.keys(progress.answers).length > 0;
+    return Boolean(progress.answers && Object.keys(progress.answers).length > 0);
   } catch {
     return false;
   }
