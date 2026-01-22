@@ -579,6 +579,7 @@ export default function SolaCheckInfoPage() {
   }, []);
 
   const [buddyIndex, setBuddyIndex] = useState(0);
+  const [speechBubbleVisible, setSpeechBubbleVisible] = useState(true);
 
   const buddyMessages = useMemo(
     () => [
@@ -648,13 +649,11 @@ export default function SolaCheckInfoPage() {
 
       {/* Info Buddy – Bottom Left */}
       <div className="fixed bottom-4 left-4 z-30">
-        <div className="relative">
+        <div className="relative flex items-end gap-2">
           <button
-            onClick={() =>
-              setBuddyIndex((prev) => (prev + 1) % buddyMessages.length)
-            }
-            className="flex-shrink-0 active:scale-95 transition-transform"
-            aria-label="Info-Hilfe anzeigen"
+            onClick={() => setSpeechBubbleVisible(!speechBubbleVisible)}
+            className="shrink-0 active:scale-95 transition-transform cursor-pointer"
+            aria-label="Sprechblase ein-/ausblenden"
             type="button"
           >
             <Image
@@ -667,26 +666,24 @@ export default function SolaCheckInfoPage() {
             />
           </button>
 
-          <div
-            className="
-              pointer-events-none
-              absolute
-              left-full
-              bottom-16
-              ml-3
-              w-[220px]
-              bg-white
-              rounded-2xl
-              rounded-bl-none
-              border border-gray-200
-              shadow-md
-              px-4 py-3
-            "
-          >
-            <p className="text-xs leading-snug text-gray-800">
-              {buddyMessages[buddyIndex]}
-            </p>
-          </div>
+          {speechBubbleVisible && (
+            <div
+              className="
+                bg-white
+                rounded-2xl
+                rounded-bl-none
+                border border-gray-200
+                shadow-md
+                px-4 py-3
+                max-w-[180px] sm:max-w-[220px]
+                -mt-2 sm:-mt-4
+              "
+            >
+              <p className="text-xs leading-snug text-gray-800">
+                {buddyMessages[buddyIndex]}
+              </p>
+            </div>
+          )}
         </div>
       </div>
     </div>

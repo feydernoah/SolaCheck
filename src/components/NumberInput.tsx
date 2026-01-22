@@ -79,8 +79,8 @@ export function NumberInput({
   }, [inputValue, min, max, onChange]);
 
   return (
-    <div className="max-w-md">
-      <div className="flex items-center gap-3">
+    <div className="w-full max-w-md">
+      <div className="flex items-center gap-2 sm:gap-3">
         <input
           type="number"
           value={inputValue}
@@ -92,7 +92,7 @@ export function NumberInput({
           max={max}
           step={step}
           className={`
-            flex-1 p-4 border-2 rounded-lg transition-colors text-lg
+            flex-1 min-w-0 p-3 sm:p-4 border-2 rounded-lg transition-colors text-base sm:text-lg
             focus:outline-none
             ${isFocused 
               ? 'border-yellow-400' 
@@ -101,7 +101,7 @@ export function NumberInput({
           `}
         />
         {unit && (
-          <span className="text-gray-600 font-medium whitespace-nowrap">
+          <span className="text-gray-600 font-medium whitespace-nowrap text-sm sm:text-base shrink-0">
             {unit}
           </span>
         )}

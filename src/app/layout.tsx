@@ -7,9 +7,20 @@ export const metadata: Metadata = {
   title: "SolaCheck",
   description: "AWP Projekt für das Zukunftsforum Nachhaltigkeit",
   manifest: "/solacheck/manifest.json",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "SolaCheck",
+  },
   icons: {
-    icon: "/solacheck/icon-192x192.png",
-    apple: "/solacheck/icon-192x192.png",
+    icon: [
+      { url: "/solacheck/favicon.ico", sizes: "any" },
+      { url: "/solacheck/icon-192x192.png", sizes: "192x192", type: "image/png" },
+      { url: "/solacheck/icon-512x512.png", sizes: "512x512", type: "image/png" },
+    ],
+    apple: [
+      { url: "/solacheck/icon-192x192.png", sizes: "180x180", type: "image/png" },
+    ],
   },
 };
 

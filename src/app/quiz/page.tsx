@@ -314,73 +314,73 @@ const solaBuddyConfig: Record<number, SolaBuddyConfig> = {
   1: { 
     image: 'Sola_chillt_winkend.png',
     buddyPosition: 'absolute -top-17 right-2 md:-top-25 md:right-4 w-24 h-24 md:w-36 md:h-36 z-20 cursor-pointer hover:scale-105 transition-transform',
-    bubblePosition: 'absolute -top-8 right-28 md:-top-12 md:right-40 bg-white p-4 md:p-5 rounded-2xl shadow-lg border border-gray-200 max-w-[240px] md:max-w-sm z-20 animate-fade-in',
+    bubblePosition: 'absolute -top-8 right-24 sm:right-28 md:-top-12 md:right-40 bg-white p-3 sm:p-4 md:p-5 rounded-2xl shadow-lg border border-gray-200 max-w-[200px] sm:max-w-[240px] md:max-w-sm z-20 animate-fade-in',
     bubbleCorner: 'rounded-tr-none'
   },
   2: { 
     image: 'Sola_nachdenklich.png',
     buddyPosition: 'absolute -top-22 left-2 md:-top-33 md:left-4 w-24 h-24 md:w-36 md:h-36 z-20 cursor-pointer hover:scale-105 transition-transform',
-    bubblePosition: 'absolute -top-11 left-28 md:-top-16 md:left-40 bg-white p-4 md:p-5 rounded-2xl shadow-lg border border-gray-200 max-w-[240px] md:max-w-sm z-20 animate-fade-in',
+    bubblePosition: 'absolute -top-11 left-24 sm:left-28 md:-top-16 md:left-40 bg-white p-3 sm:p-4 md:p-5 rounded-2xl shadow-lg border border-gray-200 max-w-[200px] sm:max-w-[240px] md:max-w-sm z-20 animate-fade-in',
     bubbleCorner: 'rounded-tl-none'
   },
   3: { 
     image: 'Sola_auf_Fragezeichen.png',
     buddyPosition: 'absolute -top-16 right-2 md:-top-20 md:right-4 w-34 h-34 md:w-49 md:h-49 z-20 cursor-pointer hover:scale-105 transition-transform',
-    bubblePosition: 'absolute -top-4 right-32 md:-top-5 md:right-48 bg-white p-4 md:p-5 rounded-2xl shadow-lg border border-gray-200 max-w-[240px] md:max-w-sm z-20 animate-fade-in',
+    bubblePosition: 'absolute -top-4 right-28 sm:right-32 md:-top-5 md:right-48 bg-white p-3 sm:p-4 md:p-5 rounded-2xl shadow-lg border border-gray-200 max-w-[200px] sm:max-w-[240px] md:max-w-sm z-20 animate-fade-in',
     bubbleCorner: 'rounded-tr-none'
   },
   4: { 
     image: 'Sola_chillt.png',
     buddyPosition: 'absolute -top-23 left-1/2 -translate-x-1/2 md:-top-33 w-35 h-35 md:w-49 md:h-49 z-20 cursor-pointer hover:scale-105 transition-transform',
-    bubblePosition: 'absolute -top-8 left-1/2 translate-x-12 md:-top-10 md:translate-x-20 bg-white p-4 md:p-5 rounded-2xl shadow-lg border border-gray-200 max-w-[240px] md:max-w-sm z-20 animate-fade-in',
+    bubblePosition: 'absolute -top-8 left-1/2 translate-x-8 sm:translate-x-12 md:-top-10 md:translate-x-20 bg-white p-3 sm:p-4 md:p-5 rounded-2xl shadow-lg border border-gray-200 max-w-[200px] sm:max-w-[240px] md:max-w-sm z-20 animate-fade-in',
     bubbleCorner: 'rounded-tl-none'
   },
   5: { 
     image: 'Sola_mit_Solarpanel.png',
     buddyPosition: 'absolute -top-19 left-2 md:-top-28 md:left-4 w-24 h-24 md:w-36 md:h-36 z-20 cursor-pointer hover:scale-105 transition-transform',
-    bubblePosition: 'absolute -top-9 left-28 md:-top-14 md:left-40 bg-white p-4 md:p-5 rounded-2xl shadow-lg border border-gray-200 max-w-[240px] md:max-w-sm z-20 animate-fade-in',
+    bubblePosition: 'absolute -top-9 left-24 sm:left-28 md:-top-14 md:left-40 bg-white p-3 sm:p-4 md:p-5 rounded-2xl shadow-lg border border-gray-200 max-w-[200px] sm:max-w-[240px] md:max-w-sm z-20 animate-fade-in',
     bubbleCorner: 'rounded-tl-none'
   },
   6: { 
     image: 'Sola_zeigt.png',
     buddyPosition: 'absolute -top-22 left-2 md:-top-33 md:left-4 w-24 h-24 md:w-36 md:h-36 z-20 cursor-pointer hover:scale-105 transition-transform',
-    bubblePosition: 'absolute -top-11 left-28 md:-top-16 md:left-40 bg-white p-4 md:p-5 rounded-2xl shadow-lg border border-gray-200 max-w-[240px] md:max-w-sm z-20 animate-fade-in',
+    bubblePosition: 'absolute -top-11 left-24 sm:left-28 md:-top-16 md:left-40 bg-white p-3 sm:p-4 md:p-5 rounded-2xl shadow-lg border border-gray-200 max-w-[200px] sm:max-w-[240px] md:max-w-sm z-20 animate-fade-in',
     bubbleCorner: 'rounded-tl-none'
   },
   7: { 
     image: 'Sola_nachdenklich.png',
     buddyPosition: 'absolute -top-22 left-1/2 -translate-x-1/2 md:-top-33 w-24 h-24 md:w-36 md:h-36 z-20 cursor-pointer hover:scale-105 transition-transform',
-    bubblePosition: 'absolute -top-11 left-1/2 translate-x-12 md:-top-16 md:translate-x-20 bg-white p-4 md:p-5 rounded-2xl shadow-lg border border-gray-200 max-w-[240px] md:max-w-sm z-20 animate-fade-in',
+    bubblePosition: 'absolute -top-11 left-1/2 translate-x-8 sm:translate-x-12 md:-top-16 md:translate-x-20 bg-white p-3 sm:p-4 md:p-5 rounded-2xl shadow-lg border border-gray-200 max-w-[200px] sm:max-w-[240px] md:max-w-sm z-20 animate-fade-in',
     bubbleCorner: 'rounded-tl-none'
   },
   8: { 
     image: 'Sola_chillt_verwirrt.png',
     buddyPosition: 'absolute -top-18 right-2 md:-top-27 md:right-4 w-24 h-24 md:w-36 md:h-36 z-20 cursor-pointer hover:scale-105 transition-transform',
-    bubblePosition: 'absolute -top-6 right-28 md:-top-10 md:right-40 bg-white p-4 md:p-5 rounded-2xl shadow-lg border border-gray-200 max-w-[240px] md:max-w-sm z-20 animate-fade-in',
+    bubblePosition: 'absolute -top-6 right-24 sm:right-28 md:-top-10 md:right-40 bg-white p-3 sm:p-4 md:p-5 rounded-2xl shadow-lg border border-gray-200 max-w-[200px] sm:max-w-[240px] md:max-w-sm z-20 animate-fade-in',
     bubbleCorner: 'rounded-tr-none'
   },
   9: { 
     image: 'Sola_auf_Couch.png',
     buddyPosition: 'absolute -top-22 left-2 md:-top-33 md:left-4 w-24 h-24 md:w-36 md:h-36 z-20 cursor-pointer hover:scale-105 transition-transform',
-    bubblePosition: 'absolute -top-11 left-28 md:-top-16 md:left-40 bg-white p-4 md:p-5 rounded-2xl shadow-lg border border-gray-200 max-w-[240px] md:max-w-sm z-20 animate-fade-in',
+    bubblePosition: 'absolute -top-11 left-24 sm:left-28 md:-top-16 md:left-40 bg-white p-3 sm:p-4 md:p-5 rounded-2xl shadow-lg border border-gray-200 max-w-[200px] sm:max-w-[240px] md:max-w-sm z-20 animate-fade-in',
     bubbleCorner: 'rounded-tl-none'
   },
   10: { 
     image: 'Sola_mit_Notizblock.png',
     buddyPosition: 'absolute -top-20 right-2 md:-top-30 md:right-4 w-24 h-24 md:w-36 md:h-36 z-20 cursor-pointer hover:scale-105 transition-transform',
-    bubblePosition: 'absolute -top-8 right-28 md:-top-10 md:right-40 bg-white p-4 md:p-5 rounded-2xl shadow-lg border border-gray-200 max-w-[240px] md:max-w-sm z-20 animate-fade-in',
+    bubblePosition: 'absolute -top-8 right-24 sm:right-28 md:-top-10 md:right-40 bg-white p-3 sm:p-4 md:p-5 rounded-2xl shadow-lg border border-gray-200 max-w-[200px] sm:max-w-[240px] md:max-w-sm z-20 animate-fade-in',
     bubbleCorner: 'rounded-tr-none'
   },
   11: { 
     image: 'Sola_chillt.png',
     buddyPosition: 'absolute -top-23 left-1/2 -translate-x-1/2 md:-top-33 w-35 h-35 md:w-49 md:h-49 z-20 cursor-pointer hover:scale-105 transition-transform',
-    bubblePosition: 'absolute -top-8 left-1/2 translate-x-12 md:-top-10 md:translate-x-20 bg-white p-4 md:p-5 rounded-2xl shadow-lg border border-gray-200 max-w-[240px] md:max-w-sm z-20 animate-fade-in',
+    bubblePosition: 'absolute -top-8 left-1/2 translate-x-8 sm:translate-x-12 md:-top-10 md:translate-x-20 bg-white p-3 sm:p-4 md:p-5 rounded-2xl shadow-lg border border-gray-200 max-w-[200px] sm:max-w-[240px] md:max-w-sm z-20 animate-fade-in',
     bubbleCorner: 'rounded-tl-none'
   },
   12: { 
     image: 'Sola_gibt_ok.png',
     buddyPosition: 'absolute -top-22 left-2 md:-top-32 md:left-4 w-24 h-24 md:w-36 md:h-36 z-20 cursor-pointer hover:scale-105 transition-transform',
-    bubblePosition: 'absolute -top-10 left-28 md:-top-14 md:left-40 bg-white p-4 md:p-5 rounded-2xl shadow-lg border border-gray-200 max-w-[240px] md:max-w-sm z-20 animate-fade-in',
+    bubblePosition: 'absolute -top-10 left-24 sm:left-28 md:-top-14 md:left-40 bg-white p-3 sm:p-4 md:p-5 rounded-2xl shadow-lg border border-gray-200 max-w-[200px] sm:max-w-[240px] md:max-w-sm z-20 animate-fade-in',
     bubbleCorner: 'rounded-tl-none'
   },
 };
@@ -643,18 +643,18 @@ export default function Home() {
                   {/* Sola Sprechblase */}
                   {((hasInfoHint && (solaSpeechBubbleVisible || showInitialSolaHint)) || 
                     (!hasInfoHint && showInitialSolaHint)) && (
-                    <div className={`${config.bubblePosition} ${config.bubbleCorner}`}>
+                    <div className={`${config.bubblePosition} ${config.bubbleCorner} overflow-hidden`}>
                       {hasInfoHint && solaSpeechBubbleVisible ? (
-                        <p className="text-sm md:text-base text-gray-700 whitespace-pre-line">
+                        <p className="text-sm md:text-base text-gray-700 whitespace-pre-line wrap-break-word">
                           <span className="font-semibold">💡 </span>
                           {currentQ.infoHint}
                         </p>
                       ) : hasInfoHint ? (
-                        <p className="text-sm md:text-base text-gray-700">
+                        <p className="text-sm md:text-base text-gray-700 wrap-break-word">
                           Wenn du Hilfe brauchst, klick mich an! 👋
                         </p>
                       ) : (
-                        <p className="text-sm md:text-base text-gray-700">
+                        <p className="text-sm md:text-base text-gray-700 wrap-break-word">
                           Für mehr Informationen klicke oben rechts auf den Info-Button! ℹ️
                         </p>
                       )}
