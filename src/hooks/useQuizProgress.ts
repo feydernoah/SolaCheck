@@ -68,7 +68,7 @@ function isProgressValid(progress: unknown): progress is QuizProgress {
 
   const answerKeys = Object.keys(p.answers).map(Number);
   for (const key of answerKeys) {
-    if (!VALID_QUESTION_IDS.includes(key)) {
+    if (!(VALID_QUESTION_IDS as readonly number[]).includes(key)) {
       console.warn('Quiz progress reset: invalid question ID in answers', key);
       return false;
     }
