@@ -15,13 +15,12 @@ interface InfoModalProps {
   sources?: string;
 }
 
-export function InfoModal({ isOpen, onClose, info, title: propTitle, content: propContent, sources: propSources }: InfoModalProps) {
+export function InfoModal({ isOpen, onClose, info, title: propTitle, content: propContent, }: InfoModalProps) {
   const router = useRouter();
   
   // Extract title and content from either info object or direct props
-  const modalTitle = propTitle || (info && 'title' in info ? info.title : undefined);
-  const modalContent = propContent || (info && 'content' in info ? info.content : undefined);
-  const modalSources = propSources || (info && 'sources' in info ? info.sources : undefined);
+  const modalTitle = propTitle ?? (info && 'title' in info ? info.title : undefined);
+  const modalContent = propContent ?? (info && 'content' in info ? info.content : undefined);
   
   // Close on Escape key
   const handleKeyDown = useCallback(
