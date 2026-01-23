@@ -268,9 +268,9 @@ export async function GET(): Promise<NextResponse<RecommendationResponse>> {
     6: 'balkonbruestung',
     7: 'sueden',
     8: 'mittel',
-    9: 'etwas',
-    10: ['kuehlschrank', 'waschmaschine', 'laptop'],
-    11: '1200', 
+    9: ['kuehlschrank', 'waschmaschine', 'laptop'],
+    10: '1200',
+    11: 'etwas',
     12: 'wichtig',
     coordinates: { lat: 52.52, lon: 13.405 }, // Berlin
   };
