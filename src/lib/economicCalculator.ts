@@ -105,10 +105,10 @@ export function getAnnualConsumption(
   householdSize: string | undefined,
   userProvidedConsumption?: string
 ): number {
-  // If user provided their consumption, use it
-  if (userProvidedConsumption) {
+  // If user provided their consumption, use it (including 0 for explicit "no consumption")
+  if (userProvidedConsumption !== undefined && userProvidedConsumption !== '') {
     const parsed = parseInt(userProvidedConsumption, 10);
-    if (!isNaN(parsed) && parsed > 0) {
+    if (!isNaN(parsed) && parsed >= 0) {
       return parsed;
     }
   }

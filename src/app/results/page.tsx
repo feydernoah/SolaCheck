@@ -13,13 +13,14 @@ import { useQuizProgress } from '@/hooks/useQuizProgress';
 import { useSolarData } from '@/hooks/useSolarData';
 import { RecommendationResponse, QuizAnswers, Coordinates } from '@/types/economic';
 import { initEmailJS, sendRecommendationEmail } from '@/lib/emailService';
+import { QUESTION_IDS } from '@/lib/quizConstants';
 import Link from 'next/link';
 
 /**
  * Extract coordinates from the address answer (stored as JSON string)
  */
 function extractCoordinatesFromAnswers(answers: Record<number, string | string[]>): Coordinates | undefined {
-  const addressAnswer = answers[1];
+  const addressAnswer = answers[QUESTION_IDS.LOCATION];
   if (typeof addressAnswer !== 'string') return undefined;
   
   try {
@@ -95,8 +96,8 @@ export default function ResultsPage() {
         
         // If we have coordinates but no cached data, fetch PVGIS data
         if (coordinates && !cachedSolarData) {
-          const orientation = answers[6] as string | undefined;
-          const mounting = answers[5] as string | undefined;
+          const orientation = answers[QUESTION_IDS.ORIENTATION] as string | undefined;
+          const mounting = answers[QUESTION_IDS.MOUNTING_LOCATION] as string | undefined;
           cachedSolarData = await fetchSolarData(coordinates, orientation, mounting);
         }
         

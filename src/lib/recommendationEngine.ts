@@ -44,6 +44,7 @@ import {
   MOUNTING_LABELS,
   ECO_IMPORTANCE_LABELS,
 } from '@/lib/constants';
+import { QUESTION_IDS } from '@/lib/quizConstants';
 
 // === MATCH REASONS & WARNINGS ===
 
@@ -85,13 +86,13 @@ function generateMatchReasons(
   }
   
   // Mounting type match
-  const mountingType = answers[5];
+  const mountingType = answers[QUESTION_IDS.MOUNTING_LOCATION];
   if (mountingType && mountingType !== 'weiss-nicht') {
     reasons.push(`Passend für ${MOUNTING_LABELS[mountingType] ?? mountingType}`);
   }
   
   // Budget friendly
-  const budget = answers[11];
+  const budget = answers[QUESTION_IDS.BUDGET];
   if (budget) {
     const budgetNum = parseInt(budget, 10);
     if (!isNaN(budgetNum) && budgetNum > 0 && product.price <= budgetNum) {
@@ -119,7 +120,7 @@ function generateWarnings(
   }
   
   // Low yield due to orientation
-  const orientation = answers[6];
+  const orientation = answers[QUESTION_IDS.ORIENTATION];
   if (orientation === 'norden') {
     warnings.push('Nordausrichtung reduziert den Ertrag erheblich');
   } else if (orientation === 'nordost' || orientation === 'nordwest') {
@@ -127,7 +128,7 @@ function generateWarnings(
   }
   
   // Heavy shading
-  const shading = answers[8];
+  const shading = answers[QUESTION_IDS.SHADING];
   if (shading === 'ganzen-tag') {
     warnings.push('Starke Verschattung reduziert den Ertrag deutlich');
   }
@@ -232,13 +233,13 @@ export function calculateRecommendations(
   answers: QuizAnswers,
   solarData?: SolarData
 ): RecommendationResponse {
-  // Extract relevant answers
-  const householdSize = answers[2] as HouseholdSize | undefined;
-  const mountingLocation = answers[5] as MountingType | undefined;
-  const orientation = answers[6] as Orientation | undefined;
-  const shading = answers[8] as ShadingLevel | undefined;
-  const budget = answers[11];
-  const userProvidedConsumption = answers[12]; // User's actual yearly consumption
+  // Extract relevant answers using centralized question IDs
+  const householdSize = answers[QUESTION_IDS.HOUSEHOLD_SIZE] as HouseholdSize | undefined;
+  const mountingLocation = answers[QUESTION_IDS.MOUNTING_LOCATION] as MountingType | undefined;
+  const orientation = answers[QUESTION_IDS.ORIENTATION] as Orientation | undefined;
+  const shading = answers[QUESTION_IDS.SHADING] as ShadingLevel | undefined;
+  const budget = answers[QUESTION_IDS.BUDGET];
+  const userProvidedConsumption = answers[QUESTION_IDS.CONSUMPTION];
   
   // Calculate factors
   const orientationFactor = getOrientationFactor(orientation);
@@ -373,7 +374,7 @@ function buildQuizSummary(
 ): RecommendationResponse['quizSummary'] {
   // Check if we have coordinates (new format stores only coordinates)
   let locationDisplay = 'Nicht angegeben';
-  const addressAnswer = answers[1];
+  const addressAnswer = answers[QUESTION_IDS.LOCATION];
   if (addressAnswer) {
     try {
       const parsed = JSON.parse(addressAnswer) as { lat?: number; lon?: number; city?: string; postalCode?: string };
@@ -393,6 +394,8 @@ function buildQuizSummary(
     }
   }
   
+  const ecoImportanceAnswer = answers[QUESTION_IDS.ECO_IMPORTANCE];
+  
   return {
     location: locationDisplay,
     orientation: orientation ? ORIENTATION_LABELS[orientation] : 'Nicht angegeben',
@@ -400,6 +403,6 @@ function buildQuizSummary(
     budget: budget ?? 'Nicht angegeben',
     mountingLocation: mountingLocation ? (MOUNTING_LABELS[mountingLocation] ?? 'Nicht angegeben') : 'Nicht angegeben',
     shading: shading ? SHADING_LABELS[shading] : 'Nicht angegeben',
-    ecoImportance: answers[12] ? (ECO_IMPORTANCE_LABELS[answers[12]] ?? answers[12]) : 'Nicht angegeben',
+    ecoImportance: ecoImportanceAnswer ? (ECO_IMPORTANCE_LABELS[ecoImportanceAnswer] ?? ecoImportanceAnswer) : 'Nicht angegeben',
   };
 }
