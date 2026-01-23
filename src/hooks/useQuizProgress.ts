@@ -1,11 +1,8 @@
 import { useState, useEffect, useCallback } from 'react';
+import { TOTAL_QUESTIONS, VALID_QUESTION_IDS } from '@/lib/quizConstants';
 
 const COOKIE_NAME = 'solacheck_quiz_progress';
 const COOKIE_MAX_AGE = 60 * 60 * 24 * 7; // 7 days
-
-const TOTAL_QUESTIONS = 12;
-
-const VALID_QUESTION_IDS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
 
 interface QuizProgress {
   currentQuestion: number;

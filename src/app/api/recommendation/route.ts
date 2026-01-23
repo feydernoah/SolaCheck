@@ -16,6 +16,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { calculateRecommendations } from '@/lib/recommendationEngine';
+import { QUESTION_IDS } from '@/lib/quizConstants';
 import type { QuizAnswers, RecommendationResponse, SolarData } from '@/types/economic';
 
 // PVGIS API configuration (same as solar-data route)
@@ -203,8 +204,8 @@ export async function POST(request: NextRequest): Promise<NextResponse<Recommend
       solarData = await fetchPVGISData(
         answers.coordinates.lat,
         answers.coordinates.lon,
-        answers[6], // orientation
-        answers[5]  // mounting
+        answers[QUESTION_IDS.ORIENTATION], // orientation
+        answers[QUESTION_IDS.MOUNTING_LOCATION]  // mounting
       );
     }
     
@@ -280,8 +281,8 @@ export async function GET(): Promise<NextResponse<RecommendationResponse>> {
     ? await fetchPVGISData(
         coords.lat,
         coords.lon,
-        sampleAnswers[6],
-        sampleAnswers[5]
+        sampleAnswers[QUESTION_IDS.ORIENTATION],
+        sampleAnswers[QUESTION_IDS.MOUNTING_LOCATION]
       )
     : null;
   
