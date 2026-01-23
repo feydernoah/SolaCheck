@@ -2,18 +2,26 @@
 
 import { useEffect, useCallback } from "react";
 import { MdClose } from "react-icons/md";
-import { QuestionInfo } from "@/data/questionInfoData";
+import { QuestionInfo, EcologicalInfo } from "@/data/questionInfoData";
 import { useRouter } from "next/navigation";
 
 
 interface InfoModalProps {
   isOpen: boolean;
   onClose: () => void;
-  info: QuestionInfo | undefined;
+  info?: QuestionInfo | EcologicalInfo | undefined;
+  title?: string;
+  content?: React.ReactNode;
+  sources?: string;
 }
 
-export function InfoModal({ isOpen, onClose, info}: InfoModalProps) {
+export function InfoModal({ isOpen, onClose, info, title: propTitle, content: propContent, }: InfoModalProps) {
   const router = useRouter();
+  
+  // Extract title and content from either info object or direct props
+  const modalTitle = propTitle ?? (info && 'title' in info ? info.title : undefined);
+  const modalContent = propContent ?? (info && 'content' in info ? info.content : undefined);
+  
   // Close on Escape key
   const handleKeyDown = useCallback(
     (e: KeyboardEvent) => {
@@ -36,7 +44,7 @@ export function InfoModal({ isOpen, onClose, info}: InfoModalProps) {
     };
   }, [isOpen, handleKeyDown]);
 
-  if (!isOpen || !info) return null;
+  if (!isOpen || !modalTitle || !modalContent) return null;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
@@ -55,7 +63,7 @@ export function InfoModal({ isOpen, onClose, info}: InfoModalProps) {
             <div className="w-10 h-10 rounded-full bg-yellow-400 flex items-center justify-center">
               <span className="text-xl font-bold text-white">?</span>
             </div>
-            <h2 className="text-lg font-bold text-gray-800 pr-8">{info.title}</h2>
+            <h2 className="text-lg font-bold text-gray-800 pr-8">{modalTitle}</h2>
           </div>
           <button
             onClick={onClose}
@@ -68,7 +76,7 @@ export function InfoModal({ isOpen, onClose, info}: InfoModalProps) {
 
         {/* Body */}
         <div className="p-5 overflow-y-auto max-h-[60vh]">
-          <div className="text-gray-700 leading-relaxed">{info.content}</div>
+          <div className="text-gray-700 leading-relaxed">{modalContent}</div>
         </div>
 
         {/* Footer */}
@@ -88,7 +96,7 @@ export function InfoModal({ isOpen, onClose, info}: InfoModalProps) {
     onClick={onClose}
     className="w-full py-3 px-4 bg-yellow-400 hover:bg-yellow-500 text-gray-800 font-semibold rounded-lg transition-colors"
   >
-    Verstanden
+    Schließen
   </button>
 </div>
 
