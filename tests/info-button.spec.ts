@@ -39,17 +39,17 @@ async function openInfoModal(page: Page) {
   const infoButton = page.getByRole('button', { name: 'Mehr Informationen' });
   await infoButton.click();
   // Wait for modal to be visible
-  await expect(page.locator('text=Verstanden')).toBeVisible();
+  await expect(page.locator('text=Schließen')).toBeVisible();
 }
 
 /**
- * Close the info modal by clicking the "Verstanden" button
+ * Close the info modal by clicking the "Schließen" button
  */
 async function closeInfoModalWithButton(page: Page) {
-  const closeButton = page.getByRole('button', { name: 'Verstanden' });
+  const closeButton = page.locator('button.w-full:has-text("Schließen")');
   await closeButton.click();
   // Wait for modal to disappear
-  await expect(page.locator('text=Verstanden')).not.toBeVisible();
+  await expect(page.locator('text=Schließen')).not.toBeVisible();
 }
 
 test.describe('Info Button Feature', () => {
@@ -143,19 +143,19 @@ test.describe('Info Button Feature', () => {
     await expect(page.getByRole('heading', { name: 'Haushaltsgröße & Stromverbrauch' })).toBeVisible();
   });
 
-  test('modal can be closed with "Verstanden" button', async ({ page }) => {
+  test('modal can be closed with "Schließen" button', async ({ page }) => {
     await page.goto('/solacheck/quiz');
     await waitForQuizReady(page);
 
     await openInfoModal(page);
 
     // Modal should be visible
-    await expect(page.locator('text=Verstanden')).toBeVisible();
+    await expect(page.locator('text=Schließen')).toBeVisible();
 
     await closeInfoModalWithButton(page);
 
     // Modal should be closed
-    await expect(page.locator('text=Verstanden')).not.toBeVisible();
+    await expect(page.locator('text=Schließen')).not.toBeVisible();
   });
 
   test('modal can be closed with X button', async ({ page }) => {
@@ -164,12 +164,12 @@ test.describe('Info Button Feature', () => {
 
     await openInfoModal(page);
 
-    // Find and click the close X button
-    const closeXButton = page.getByRole('button', { name: 'Schließen' });
+    // Find and click the close X button (use getByLabel to target aria-label specifically)
+    const closeXButton = page.getByLabel('Schließen');
     await closeXButton.click();
 
     // Modal should be closed
-    await expect(page.locator('text=Verstanden')).not.toBeVisible();
+    await expect(page.locator('text=Schließen')).not.toBeVisible();
   });
 
   test('modal can be closed by clicking backdrop', async ({ page }) => {
@@ -183,7 +183,7 @@ test.describe('Info Button Feature', () => {
     await backdrop.click({ position: { x: 10, y: 10 } });
 
     // Modal should be closed
-    await expect(page.locator('text=Verstanden')).not.toBeVisible();
+    await expect(page.locator('text=Schließen')).not.toBeVisible();
   });
 
   test('modal can be closed with Escape key', async ({ page }) => {
@@ -196,7 +196,7 @@ test.describe('Info Button Feature', () => {
     await page.keyboard.press('Escape');
 
     // Modal should be closed
-    await expect(page.locator('text=Verstanden')).not.toBeVisible();
+    await expect(page.locator('text=Schließen')).not.toBeVisible();
   });
 
   test('info content changes when navigating to different questions', async ({ page }) => {
@@ -333,7 +333,7 @@ test.describe('Info Button - Accessibility', () => {
 
     await openInfoModal(page);
 
-    const closeButton = page.getByRole('button', { name: 'Schließen' });
+    const closeButton = page.getByLabel('Schließen');
     await expect(closeButton).toHaveAttribute('aria-label', 'Schließen');
   });
 });
