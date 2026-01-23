@@ -31,19 +31,18 @@ export interface SolarData {
 
 // Quiz answer types (mirrors the quiz structure)
 export interface QuizAnswers {
-  1?: string; // Age
-  2?: string; // Location (PLZ/City)
-  3?: string; // Household size
-  4?: string; // Housing type
-  5?: string; // Apartment size
-  6?: string; // Mounting location
-  7?: string; // Orientation
-  8?: string; // Balcony size
-  9?: string; // Shading
-  10?: string[]; // Appliances (multiselect)
+  1?: string; // Location (PLZ/City)
+  2?: string; // Household size
+  3?: string; // Housing type
+  4?: string; // Apartment size
+  5?: string; // Mounting location
+  6?: string; // Orientation (compass)
+  7?: string; // Balcony size
+  8?: string; // Shading
+  9?: string[]; // Appliances (multiselect)
+  10?: string; // Yearly electricity consumption in kWh (optional, user-provided)
   11?: string; // Budget
   12?: string; // CO2 importance
-  13?: string; // Yearly electricity consumption in kWh (optional, user-provided)
   // Location coordinates for PVGIS API
   coordinates?: Coordinates;
 }
