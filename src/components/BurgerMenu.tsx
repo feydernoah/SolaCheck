@@ -7,9 +7,6 @@ import { useResetConfirmation } from "@/components/ResetConfirmDialog";
 
 const COOKIE_NAME = 'solacheck_quiz_progress';
 
-/**
- * Check if there's quiz progress in the cookie
- */
 function hasQuizProgress(): boolean {
   if (typeof document === 'undefined') return false;
   const regex = new RegExp('(^| )' + COOKIE_NAME + '=([^;]+)');
@@ -18,7 +15,6 @@ function hasQuizProgress(): boolean {
   
   try {
     const progress = JSON.parse(decodeURIComponent(match[2])) as { answers?: Record<string, unknown> };
-    // Check if there are any answers saved
     return Boolean(progress.answers && Object.keys(progress.answers).length > 0);
   } catch {
     return false;
@@ -28,23 +24,19 @@ function hasQuizProgress(): boolean {
 interface BurgerMenuProps {
   showHome?: boolean;
   showQuiz?: boolean;
-  /** @deprecated Use confirmOnHome instead */
   onHomeClick?: () => boolean;
-  /** Whether to show confirmation dialog when clicking Home (auto-detects quiz progress if not set) */
   confirmOnHome?: boolean;
   additionalItems?: {
     label: string;
     href: string;
     onClick?: () => void;
   }[];
-  /** When true, the menu button won't have fixed positioning (useful when placed in a custom container) */
   inline?: boolean;
 }
 
 export function BurgerMenu({ 
   showHome = true, 
   showQuiz = true,
-  // eslint-disable-next-line @typescript-eslint/no-deprecated
   onHomeClick,
   confirmOnHome,
   additionalItems = [],
@@ -54,18 +46,15 @@ export function BurgerMenu({
   const { confirmAndReset } = useResetConfirmation();
   const router = useRouter();
 
-  // Check for quiz progress when menu is open (computed during render, not in effect)
   const quizInProgress = useMemo(() => {
     if (!menuOpen) return false;
     return hasQuizProgress();
   }, [menuOpen]);
 
-  // Determine if we should confirm: explicit prop or auto-detect quiz progress
   const shouldConfirm = confirmOnHome ?? quizInProgress;
 
   const handleHomeClick = (e: React.MouseEvent) => {
     e.preventDefault();
-    // Support legacy onHomeClick prop
     if (onHomeClick) {
       const shouldNavigate = onHomeClick();
       if (!shouldNavigate) {
@@ -78,10 +67,8 @@ export function BurgerMenu({
         setMenuOpen(false);
         return;
       }
-      // confirmAndReset handles navigation
       return;
     }
-    // Navigate to home
     setMenuOpen(false);
     router.push("/");
   };
@@ -102,7 +89,6 @@ export function BurgerMenu({
         <div className="w-6 sm:w-7 md:w-7 lg:w-8 xl:w-8 h-0.5 bg-gray-800"></div>
       </button>
 
-      {/* Menu Dropdown */}
       {menuOpen && (
         <div className="absolute right-0 mt-2 w-48 md:w-56 lg:w-64 xl:w-64 bg-white rounded-lg shadow-xl p-2 border border-gray-200">
           {showHome && (

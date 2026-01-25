@@ -1,30 +1,23 @@
-/**
- * Types for scraped BKW (Balkonkraftwerk) product data from FAZ Kaufkompass
- * with price data from SerpAPI Google Shopping
- */
-
 export interface ScrapedSpecs {
-  wattage?: number; // Maximale PV-Eingangsleistung in Watt
-  storageCapacity?: number; // Interner Speicher in kWh
-  dimensions?: string; // Abmessungen
-  weight?: number; // Gewicht in kg
-  warranty?: number; // Garantie in years
-  // Enriched via Gemini AI
+  wattage?: number;
+  storageCapacity?: number;
+  dimensions?: string;
+  weight?: number;
+  warranty?: number;
   bifacial?: boolean;
-  moduleEfficiency?: number; // Percentage, e.g., 21.5
-  manufacturingOrigin?: string; // "germany" | "europe" | "asia" | "china" | "unknown"
+  moduleEfficiency?: number;
+  manufacturingOrigin?: string;
   moduleCount?: number;
   includesInverter?: boolean;
-  mountingTypes?: string[]; // e.g., ["balkonbruestung", "balkonboden"]
+  mountingTypes?: string[];
   description?: string;
 }
 
-// Enrichment data from Gemini AI
 export interface EnrichmentData {
-  mountingTypes: string[]; // e.g., ["balkonbruestung", "balkonboden", "hauswand", "flachdach"]
-  manufacturingOrigin: string; // "germany" | "europe" | "asia" | "china" | "unknown"
+  mountingTypes: string[];
+  manufacturingOrigin: string;
   bifacial: boolean;
-  moduleEfficiency: number; // Percentage, e.g., 21.5
+  moduleEfficiency: number;
   moduleCount: number;
   includesInverter: boolean;
   description: string;
@@ -33,27 +26,24 @@ export interface EnrichmentData {
 export interface ScrapedBKWProduct {
   id: string;
   name: string;
-  brand: string; // Extracted from first word of product name
-  category?: string; // e.g., "Testsieger", "Fürs Wohnzimmer", etc.
+  brand: string;
+  category?: string;
   imageUrl?: string;
-  // Price info from SerpAPI Google Shopping
   price?: number;
   priceCurrency?: string;
-  priceSource?: string; // Shop name from Google Shopping
-  priceLink?: string; // Link to the product
-  // Specs from FAZ
+  priceSource?: string;
+  priceLink?: string;
   specs: ScrapedSpecs;
-  // Enrichment from Gemini AI
   enrichment?: EnrichmentData;
-  scrapedAt: string; // ISO timestamp
+  scrapedAt: string;
 }
 
 export interface ScrapedDataResult {
   products: ScrapedBKWProduct[];
-  scrapedAt: string; // ISO date string
+  scrapedAt: string;
   sources: {
-    productInfo: string; // FAZ URL
-    pricing: string; // "SerpAPI Google Shopping"
+    productInfo: string;
+    pricing: string;
   };
   totalProducts: number;
 }

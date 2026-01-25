@@ -3,7 +3,6 @@ import { readFile, writeFile, mkdir } from "fs/promises";
 import path from "path";
 import type { ScrapedDataResult } from "@/types/scraped";
 
-// Enrichment data structure from Gemini AI
 interface GeminiEnrichment {
   name: string;
   mountingTypes: string[];
@@ -16,7 +15,6 @@ interface GeminiEnrichment {
   description: string;
 }
 
-// Enrichment result stored separately
 interface EnrichmentResult {
   enrichments: GeminiEnrichment[];
   enrichedAt: string;
@@ -34,7 +32,6 @@ export async function GET(): Promise<NextResponse> {
     );
   }
 
-  // Read the latest scraped data
   const dataDir = path.join(process.cwd(), "src", "data", "scraped");
   const latestPath = path.join(dataDir, "bkw-latest.json");
 
@@ -55,7 +52,6 @@ export async function GET(): Promise<NextResponse> {
   const productCount = scrapedData.products.length;
   console.log(`Enriching ${String(productCount)} products with Gemini AI...`);
 
-  // Build product list for the prompt
   const productList = scrapedData.products
     .map((p) => {
       const { name, brand, specs } = p;
@@ -90,7 +86,6 @@ IMPORTANT for inverterACPower:
 - Research each product to find the actual inverter AC output power
 - If unknown, default to 800 (the legal maximum)`;
 
-  // Define JSON schema for structured output (guaranteed valid JSON)
   const responseSchema = {
     type: "ARRAY",
     items: {
@@ -166,7 +161,6 @@ IMPORTANT for inverterACPower:
 
     console.log("Gemini response received, length:", text.length);
 
-    // Parse the response (structured output guarantees valid JSON)
     let enrichments: GeminiEnrichment[];
     try {
       enrichments = JSON.parse(text) as GeminiEnrichment[];
@@ -178,7 +172,6 @@ IMPORTANT for inverterACPower:
       });
     }
 
-    // Build the enrichment result
     const result: EnrichmentResult = {
       enrichments,
       enrichedAt: new Date().toISOString(),
@@ -186,7 +179,6 @@ IMPORTANT for inverterACPower:
       totalProducts: enrichments.length,
     };
 
-    // Save to separate enrichment file
     await mkdir(dataDir, { recursive: true });
 
     const date = new Date().toISOString().split("T")[0];
@@ -195,7 +187,6 @@ IMPORTANT for inverterACPower:
 
     await writeFile(filepath, JSON.stringify(result, null, 2), "utf-8");
 
-    // Also save as latest enrichment
     const latestEnrichmentPath = path.join(dataDir, "bkw-enrichment-latest.json");
     await writeFile(latestEnrichmentPath, JSON.stringify(result, null, 2), "utf-8");
 

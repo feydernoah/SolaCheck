@@ -7,8 +7,6 @@ export interface QuestionInfo {
   hasChart?: boolean;
 }
 
-// Info content for each quiz question
-// You can add charts by setting hasChart: true and including chart components in content
 export const questionInfoData: QuestionInfo[] = [
   {
     questionId: 1,
@@ -267,7 +265,6 @@ export const questionInfoData: QuestionInfo[] = [
   },
 ];
 
-// Info content for ecological/CO2 sections on carbon-footprint page
 export interface EcologicalInfo {
   id: string;
   title: string;
@@ -341,12 +338,10 @@ export const ecologicalInfoData: EcologicalInfo[] = [
   },
 ];
 
-// Helper function to get info for a specific question
 export function getQuestionInfo(questionId: number): QuestionInfo | undefined {
   return questionInfoData.find((info) => info.questionId === questionId);
 }
 
-// Helper function to get eco info
 export function getEcologicalInfo(id: string): EcologicalInfo | undefined {
   return ecologicalInfoData.find((info) => info.id === id);
 }

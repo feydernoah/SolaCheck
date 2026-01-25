@@ -54,7 +54,6 @@ interface Question {
 }
 
 const questions: Question[] = [
-  // Kategorie 1: Über dich & deine Wohnsituation
   {
     id: 1,
     category: 'Über dich & deine Wohnsituation',
@@ -101,7 +100,6 @@ const questions: Question[] = [
     infoHint: 'Die Wohnfläche findest du meist im Mietvertrag oder in der Hausdokumentation. Wenn du unsicher bist, schätze einfach grob. \nFür mehr Informationen klicke auf das Fragezeichen oben rechts.',
   },
   
-  // Kategorie 2: Balkon & Installationsort
   {
     id: 5,
     category: 'Balkon & Installationsort',
@@ -174,7 +172,6 @@ const questions: Question[] = [
     ],
   },
 
-  // Kategorie 3: Geräte & Nutzungsmuster
   {
     id: 9,
     category: 'Geräte & Nutzungsmuster',
@@ -212,7 +209,6 @@ const questions: Question[] = [
     infoHint: 'Du findest deinen Jahresverbrauch auf der Stromrechnung oder im Kundenportal deines Anbieters. Wenn du ihn nicht kennst, überspringe diese Frage einfach – wir schätzen dann anhand deiner Haushaltsgröße. \nFür mehr Informationen klicke auf das Fragezeichen oben rechts.',
   },
 
-  // Kategorie 4: Budget & Investitionsbereitschaft
   {
     id: 11,
     category: 'Budget & Investitionsbereitschaft',
@@ -239,7 +235,6 @@ const questions: Question[] = [
   },
 ];
 
-// Hilfsfunktion um gefilterte Optionen basierend auf Abhängigkeiten zu berechnen
 const getFilteredOptions = (question: Question, answers: Record<number, string | string[]>): QuestionOption[] => {
   if (!question.options) return [];
   
@@ -272,7 +267,6 @@ const getFilteredOptions = (question: Question, answers: Record<number, string |
   return filteredOptions;
 };
 
-// Hilfsfunktion um zu prüfen, ob eine Frage angezeigt werden soll
 const isQuestionVisible = (question: Question, answers: Record<number, string | string[]>): boolean => {
   if (!question.dependencies || question.dependencies.length === 0) {
     return true;
@@ -284,15 +278,11 @@ const isQuestionVisible = (question: Question, answers: Record<number, string | 
       ? dependency.answerValue.includes(answerToCheck as string)
       : answerToCheck === dependency.answerValue;
 
-    // Abhängigkeiten für Sichtbarkeit: Haben excludeOptions oder includeOptions, aber NICHT leer
     const hasFilterOptions = 
       ((dependency.excludeOptions ?? []).length > 0) ||
       ((dependency.includeOptions ?? []).length > 0);
 
-    // Nur Abhängigkeiten berücksichtigen, die KEINE Filteroptionen haben
-    // Diese definieren Sichtbarkeitsbedingungen für ganze Fragen
     if (!hasFilterOptions) {
-      // Wenn die Abhängigkeit erfüllt ist, soll die Frage NICHT angezeigt werden
       if (dependencyMet) {
         return false;
       }
@@ -302,12 +292,11 @@ const isQuestionVisible = (question: Question, answers: Record<number, string | 
   return true;
 };
 
-// Sola Buddy Konfiguration für jede Frage
 interface SolaBuddyConfig {
   image: string;
-  buddyPosition: string; // Tailwind classes für Position des Buddys
-  bubblePosition: string; // Tailwind classes für Position der Sprechblase
-  bubbleCorner: string; // z.B. 'rounded-tr-none' (Pfeil rechts) oder 'rounded-tl-none' (Pfeil links)
+  buddyPosition: string;
+  bubblePosition: string;
+  bubbleCorner: string;
 }
 
 const solaBuddyConfig: Record<number, SolaBuddyConfig> = {
@@ -398,7 +387,6 @@ export default function Home() {
     updateAnswer,
   } = useQuizProgress();
 
-  // Only show walking animation on absolute first visit (use sessionStorage to track)
   const [showWalkingAnimation, setShowWalkingAnimation] = useState(() => {
     if (typeof window !== 'undefined') {
       const hasSeenAnimation = sessionStorage.getItem('hasSeenQuizAnimation');
@@ -408,7 +396,6 @@ export default function Home() {
     return false;
   });
 
-  // Mark animation as seen when it completes
   const handleAnimationComplete = () => {
     if (typeof window !== 'undefined') {
       sessionStorage.setItem('hasSeenQuizAnimation', 'true');
@@ -416,22 +403,16 @@ export default function Home() {
     setShowWalkingAnimation(false);
   };
 
-  // Safety fallback: ensure currentQuestion is always within valid bounds
-  // The hook already validates cookies, but this guards against any edge cases
-  // If out of bounds, correct the persisted state as well
   const isOutOfBounds = currentQuestion < 0 || currentQuestion >= questions.length;
   const safeCurrentQuestion = isOutOfBounds ? 0 : currentQuestion;
   
-  // Correct the persisted state if it was out of bounds
   useEffect(() => {
     if (isOutOfBounds) {
       setCurrentQuestion(0);
     }
   }, [isOutOfBounds, setCurrentQuestion]);
 
-  // Timer für initialen Sola Hint (nach 10 Sekunden)
   useEffect(() => {
-    // Timer nur starten wenn Sprechblase nicht sichtbar ist
     if (!solaSpeechBubbleVisible) {
       const timer = setTimeout(() => {
         setShowInitialSolaHint(true);
@@ -439,7 +420,7 @@ export default function Home() {
 
       return () => clearTimeout(timer);
     }
-  }, [currentQuestion, solaSpeechBubbleVisible]); // Reset bei neuer Frage oder wenn Sprechblase geschlossen wird
+  }, [currentQuestion, solaSpeechBubbleVisible]);
 
   const handleNext = () => {
     let nextQuestion = safeCurrentQuestion + 1;
@@ -490,22 +471,18 @@ export default function Home() {
     if (currentQ.type === 'multiselect') {
       return currentMultiSelectAnswers.length > 0;
     }
-    // For address question (id 1), check validation state
     if (currentQ.id === 1) {
       return isAddressValid;
     }
-    // For slider type (budget), default state (no limit) should be considered answered
     if (currentQ.type === 'slider') {
       return true;
     }
-    // For number type (electricity consumption), it's optional so always allow proceeding
     if (currentQ.type === 'number') {
       return true;
     }
     return !!currentAnswer;
   };
 
-  // Show walking animation on first visit
   if (showWalkingAnimation) {
     const firstQuestion = questions[0];
     return (
@@ -521,14 +498,12 @@ export default function Home() {
             <div className="flex items-center justify-center min-h-screen">
               <div className="w-full max-w-4xl px-4">
                 <Card padding="lg" className="animate-fade-in">
-                  {/* Category Badge */}
                   <div className="mb-4">
                     <span className="inline-block bg-yellow-100 text-yellow-800 text-sm font-medium px-3 py-1 rounded-full">
                       {firstQuestion.category}
                     </span>
                   </div>
                   
-                  {/* Progress Indicator */}
                   <div className="mb-8">
                     <div className="flex justify-end text-sm text-gray-600 mb-2">
                       <span>{Math.round((1 / questions.length) * 100)}%</span>
@@ -541,14 +516,10 @@ export default function Home() {
                     </div>
                   </div>
 
-                  {/* Question */}
                   <h2 className="text-heading-2 md:text-heading-1 font-bold text-gray-800 mb-8">
                     {firstQuestion.question}
                   </h2>
 
-                  {/* Info Hint intentionally hidden during animated transition to match buddy layout */}
-
-                  {/* Answer Input */}
                   <div className="mb-8">
                     {firstQuestion.type === 'text' && (
                       <AddressInput
@@ -593,25 +564,20 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-white relative overflow-visible p-4">
-      {/* Burger Menu and Info Button */}
       <div className="fixed top-4 right-4 sm:top-5 sm:right-5 md:top-6 md:right-6 z-50 flex items-center gap-4">
         <InfoButton onClick={() => setIsInfoModalOpen(true)} />
         <BurgerMenu showHome showQuiz={false} confirmOnHome inline />
       </div>
 
-      {/* Info Modal */}
       <InfoModal
         isOpen={isInfoModalOpen}
         onClose={() => setIsInfoModalOpen(false)}
         info={currentQuestionInfo}
       />
 
-      {/* Main Content */}
       <div className="flex items-center justify-center min-h-screen pt-36 pb-8">
         <div className="w-full max-w-4xl px-4">
-          {/* Question Card */}
           <Card padding="lg" className="animate-fade-in relative overflow-visible">
-            {/* Sola Buddy - dynamisch basierend auf Config */}
             {currentQ.id in solaBuddyConfig && (() => {
               const config = solaBuddyConfig[currentQ.id];
               const hasInfoHint = !!currentQ.infoHint;
@@ -640,7 +606,6 @@ export default function Home() {
                     />
                   </button>
 
-                  {/* Sola Sprechblase */}
                   {((hasInfoHint && (solaSpeechBubbleVisible || showInitialSolaHint)) || 
                     (!hasInfoHint && showInitialSolaHint)) && (
                     <div className={`${config.bubblePosition} ${config.bubbleCorner} overflow-hidden`}>
@@ -664,14 +629,12 @@ export default function Home() {
               );
             })()}
             
-            {/* Category Badge */}
             <div className="mb-4">
               <span className="inline-block bg-yellow-100 text-yellow-800 text-sm font-medium px-3 py-1 rounded-full">
                 {currentQ.category}
               </span>
             </div>
 
-            {/* Progress Indicator */}
             <div className="mb-8">
               <div className="flex justify-end text-sm text-gray-600 mb-2">
                 <span>{Math.round(((safeCurrentQuestion + 1) / questions.length) * 100)}%</span>
@@ -684,14 +647,11 @@ export default function Home() {
               </div>
             </div>
 
-            {/* Question */}
             <h2 className="text-heading-2 md:text-heading-1 font-bold text-gray-800 mb-8">
               {currentQ.question}
             </h2>
 
-            {/* Answer Input */}
             <div className="mb-8">
-              {/* Tile Type */}
               {currentQ.type === 'tile' && filteredOptions.length > 0 && (
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                   {filteredOptions.map((option) => (
@@ -706,7 +666,6 @@ export default function Home() {
                 </div>
               )}
 
-              {/* Button Type */}
               {currentQ.type === 'button' && filteredOptions.length > 0 && (
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   {filteredOptions.map((option) => (
@@ -725,10 +684,8 @@ export default function Home() {
                 </div>
               )}
 
-              {/* Text Input Type */}
               {currentQ.type === 'text' && (
                 <>
-                  {/* Spezielle AddressInput für Frage 1 (Wohnort) */}
                   {currentQ.id === 1 ? (
                     <AddressInput
                       value={currentTextAnswer}
@@ -736,7 +693,6 @@ export default function Home() {
                       onValidationChange={setIsAddressValid}
                     />
                   ) : (
-                    /* Normaler Text Input für andere Fragen */
                     <div className="max-w-md">
                       <div className="flex items-center gap-2">
                         <input
@@ -755,7 +711,6 @@ export default function Home() {
                 </>
               )}
 
-              {/* Number Input Type (optional, can be skipped) */}
               {currentQ.type === 'number' && (
                 <NumberInput
                   value={currentTextAnswer}
@@ -767,7 +722,6 @@ export default function Home() {
                 />
               )}
 
-              {/* Compass Selector Type */}
               {currentQ.type === 'compass' && (
                 <CompassSelector
                   value={currentTextAnswer}
@@ -776,7 +730,6 @@ export default function Home() {
                 />
               )}
 
-              {/* Multiselect Type */}
               {currentQ.type === 'multiselect' && filteredOptions.length > 0 && (
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                   {filteredOptions.map((option) => (
@@ -808,7 +761,6 @@ export default function Home() {
                 </div>
               )}
 
-              {/* Slider Type */}
               {currentQ.type === 'slider' && currentQ.sliderConfig && (
                 <div className="max-w-xl mx-auto">
                   <div className="mb-10">
@@ -835,7 +787,6 @@ export default function Home() {
               )}
             </div>
 
-            {/* Navigation */}
             <div className="flex justify-between items-center">
               <Button
                 onClick={handlePrevious}

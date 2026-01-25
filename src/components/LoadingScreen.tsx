@@ -11,12 +11,10 @@ export function LoadingScreen({ isVisible, message = 'Berechne deine Empfehlung.
   return (
     <div className="fixed inset-0 bg-white flex items-center justify-center z-50 animate-fade-in">
       <div className="text-center">
-        {/* Sola Calculating Animation */}
         <div className="mb-12 flex justify-center">
           <SolaCalculatingAnimation />
         </div>
 
-        {/* Message */}
         <p className="text-heading-3 font-semibold text-gray-800 mb-2">
           {message}
         </p>

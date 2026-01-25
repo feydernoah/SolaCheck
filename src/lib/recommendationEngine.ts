@@ -1,15 +1,3 @@
-/**
- * Recommendation Engine for Balkonkraftwerk (BKW) Products
- * 
- * Orchestrates the recommendation process by:
- * - Loading and filtering products
- * - Calculating economic metrics for each product
- * - Calculating ecological metrics for each product
- * - Scoring and ranking products
- * - Generating match reasons and warnings
- * - Building the final recommendation response
- */
-
 import type {
   BKWProduct,
   QuizAnswers,
@@ -46,11 +34,6 @@ import {
 } from '@/lib/constants';
 import { QUESTION_IDS } from '@/lib/quizConstants';
 
-// === MATCH REASONS & WARNINGS ===
-
-/**
- * Generate match reasons for a product
- */
 function generateMatchReasons(
   product: BKWProduct,
   economics: ProductEconomics,
@@ -58,40 +41,33 @@ function generateMatchReasons(
 ): string[] {
   const reasons: string[] = [];
   
-  // Fast amortization
   if (economics.amortizationYears <= 6) {
     reasons.push('Sehr schnelle Amortisation unter 6 Jahren');
   } else if (economics.amortizationYears <= 8) {
     reasons.push('Gute Amortisation unter 8 Jahren');
   }
   
-  // Storage benefit
   if (product.includesStorage && product.storageCapacity) {
     reasons.push(`Inkl. ${String(product.storageCapacity)} kWh Speicher für höheren Eigenverbrauch`);
   }
   
-  // Bifacial bonus
   if (product.bifacial) {
     reasons.push('Bifaziale Module für bis zu 8% Mehrertrag');
   }
   
-  // High self-consumption
   if (economics.annualYieldKwh > 0 && economics.selfConsumptionKwh / economics.annualYieldKwh > 0.5) {
     reasons.push('Hohe Eigenverbrauchsquote möglich');
   }
   
-  // Good warranty
   if (product.warrantyYears >= 25) {
     reasons.push(`Lange Garantie (${String(product.warrantyYears)} Jahre)`);
   }
   
-  // Mounting type match
   const mountingType = answers[QUESTION_IDS.MOUNTING_LOCATION];
   if (mountingType && mountingType !== 'weiss-nicht') {
     reasons.push(`Passend für ${MOUNTING_LABELS[mountingType] ?? mountingType}`);
   }
   
-  // Budget friendly
   const budget = answers[QUESTION_IDS.BUDGET];
   if (budget) {
     const budgetNum = parseInt(budget, 10);
@@ -103,9 +79,6 @@ function generateMatchReasons(
   return reasons;
 }
 
-/**
- * Generate warnings for a product
- */
 function generateWarnings(
   product: BKWProduct,
   economics: ProductEconomics,
@@ -114,12 +87,10 @@ function generateWarnings(
 ): string[] {
   const warnings: string[] = [];
   
-  // Long amortization
   if (economics.amortizationYears > 12) {
     warnings.push('Lange Amortisationszeit über 12 Jahre');
   }
   
-  // Low yield due to orientation
   const orientation = answers[QUESTION_IDS.ORIENTATION];
   if (orientation === 'norden') {
     warnings.push('Nordausrichtung reduziert den Ertrag erheblich');
@@ -127,18 +98,15 @@ function generateWarnings(
     warnings.push('Nordost/Nordwest-Ausrichtung reduziert den Ertrag spürbar');
   }
   
-  // Heavy shading
   const shading = answers[QUESTION_IDS.SHADING];
   if (shading === 'ganzen-tag') {
     warnings.push('Starke Verschattung reduziert den Ertrag deutlich');
   }
   
-  // High feed-in (wasted potential)
   if (economics.feedInKwh > economics.selfConsumptionKwh) {
     warnings.push('Mehr Einspeisung als Eigenverbrauch - Speicher könnte sich lohnen');
   }
   
-  // Low consumption warning (500-1500 kWh range)
   if (annualConsumption < 1500 && annualConsumption >= 500) {
     const selfConsumptionPercent = economics.annualYieldKwh > 0
       ? Math.round((economics.selfConsumptionKwh / economics.annualYieldKwh) * 100)
@@ -149,16 +117,12 @@ function generateWarnings(
   return warnings;
 }
 
-/**
- * Determine if a BKW is recommended and provide reasoning
- */
 function determineRecommendation(
   rankings: ProductRanking[],
   orientationFactor: number,
   shadingFactor: number,
   annualConsumption: number
 ): { isRecommended: boolean; reason: string } {
-  // No products available in budget
   if (rankings.length === 0) {
     return {
       isRecommended: false,
@@ -166,9 +130,6 @@ function determineRecommendation(
     };
   }
 
-  // Very low consumption - BKW doesn't make economic sense
-  // A typical BKW produces 600-800 kWh/year, if consumption is below 500 kWh,
-  // almost all energy would be fed in at low tariffs
   if (annualConsumption < 500) {
     return {
       isRecommended: false,
@@ -176,7 +137,6 @@ function determineRecommendation(
     };
   }
 
-  // Extremely poor conditions (north + heavy shade = factor < 0.25)
   const combinedFactor = orientationFactor * shadingFactor;
   if (combinedFactor < 0.25) {
     return {
@@ -185,7 +145,6 @@ function determineRecommendation(
     };
   }
 
-  // Best option has too long amortization (> 15 years)
   const bestProduct = rankings[0];
   if (bestProduct.economics.amortizationYears > 15) {
     return {
@@ -194,7 +153,6 @@ function determineRecommendation(
     };
   }
   
-  // Check self-consumption ratio - if less than 20% of yield is self-consumed, warn
   if (bestProduct.economics.annualYieldKwh > 0) {
     const selfConsumptionRatio = bestProduct.economics.selfConsumptionKwh / bestProduct.economics.annualYieldKwh;
     if (selfConsumptionRatio < 0.20) {
@@ -205,7 +163,6 @@ function determineRecommendation(
     }
   }
 
-  // Good conditions - recommend!
   let reason = 'Basierend auf deinen Angaben sind die Bedingungen für ein Balkonkraftwerk sehr gut! ';
   
   if (combinedFactor >= 0.8) {
@@ -221,19 +178,10 @@ function determineRecommendation(
   return { isRecommended: true, reason };
 }
 
-// === MAIN RECOMMENDATION FUNCTION ===
-
-/**
- * Main calculation function - generates full recommendations
- * 
- * @param answers - Quiz answers from user
- * @param solarData - Optional PVGIS solar data for location-specific yield
- */
 export function calculateRecommendations(
   answers: QuizAnswers,
   solarData?: SolarData
 ): RecommendationResponse {
-  // Extract relevant answers using centralized question IDs
   const householdSize = answers[QUESTION_IDS.HOUSEHOLD_SIZE] as HouseholdSize | undefined;
   const mountingLocation = answers[QUESTION_IDS.MOUNTING_LOCATION] as MountingType | undefined;
   const orientation = answers[QUESTION_IDS.ORIENTATION] as Orientation | undefined;
@@ -241,26 +189,21 @@ export function calculateRecommendations(
   const budget = answers[QUESTION_IDS.BUDGET];
   const userProvidedConsumption = answers[QUESTION_IDS.CONSUMPTION];
   
-  // Calculate factors
   const orientationFactor = getOrientationFactor(orientation);
   const shadingFactor = getShadingFactor(shading);
   const annualConsumption = getAnnualConsumption(householdSize, userProvidedConsumption);
   
-  // Get PVGIS yield if available
   const pvgisYieldKwhPerKwp = solarData?.annualYieldKwhPerKwp;
   const usedPvgisData = pvgisYieldKwhPerKwp !== undefined;
   
-  // Log for dev purposes
   if (usedPvgisData) {
     console.log(`[RecommendationEngine] Using PVGIS yield: ${String(pvgisYieldKwhPerKwp)} kWh/kWp/year`);
   } else {
     console.log(`[RecommendationEngine] Using fallback yield: ${String(BASE_YIELD_KWH_PER_WP * 1000)} kWh/kWp/year`);
   }
   
-  // Get budget max
   const maxBudget = getBudgetMaxValue(budget ?? '0');
   
-  // Load products from scraped data, falling back to static data
   let allProducts: BKWProduct[];
   try {
     allProducts = loadScrapedProducts();
@@ -270,19 +213,15 @@ export function calculateRecommendations(
     allProducts = bkwProducts;
   }
   
-  // Filter products by budget (strict) and mounting type
   let eligibleProducts = allProducts.filter(product => product.price <= maxBudget);
   const filteredOutCount = allProducts.length - eligibleProducts.length;
   
-  // Filter by mounting type if specified
   if (mountingLocation && mountingLocation !== 'weiss-nicht') {
     eligibleProducts = eligibleProducts.filter(product =>
       product.mountingTypes.includes(mountingLocation)
     );
   }
   
-  // Calculate economics and ecological impact for each product
-  // Note: AC limit enforcement is handled internally by calculateProductEconomics/calculateAnnualYield
   const rankings: ProductRanking[] = eligibleProducts.map(product => {
     const selfConsumptionRate = getSelfConsumptionRate(
       householdSize,
@@ -299,16 +238,15 @@ export function calculateRecommendations(
       pvgisYieldKwhPerKwp
     );
 
-    // Calculate ecological impact
     const ecological = calculateProductEcological(product, economics);
     const { reasons: ecologicalReasons, warnings: ecologicalWarnings } = generateEcologicalInsights(product, ecological);
 
     return {
-      rank: 0, // Will be set after sorting
+      rank: 0,
       product,
       economics,
       ecological,
-      score: ecological.paybackPeriodYears, // Lower CO₂ payback is better (app focus on sustainability)
+      score: ecological.paybackPeriodYears,
       matchReasons: generateMatchReasons(product, economics, answers),
       warnings: generateWarnings(product, economics, answers, annualConsumption),
       ecologicalReasons,
@@ -316,15 +254,12 @@ export function calculateRecommendations(
     };
   });
   
-  // Sort by CO₂ payback period (shortest first) - prioritizing environmental impact
   rankings.sort((a, b) => a.score - b.score);
   
-  // Assign ranks
   rankings.forEach((ranking, index) => {
     ranking.rank = index + 1;
   });
   
-  // Determine if we should recommend a BKW
   const { isRecommended, reason: recommendationReason } = determineRecommendation(
     rankings,
     orientationFactor,
@@ -332,7 +267,6 @@ export function calculateRecommendations(
     annualConsumption
   );
   
-  // Build assumptions object
   const usedUserProvidedConsumption = !!(userProvidedConsumption && typeof userProvidedConsumption === 'string' && parseInt(userProvidedConsumption, 10) > 0);
   const assumptions: CalculationAssumptions = {
     electricityPriceCentPerKwh: ELECTRICITY_PRICE_CT_PER_KWH,
@@ -347,7 +281,6 @@ export function calculateRecommendations(
     usedPvgisData,
   };
   
-  // Build quiz summary
   const quizSummary = buildQuizSummary(answers, orientation, householdSize, budget, mountingLocation, shading);
   
   return {
@@ -361,9 +294,6 @@ export function calculateRecommendations(
   };
 }
 
-/**
- * Build the quiz summary for the response
- */
 function buildQuizSummary(
   answers: QuizAnswers,
   orientation: Orientation | undefined,
@@ -372,24 +302,20 @@ function buildQuizSummary(
   mountingLocation: MountingType | undefined,
   shading: ShadingLevel | undefined
 ): RecommendationResponse['quizSummary'] {
-  // Check if we have coordinates (new format stores only coordinates)
   let locationDisplay = 'Nicht angegeben';
   const addressAnswer = answers[QUESTION_IDS.LOCATION];
   if (addressAnswer) {
     try {
       const parsed = JSON.parse(addressAnswer) as { lat?: number; lon?: number; city?: string; postalCode?: string };
       
-      // New format: just coordinates
       if (typeof parsed.lat === 'number' && typeof parsed.lon === 'number') {
         locationDisplay = 'Standort erfasst';
       } else if (parsed.city) {
-        // Old format: full address (backwards compatibility)
         locationDisplay = parsed.postalCode 
           ? `${parsed.postalCode} ${parsed.city}`
           : parsed.city;
       }
     } catch {
-      // Not JSON, use as-is
       locationDisplay = addressAnswer;
     }
   }

@@ -1,25 +1,8 @@
-/**
- * API Route: /api/recommendation
- * 
- * Receives quiz answers and returns BKW product recommendations
- * sorted by shortest amortization time, including economic and ecological analysis.
- * 
- * POST endpoint:
- * - Fetches PVGIS solar data for location-specific yield (if coordinates provided)
- * - Analyzes quiz answers to calculate economic viability and environmental impact
- * - Returns ranked products with detailed breakdowns
- * - Includes CO2 payback periods and lifecycle assessments
- * 
- * GET endpoint:
- * - Returns sample recommendations for testing
- */
-
 import { NextRequest, NextResponse } from 'next/server';
 import { calculateRecommendations } from '@/lib/recommendationEngine';
 import { QUESTION_IDS } from '@/lib/quizConstants';
 import type { QuizAnswers, RecommendationResponse, SolarData } from '@/types/economic';
 
-// PVGIS API configuration (same as solar-data route)
 const PVGIS_BASE_URL = 'https://re.jrc.ec.europa.eu/api/v5_3/PVcalc';
 
 const DEFAULT_PVGIS_PARAMS = {
@@ -49,9 +32,6 @@ const MOUNTING_TO_ANGLE: Record<string, number> = {
   'weiss-nicht': 35,
 };
 
-/**
- * Fetch solar data from PVGIS API (server-side)
- */
 async function fetchPVGISData(
   lat: number,
   lon: number,
@@ -92,7 +72,6 @@ async function fetchPVGISData(
     
     const pvgisData = await response.json();
     
-    // Extract monthly yields
     const monthlyYields = pvgisData.outputs.monthly.fixed
       .sort((a: { month: number }, b: { month: number }) => a.month - b.month)
       .map((m: { E_m: number }) => m.E_m);
@@ -126,40 +105,13 @@ async function fetchPVGISData(
   }
 }
 
-/**
- * POST /api/recommendation
- * 
- * Request body:
- * {
- *   "answers": {
- *     "1": "25-34",
- *     "2": "Berlin",
- *     "3": "2",
- *     "6": "balkonbruestung",
- *     "7": "sueden",
- *     "9": "keine",
- *     "11": "400-700",
- *     "12": "wichtig",
- *     "coordinates": { "lat": 52.52, "lon": 13.405 }
- *   },
- *   "solarData": { ... } // Optional: pre-fetched PVGIS data from cookie
- * }
- * 
- * Response includes:
- * - Economic analysis: amortization times, annual savings, 10/20-year returns
- * - Ecological analysis: manufacturing CO2, payback period, lifecycle assessment
- * - Detailed product rankings with match reasons and warnings
- * - User quiz summary and calculation assumptions
- */
 export async function POST(request: NextRequest): Promise<NextResponse<RecommendationResponse>> {
   try {
-    // Parse request body
     const body = await request.json() as { 
       answers?: QuizAnswers;
-      solarData?: SolarData; // Can be passed from cookie
+      solarData?: SolarData;
     };
     
-    // Validate that answers exist
     if (!body.answers || typeof body.answers !== 'object') {
       return NextResponse.json(
         {
@@ -196,23 +148,19 @@ export async function POST(request: NextRequest): Promise<NextResponse<Recommend
     
     const answers = body.answers;
     
-    // Get solar data - either from request body (cookie) or fetch from PVGIS
     let solarData: SolarData | null | undefined = body.solarData;
     
     if (!solarData && answers.coordinates) {
-      // Fetch PVGIS data if coordinates are available and no cached data provided
       solarData = await fetchPVGISData(
         answers.coordinates.lat,
         answers.coordinates.lon,
-        answers[QUESTION_IDS.ORIENTATION], // orientation
-        answers[QUESTION_IDS.MOUNTING_LOCATION]  // mounting
+        answers[QUESTION_IDS.ORIENTATION],
+        answers[QUESTION_IDS.MOUNTING_LOCATION]
       );
     }
     
-    // Calculate recommendations (will use fallback if solarData is null)
     const result = calculateRecommendations(answers, solarData ?? undefined);
     
-    // Return successful response
     return NextResponse.json(result, { status: 200 });
     
   } catch (error) {
@@ -252,13 +200,7 @@ export async function POST(request: NextRequest): Promise<NextResponse<Recommend
   }
 }
 
-/**
- * GET /api/recommendation
- * 
- * Returns a sample response with default values for testing
- */
 export async function GET(): Promise<NextResponse<RecommendationResponse>> {
-  // Sample quiz answers for testing (Berlin coordinates)
   const sampleAnswers: QuizAnswers = {
     1: '25-34',
     2: 'Berlin',
@@ -272,10 +214,9 @@ export async function GET(): Promise<NextResponse<RecommendationResponse>> {
     10: '1200',
     11: 'etwas',
     12: 'wichtig',
-    coordinates: { lat: 52.52, lon: 13.405 }, // Berlin
+    coordinates: { lat: 52.52, lon: 13.405 },
   };
   
-  // Try to fetch PVGIS data for sample
   const coords = sampleAnswers.coordinates;
   const solarData = coords 
     ? await fetchPVGISData(

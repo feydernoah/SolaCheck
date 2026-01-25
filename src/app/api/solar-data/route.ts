@@ -1,29 +1,16 @@
-/**
- * API Route: /api/solar-data
- * 
- * Proxy endpoint for PVGIS (Photovoltaic Geographical Information System) API
- * PVGIS does not allow CORS, so we need a server-side proxy
- * 
- * Documentation: https://joint-research-centre.ec.europa.eu/photovoltaic-geographical-information-system-pvgis/getting-started-pvgis/api-non-interactive-service_en
- */
-
 import { NextRequest, NextResponse } from 'next/server';
 
-// PVGIS API configuration
 const PVGIS_BASE_URL = 'https://re.jrc.ec.europa.eu/api/v5_3/PVcalc';
 
-// Default system parameters for balcony solar systems
 const DEFAULT_PARAMS = {
-  peakpower: 1, // 1 kWp for normalized output (we scale by actual wattage later)
-  loss: 14, // System losses in % (industry standard)
-  pvtechchoice: 'crystSi', // Crystalline silicon (most common)
-  mountingplace: 'building', // Building-integrated (balcony)
-  raddatabase: 'PVGIS-SARAH3', // Best database for Europe
+  peakpower: 1,
+  loss: 14,
+  pvtechchoice: 'crystSi',
+  mountingplace: 'building',
+  raddatabase: 'PVGIS-SARAH3',
   outputformat: 'json',
 };
 
-// Map orientation answers to PVGIS aspect (azimuth) values
-// PVGIS: 0 = south, 90 = west, -90 = east, 180/-180 = north
 const ORIENTATION_TO_ASPECT: Record<string, number> = {
   'sueden': 0,
   'suedost': -45,
@@ -31,17 +18,15 @@ const ORIENTATION_TO_ASPECT: Record<string, number> = {
   'westen': 90,
   'osten': -90,
   'norden': 180,
-  'weiss-nicht': 0, // Default to south (optimal)
+  'weiss-nicht': 0,
 };
 
-// Map mounting types to typical tilt angles
-// Balcony railings are typically vertical or near-vertical
 const MOUNTING_TO_ANGLE: Record<string, number> = {
-  'balkonbruestung': 90, // Vertical mounting on railing
-  'balkonboden': 30, // Ground/floor mounting with stand (optimal ~30°)
-  'hauswand': 90, // Wall mounting (vertical)
-  'flachdach': 15, // Flat roof with slight tilt
-  'weiss-nicht': 35, // Default to near-optimal angle
+  'balkonbruestung': 90,
+  'balkonboden': 30,
+  'hauswand': 90,
+  'flachdach': 15,
+  'weiss-nicht': 35,
 };
 
 export interface PVGISResponse {
@@ -66,18 +51,18 @@ export interface PVGISResponse {
   outputs: {
     totals: {
       fixed: {
-        E_d: number; // Average daily energy production (kWh/day)
-        E_m: number; // Average monthly energy production (kWh/month)
-        E_y: number; // Average yearly energy production (kWh/year)
-        H_d: number; // Average daily sum of global irradiation (kWh/m²/day)
-        H_m: number; // Average monthly sum of global irradiation (kWh/m²/month)
-        H_y: number; // Average yearly sum of global irradiation (kWh/m²/year)
-        SD_m: number; // Standard deviation of monthly production
-        SD_y: number; // Standard deviation of yearly production
-        l_aoi: number; // Angle of incidence loss (%)
-        l_spec: number; // Spectral loss (%)
-        l_tg: number; // Temperature and irradiance loss (%)
-        l_total: number; // Total loss (%)
+        E_d: number;
+        E_m: number;
+        E_y: number;
+        H_d: number;
+        H_m: number;
+        H_y: number;
+        SD_m: number;
+        SD_y: number;
+        l_aoi: number;
+        l_spec: number;
+        l_tg: number;
+        l_total: number;
       };
     };
     monthly: {
@@ -96,12 +81,12 @@ export interface PVGISResponse {
 export interface SolarDataResponse {
   success: boolean;
   data?: {
-    annualYieldKwhPerKwp: number; // E_y - key metric for calculations
-    averageDailyYieldKwh: number; // E_d
-    averageMonthlyYieldKwh: number; // E_m
-    yearlyIrradiationKwhPerM2: number; // H_y
-    monthlyYields: number[]; // E_m for each month (Jan-Dec)
-    totalLossPercent: number; // l_total
+    annualYieldKwhPerKwp: number;
+    averageDailyYieldKwh: number;
+    averageMonthlyYieldKwh: number;
+    yearlyIrradiationKwhPerM2: number;
+    monthlyYields: number[];
+    totalLossPercent: number;
     location: {
       lat: number;
       lon: number;
@@ -118,20 +103,9 @@ export interface SolarDataResponse {
   fallbackUsed?: boolean;
 }
 
-/**
- * GET /api/solar-data
- * 
- * Query parameters:
- * - lat: Latitude (required)
- * - lon: Longitude (required)
- * - orientation: User's orientation answer (optional, defaults to 'sueden')
- * - mounting: User's mounting type answer (optional, defaults to 'weiss-nicht')
- * - angle: Override tilt angle (optional)
- */
 export async function GET(request: NextRequest): Promise<NextResponse<SolarDataResponse>> {
   const searchParams = request.nextUrl.searchParams;
   
-  // Extract and validate coordinates
   const latStr = searchParams.get('lat');
   const lonStr = searchParams.get('lon');
   
@@ -158,7 +132,6 @@ export async function GET(request: NextRequest): Promise<NextResponse<SolarDataR
     );
   }
   
-  // Validate coordinate ranges
   if (lat < -90 || lat > 90 || lon < -180 || lon > 180) {
     return NextResponse.json(
       {
@@ -169,20 +142,16 @@ export async function GET(request: NextRequest): Promise<NextResponse<SolarDataR
     );
   }
   
-  // Get optional parameters
   const orientation = searchParams.get('orientation') ?? 'weiss-nicht';
   const mounting = searchParams.get('mounting') ?? 'weiss-nicht';
   const angleOverride = searchParams.get('angle');
   
-  // Calculate aspect (azimuth) from orientation
   const aspect = ORIENTATION_TO_ASPECT[orientation] ?? ORIENTATION_TO_ASPECT['weiss-nicht'];
   
-  // Calculate angle (tilt) from mounting type, or use override
   const angle = angleOverride 
     ? parseFloat(angleOverride) 
     : (MOUNTING_TO_ANGLE[mounting] ?? MOUNTING_TO_ANGLE['weiss-nicht']);
   
-  // Build PVGIS API URL
   const pvgisParams = new URLSearchParams({
     lat: lat.toString(),
     lon: lon.toString(),
@@ -212,20 +181,18 @@ export async function GET(request: NextRequest): Promise<NextResponse<SolarDataR
       const errorText = await response.text();
       console.error(`[PVGIS] Error response (${String(response.status)}):`, errorText);
       
-      // Return fallback for client, but log the actual error
       return NextResponse.json(
         {
           success: false,
           error: `PVGIS API error: ${String(response.status)} - ${errorText}`,
           fallbackUsed: true,
         },
-        { status: 200 } // Return 200 so client can use fallback
+        { status: 200 }
       );
     }
     
     const pvgisData: PVGISResponse = await response.json();
     
-    // Extract monthly yields
     const monthlyYields = pvgisData.outputs.monthly.fixed
       .sort((a, b) => a.month - b.month)
       .map(m => m.E_m);
@@ -266,7 +233,7 @@ export async function GET(request: NextRequest): Promise<NextResponse<SolarDataR
         error: error instanceof Error ? error.message : 'Unknown error fetching PVGIS data',
         fallbackUsed: true,
       },
-      { status: 200 } // Return 200 so client can use fallback
+      { status: 200 }
     );
   }
 }

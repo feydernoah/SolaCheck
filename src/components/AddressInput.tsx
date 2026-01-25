@@ -4,15 +4,14 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import { useGeolocation } from '@/hooks/useGeolocation';
 
 interface AddressInputProps {
-  value: string; // Stores coordinates as JSON: {"lat": number, "lon": number}
+  value: string;
   onChange: (value: string) => void;
   onValidationChange?: (isValid: boolean) => void;
 }
 
-// Photon API response types (Komoot's geocoder - better for autocomplete)
 interface PhotonFeature {
   geometry: {
-    coordinates: [number, number]; // [lon, lat]
+    coordinates: [number, number];
   };
   properties: {
     osm_id?: number;
@@ -33,14 +32,12 @@ interface PhotonFeature {
   };
 }
 
-// Allowed country codes for search results
-const ALLOWED_COUNTRIES = ['DE', 'AT', 'CH']; // Germany, Austria, Switzerland
+const ALLOWED_COUNTRIES = ['DE', 'AT', 'CH'];
 
 interface PhotonResponse {
   features: PhotonFeature[];
 }
 
-// Suggestion type for internal use (normalized from Photon)
 interface LocationSuggestion {
   id: string;
   name: string;
@@ -51,44 +48,35 @@ interface LocationSuggestion {
   countryCode?: string;
 }
 
-// Convert Photon feature to our suggestion type
 function photonToSuggestion(feature: PhotonFeature): LocationSuggestion {
   const props = feature.properties;
   const [lon, lat] = feature.geometry.coordinates;
   
-  // Determine the primary name
   const primaryName = props.name ?? props.city ?? props.town ?? props.village ?? props.municipality ?? '';
   
-  // Build display name
   const parts: string[] = [];
   
-  // Street address
   if (props.street) {
     parts.push(props.housenumber ? `${props.street} ${props.housenumber}` : props.street);
   } else if (primaryName) {
     parts.push(primaryName);
   }
   
-  // City/Location
   const city = props.city ?? props.town ?? props.village ?? props.municipality;
   if (city && city !== primaryName) {
     parts.push(props.postcode ? `${props.postcode} ${city}` : city);
   } else if (props.postcode && city) {
-    // If city is the primary name, still add postcode
     parts[0] = `${props.postcode} ${parts[0]}`;
   }
   
-  // State for context
   if (props.state && parts.length < 2) {
     parts.push(props.state);
   }
   
   const displayName = parts.join(', ') || primaryName;
   
-  // Determine type based on Photon's type field and address properties
   let type: LocationSuggestion['type'] = 'place';
   
-  // First check Photon's type field
   if (props.type === 'street') {
     type = 'street';
   } else if (props.type === 'house' && props.housenumber) {
@@ -100,10 +88,8 @@ function photonToSuggestion(feature: PhotonFeature): LocationSuggestion {
   } else if (props.type === 'village' || props.type === 'hamlet') {
     type = 'village';
   } else if (props.housenumber && props.street) {
-    // Fallback: has house number and street = address
     type = 'address';
   } else if (props.street) {
-    // Fallback: has street but no house number = street reference
     type = 'street';
   } else if (props.city) {
     type = 'city';
@@ -124,7 +110,6 @@ function photonToSuggestion(feature: PhotonFeature): LocationSuggestion {
   };
 }
 
-// Get German label for suggestion type
 function getSuggestionTypeLabel(type: LocationSuggestion['type']): string {
   const labels: Record<LocationSuggestion['type'], string> = {
     city: 'Stadt',
@@ -137,7 +122,6 @@ function getSuggestionTypeLabel(type: LocationSuggestion['type']): string {
   return labels[type];
 }
 
-// Debounce helper
 function useDebounce<T>(value: T, delay: number): T {
   const [debouncedValue, setDebouncedValue] = useState<T>(value);
 
@@ -171,7 +155,6 @@ export function AddressInput({ value, onChange, onValidationChange }: AddressInp
   
   const debouncedQuery = useDebounce(searchQuery, 300);
 
-  // Parse initial value to restore selected location
   useEffect(() => {
     if (value && !selectedLocation) {
       try {
@@ -183,21 +166,16 @@ export function AddressInput({ value, onChange, onValidationChange }: AddressInp
             lon: parsed.lon,
           });
         }
-      } catch {
-        // Not valid JSON
-      }
+      } catch { /* */ }
     }
   }, [value, selectedLocation]);
 
-  // Handle GPS coordinates
   useEffect(() => {
     if (coordinates && !hasProcessedCoords.current) {
       hasProcessedCoords.current = true;
       
-      // Log GPS coordinates
       console.log('[SolaCheck] GPS coordinates received:', { lat: coordinates.lat, lon: coordinates.lon });
       
-      // Do reverse geocoding to get location name (using Photon reverse)
       void (async () => {
         try {
           const response = await fetch(
@@ -214,7 +192,6 @@ export function AddressInput({ value, onChange, onValidationChange }: AddressInp
             if (data.features.length > 0) {
               const suggestion = photonToSuggestion(data.features[0]);
               
-              // Log resolved location name
               console.log('[SolaCheck] GPS location resolved:', { name: suggestion.displayName, lat: coordinates.lat, lon: coordinates.lon });
               
               setSelectedLocation({
@@ -223,7 +200,6 @@ export function AddressInput({ value, onChange, onValidationChange }: AddressInp
                 lon: coordinates.lon,
               });
             } else {
-              // No result from reverse geocoding
               setSelectedLocation({
                 name: `${coordinates.lat.toFixed(4)}, ${coordinates.lon.toFixed(4)}`,
                 lat: coordinates.lat,
@@ -234,12 +210,10 @@ export function AddressInput({ value, onChange, onValidationChange }: AddressInp
             setSuggestions([]);
             setShowSuggestions(false);
             
-            // Save coordinates
             onChange(JSON.stringify({ lat: coordinates.lat, lon: coordinates.lon }));
             onValidationChange?.(true);
           }
         } catch {
-          // If reverse geocoding fails, still save the coordinates
           setSelectedLocation({
             name: `${coordinates.lat.toFixed(4)}, ${coordinates.lon.toFixed(4)}`,
             lat: coordinates.lat,
@@ -252,7 +226,6 @@ export function AddressInput({ value, onChange, onValidationChange }: AddressInp
     }
   }, [coordinates, onChange, onValidationChange]);
 
-  // Search for locations when query changes (using Photon API for better autocomplete)
   useEffect(() => {
     if (!debouncedQuery || debouncedQuery.length < 2) {
       setSuggestions([]);
@@ -260,7 +233,6 @@ export function AddressInput({ value, onChange, onValidationChange }: AddressInp
       return;
     }
 
-    // Cancel previous request
     if (searchAbortController.current) {
       searchAbortController.current.abort();
     }
@@ -270,30 +242,22 @@ export function AddressInput({ value, onChange, onValidationChange }: AddressInp
       setIsSearching(true);
       
       try {
-        // Detect if query looks like a postal code (4-5 digits for DE/AT/CH)
-        // If so, optionally append country context to improve search results
         const isPostalCode = /^\d{4,5}$/.test(debouncedQuery);
         let searchQuery = debouncedQuery;
         
         if (isPostalCode) {
-          // German postal codes are 5 digits; 4-digit codes occur in multiple countries
-          // Only bias 5-digit codes towards Germany; let 4-digit codes be resolved by Photon + bbox
           const digits = debouncedQuery.length;
           if (digits === 5) {
-            // Likely German postal code
             searchQuery = `${debouncedQuery} Deutschland`;
           }
-          // For 4-digit codes (AT/CH), let the bounding box and country filter handle it
         }
         
-        // Use Photon API (by Komoot) - better for autocomplete than Nominatim
-        // Bounding box for Central Europe to prioritize local results
         const response = await fetch(
           `https://photon.komoot.io/api/?` +
           `q=${encodeURIComponent(searchQuery)}&` +
           `lang=de&` +
-          `limit=15&` + // Fetch more to filter by country
-          `bbox=5.8,45.8,17.2,55.1`, // Central Europe bounding box
+          `limit=15&` +
+          `bbox=5.8,45.8,17.2,55.1`,
           {
             signal: searchAbortController.current?.signal,
           }
@@ -303,23 +267,17 @@ export function AddressInput({ value, onChange, onValidationChange }: AddressInp
           const data = await response.json() as PhotonResponse;
           let suggestions = data.features
             .map(photonToSuggestion)
-            // Filter to only German-speaking countries (DE, AT, CH)
             .filter(s => !s.countryCode || ALLOWED_COUNTRIES.includes(s.countryCode))
-            // Filter out duplicates by display name
             .filter((s, i, arr) => arr.findIndex(x => x.displayName === s.displayName) === i);
           
-          // For postal code searches, prioritize city/town/village results
-          // If none found, try to extract city info from the first result
           if (isPostalCode && suggestions.length > 0) {
             const cityResults = suggestions.filter(s => 
               s.type === 'city' || s.type === 'town' || s.type === 'village'
             );
             
             if (cityResults.length > 0) {
-              // Use the city/town/village results
               suggestions = cityResults;
             } else if (data.features.length > 0) {
-              // Extract city from the first result and search for it
               const firstResult = data.features[0];
               const cityName = firstResult.properties.city ?? 
                               firstResult.properties.town ?? 
@@ -327,7 +285,6 @@ export function AddressInput({ value, onChange, onValidationChange }: AddressInp
                               firstResult.properties.municipality;
               
               if (cityName) {
-                // Create a city-level suggestion from the postal code search result
                 const [lon, lat] = firstResult.geometry.coordinates;
                 const postcode = firstResult.properties.postcode ?? debouncedQuery;
                 suggestions = [{
@@ -343,7 +300,6 @@ export function AddressInput({ value, onChange, onValidationChange }: AddressInp
             }
           }
           
-          // Limit to 5 results
           suggestions = suggestions.slice(0, 5);
           
           setSuggestions(suggestions);
@@ -366,7 +322,6 @@ export function AddressInput({ value, onChange, onValidationChange }: AddressInp
     };
   }, [debouncedQuery]);
 
-  // Handle clicking outside to close suggestions
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
@@ -383,11 +338,9 @@ export function AddressInput({ value, onChange, onValidationChange }: AddressInp
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  // Select a suggestion
   const handleSelectSuggestion = useCallback((suggestion: LocationSuggestion) => {
     const { lat, lon, displayName } = suggestion;
     
-    // Log selected coordinates for debugging
     console.log('[SolaCheck] Location selected:', { name: displayName, lat, lon });
     
     setSelectedLocation({ name: displayName, lat, lon });
@@ -395,12 +348,10 @@ export function AddressInput({ value, onChange, onValidationChange }: AddressInp
     setSuggestions([]);
     setShowSuggestions(false);
     
-    // Save coordinates
     onChange(JSON.stringify({ lat, lon }));
     onValidationChange?.(true);
   }, [onChange, onValidationChange]);
 
-  // Handle keyboard navigation
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (!showSuggestions || suggestions.length === 0) return;
 
@@ -428,7 +379,6 @@ export function AddressInput({ value, onChange, onValidationChange }: AddressInp
     }
   };
 
-  // Clear selection
   const handleClear = () => {
     setSelectedLocation(null);
     setSearchQuery('');

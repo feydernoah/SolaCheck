@@ -16,9 +16,6 @@ import { initEmailJS, sendRecommendationEmail } from '@/lib/emailService';
 import { QUESTION_IDS } from '@/lib/quizConstants';
 import Link from 'next/link';
 
-/**
- * Extract coordinates from the address answer (stored as JSON string)
- */
 function extractCoordinatesFromAnswers(answers: Record<number, string | string[]>): Coordinates | undefined {
   const addressAnswer = answers[QUESTION_IDS.LOCATION];
   if (typeof addressAnswer !== 'string') return undefined;
@@ -26,19 +23,15 @@ function extractCoordinatesFromAnswers(answers: Record<number, string | string[]
   try {
     const parsed = JSON.parse(addressAnswer) as { lat?: number; lon?: number; coordinates?: Coordinates };
     
-    // New format: direct coordinates { lat, lon }
     if (typeof parsed.lat === 'number' && typeof parsed.lon === 'number') {
       return { lat: parsed.lat, lon: parsed.lon };
     }
     
-    // Old format: nested coordinates { coordinates: { lat, lon } }
     const coords = parsed.coordinates;
     if (coords && typeof coords.lat === 'number' && typeof coords.lon === 'number') {
       return coords;
     }
-  } catch {
-    // Not JSON or no coordinates
-  }
+  } catch { /* ignore parse errors */ }
   return undefined;
 }
 
@@ -52,28 +45,23 @@ export default function ResultsPage() {
   const [error, setError] = useState<string | null>(null);
   const [hasFetched, setHasFetched] = useState(false);
   
-  // Email form state
   const [emailInput, setEmailInput] = useState('');
   const [includeCarbonFootprint, setIncludeCarbonFootprint] = useState(false);
   const [isSendingEmail, setIsSendingEmail] = useState(false);
   const [emailStatus, setEmailStatus] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
 
-  // Email validation regex
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   const isEmailValid = emailRegex.test(emailInput);
-  // Show error only if user has typed something and it's invalid
   const showEmailError = emailInput.length > 0 && !isEmailValid;
 
   useEffect(() => { initEmailJS(); }, []);
 
   useEffect(() => {
-    // Wait for cookie to be loaded before checking answers
     if (!isLoaded || hasFetched) {
       return;
     }
 
     const fetchRecommendation = async () => {
-      // Wenn keine Antworten vorhanden, zurück zum Quiz
       if (Object.keys(answers).length === 0) {
         router.push('/quiz');
         return;
@@ -82,19 +70,15 @@ export default function ResultsPage() {
       setHasFetched(true);
 
       try {
-        // Extract coordinates from address answer
         const coordinates = extractCoordinatesFromAnswers(answers);
         
-        // Build quiz answers with coordinates for the API
         const quizAnswers: QuizAnswers = {
           ...answers as unknown as QuizAnswers,
           coordinates,
         };
         
-        // Try to get cached solar data from cookie first
         let cachedSolarData = getSolarDataFromCookie();
         
-        // If we have coordinates but no cached data, fetch PVGIS data
         if (coordinates && !cachedSolarData) {
           const orientation = answers[QUESTION_IDS.ORIENTATION] as string | undefined;
           const mounting = answers[QUESTION_IDS.MOUNTING_LOCATION] as string | undefined;
@@ -108,7 +92,7 @@ export default function ResultsPage() {
           },
           body: JSON.stringify({ 
             answers: quizAnswers,
-            solarData: cachedSolarData, // Pass cached data to avoid double fetch
+            solarData: cachedSolarData,
           }),
         });
 
@@ -134,7 +118,6 @@ export default function ResultsPage() {
   };
 
   const handleSendEmail = async () => {
-    // Validate email input
     if (!emailInput || !isEmailValid) {
       setEmailStatus({
         type: 'error',
@@ -143,7 +126,6 @@ export default function ResultsPage() {
       return;
     }
 
-    // Check if we have recommendations
     if (!recommendation?.rankings.length) {
       setEmailStatus({
         type: 'error',
@@ -156,7 +138,6 @@ export default function ResultsPage() {
     setEmailStatus(null);
 
     try {
-      // Send email with recommendations
       const result = await sendRecommendationEmail({
         toEmail: emailInput,
         recommendations: recommendation.rankings,
@@ -168,7 +149,6 @@ export default function ResultsPage() {
           type: 'success',
           message: `E-Mail erfolgreich an ${emailInput} gesendet!`,
         });
-        // Clear email input on success
         setEmailInput('');
         setIncludeCarbonFootprint(false);
       } else {
@@ -211,18 +191,14 @@ export default function ResultsPage() {
     );
   }
 
-  // Get top 3 rankings for display
   const topRankings = recommendation.rankings.slice(0, 3);
 
   return (
     <div className="min-h-screen bg-white relative overflow-hidden">
-      {/* Burger Menu */}
       <BurgerMenu showHome showQuiz={false} confirmOnHome />
 
-      {/* Main Content */}
       <div className="flex flex-col items-center justify-center min-h-screen px-4 py-8 md:py-16">
         <div className="w-full max-w-5xl">
-          {/* Header Section */}
           <div className="text-center mb-12 animate-fade-in">
             {recommendation.isRecommended ? (
               <>
@@ -324,7 +300,6 @@ export default function ResultsPage() {
                   Hinweis: Verfügbarkeit und Preise von Stromtarifen unterscheiden sich je nach Region.
                 </p>
 
-                {/* Link to Info Page */}
                 <div className="mt-6 text-center">
                   <Link
                     href="/info-page"
@@ -338,7 +313,6 @@ export default function ResultsPage() {
             )}
           </div>
 
-          {/* AC Limit Disclaimer */}
           {recommendation.isRecommended && topRankings.length > 0 && (
             <div className="mb-12 animate-slide-up">
               <Card padding="md" className="mb-6 bg-yellow-50 border-yellow-200">
@@ -355,7 +329,6 @@ export default function ResultsPage() {
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
                 {topRankings.map((ranking, index) => {
-                  // Feature-based badges with distinct colors
                   const badges: { text: string; color: 'yellow' | 'blue' | 'green' }[] = [
                     { text: '🌱 Beste CO₂-Bilanz', color: 'green' },
                     { text: '✅  Weitere empfehlenswerte Option', color: 'blue' },
@@ -380,7 +353,6 @@ export default function ResultsPage() {
                 })}
               </div>
 
-              {/* Info Box */}
               <Card padding="lg" className="mb-8 bg-blue-50 border-blue-200">
                 <div className="flex gap-4">
                   <div className="text-2xl">💡</div>
@@ -397,7 +369,6 @@ export default function ResultsPage() {
                 </div>
               </Card>
 
-              {/* Email Results Box */}
               <Card padding="lg" className="mb-8 bg-yellow-50 border-yellow-200">
                 <div className="flex gap-4">
                   <div className="text-2xl">📧</div>
@@ -409,7 +380,6 @@ export default function ResultsPage() {
                       Lass dir deine personalisierten Empfehlungen direkt per E-Mail zusenden.
                     </p>
                     
-                    {/* Email Input */}
                     <div className="mb-3">
                       <label htmlFor="email-input" className="block text-sm font-medium text-gray-700 mb-1">
                         E-Mail-Adresse
@@ -434,7 +404,6 @@ export default function ResultsPage() {
                       )}
                     </div>
 
-                    {/* Checkbox for CO2 Data */}
                     <div className="mb-4">
                       <label className="flex items-center gap-2 cursor-pointer">
                         <input
@@ -450,7 +419,6 @@ export default function ResultsPage() {
                       </label>
                     </div>
 
-                    {/* Send Button */}
                     <Button
                       variant="primary"
                       onClick={() => void handleSendEmail()}
@@ -460,7 +428,6 @@ export default function ResultsPage() {
                       {isSendingEmail ? 'Wird gesendet...' : 'Ergebnis erhalten'}
                     </Button>
 
-                    {/* Status Message */}
                     {emailStatus && (
                       <div
                         className={`mt-4 p-3 rounded-lg ${
@@ -483,7 +450,6 @@ export default function ResultsPage() {
             </div>
           )}
 
-          {/* CTA Section */}
           <div className="flex flex-col sm:flex-row gap-4 justify-center mb-8">
             {recommendation.isRecommended ? (
               <>

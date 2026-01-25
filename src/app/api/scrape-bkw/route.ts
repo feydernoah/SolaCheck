@@ -7,7 +7,6 @@ import type { ScrapedBKWProduct, ScrapedDataResult, ScrapedSpecs } from "@/types
 const FAZ_URL =
   "https://www.faz.net/kaufkompass/test/das-beste-balkonkraftwerk/";
 
-// SerpAPI Google Shopping search
 async function searchGoogleShopping(
   productName: string
 ): Promise<{ price: number | null; currency: string; source: string; link: string }> {
@@ -19,7 +18,6 @@ async function searchGoogleShopping(
   }
 
   try {
-    // Build search query - add "Balkonkraftwerk" for better results
     const query = encodeURIComponent(`${productName} Balkonkraftwerk kaufen`);
     const url = `https://serpapi.com/search.json?engine=google_shopping&q=${query}&location=Germany&hl=de&gl=de&api_key=${apiKey}`;
 
@@ -32,17 +30,14 @@ async function searchGoogleShopping(
 
     const data = await response.json();
 
-    // Get shopping results
     const results: Record<string, unknown>[] = (data.shopping_results as Record<string, unknown>[] | undefined) ?? [];
     if (results.length === 0) {
       console.log(`No shopping results for: ${productName}`);
       return { price: null, currency: "EUR", source: "", link: "" };
     }
 
-    // Use the first result (most relevant) instead of lowest price
     const firstResult = results[0];
     
-    // Extract price from first result
     let price: number | null = null;
     const priceValue = firstResult.extracted_price ?? firstResult.price;
     if (typeof priceValue === "number") {
@@ -64,7 +59,6 @@ async function searchGoogleShopping(
   }
 }
 
-// Scrape FAZ for product info
 async function scrapeFAZProducts(): Promise<{
   products: Partial<ScrapedBKWProduct>[];
   fazUrl: string;
@@ -86,7 +80,6 @@ async function scrapeFAZProducts(): Promise<{
   const html = await response.text();
   const $ = cheerio.load(html);
   
-  // First, build a map of box-id -> specs from the specs section
   const specsMap = new Map<string, ScrapedSpecs>();
   
   $(".ab-comparison--infos .ab-comparison--track").each((_, trackEl) => {
@@ -103,12 +96,9 @@ async function scrapeFAZProducts(): Promise<{
       
       if (!value || value === "–") return;
       
-      // Parse and map to our specific fields
       if (label === "Maximale PV-Eingangsleistung") {
-        // Extract number like "3.600 Watt" or "2000 Watt"
         const match = /([\d.]+)/.exec(value);
         if (match) {
-          // Remove dots used as thousands separator and parse
           specs.wattage = parseInt(match[1].replace(/\./g, ""));
         }
       } else if (label === "Interner Speicher") {
@@ -130,30 +120,23 @@ async function scrapeFAZProducts(): Promise<{
   
   console.log(`Found specs for ${String(specsMap.size)} products`);
   
-  // Now extract products from the header section with product names
   const products: Partial<ScrapedBKWProduct>[] = [];
   const seenNames = new Set<string>();
   
-  // Find product tracks that have the model name
   $(".ab-comparison--track[data-id]").each((_, element) => {
     const track = $(element);
     const dataId = track.attr("data-id") ?? "";
-    // Convert "box-1" to "1" for matching with specs
     const boxId = dataId.replace("box-", "");
     
-    // Extract product name
     const name = track.find(".ab-comparison--model").text().trim();
     if (!name || seenNames.has(name)) return;
     seenNames.add(name);
     
-    // Extract category/badge
     const category = track.find(".ab-comparison--heading").text().trim();
     
-    // Extract image
     const imgElement = track.find(".ab-comparison--image img").first();
     const imageUrl = imgElement.attr("src") ?? "";
     
-    // Get specs for this product
     const specs = specsMap.get(boxId) ?? {};
     
     products.push({
@@ -170,7 +153,6 @@ async function scrapeFAZProducts(): Promise<{
   return { products, fazUrl: FAZ_URL };
 }
 
-// Enrich FAZ products with SerpAPI prices
 async function enrichWithPrices(
   products: Partial<ScrapedBKWProduct>[]
 ): Promise<ScrapedBKWProduct[]> {
@@ -181,13 +163,10 @@ async function enrichWithPrices(
 
     console.log(`Looking up price for: ${product.name}`);
 
-    // Query SerpAPI for price
     const priceData = await searchGoogleShopping(product.name);
 
-    // Add a small delay to avoid rate limiting
     await new Promise((resolve) => setTimeout(resolve, 500));
 
-    // Extract brand from first word of product name
     const brand = product.name.split(/\s+/)[0].replace(/[^a-zA-Z]/g, "");
 
     enrichedProducts.push({
@@ -208,7 +187,6 @@ async function enrichWithPrices(
   return enrichedProducts;
 }
 
-// Save scraped data to JSON
 async function saveScrapedData(result: ScrapedDataResult): Promise<string> {
   const dataDir = path.join(process.cwd(), "src", "data", "scraped");
   await mkdir(dataDir, { recursive: true });
@@ -219,7 +197,6 @@ async function saveScrapedData(result: ScrapedDataResult): Promise<string> {
 
   await writeFile(filepath, JSON.stringify(result, null, 2), "utf-8");
 
-  // Also save as latest
   const latestPath = path.join(dataDir, "bkw-latest.json");
   await writeFile(latestPath, JSON.stringify(result, null, 2), "utf-8");
 
@@ -230,7 +207,6 @@ export async function GET() {
   try {
     console.log("Starting BKW scrape...");
 
-    // Step 1: Scrape FAZ for product info
     console.log("Scraping FAZ for product info...");
     const { products: fazProducts, fazUrl } = await scrapeFAZProducts();
     console.log(`Found ${String(fazProducts.length)} products on FAZ`);
@@ -246,11 +222,9 @@ export async function GET() {
       );
     }
 
-    // Step 2: Enrich with SerpAPI prices
     console.log("Enriching with Google Shopping prices...");
     const enrichedProducts = await enrichWithPrices(fazProducts);
 
-    // Step 3: Build result
     const result: ScrapedDataResult = {
       products: enrichedProducts,
       scrapedAt: new Date().toISOString(),
@@ -261,7 +235,6 @@ export async function GET() {
       totalProducts: enrichedProducts.length,
     };
 
-    // Step 4: Save to file
     const savedPath = await saveScrapedData(result);
     console.log(`Saved to: ${savedPath}`);
 

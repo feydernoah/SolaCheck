@@ -6,10 +6,8 @@ import Image from "next/image";
 import { BurgerMenu } from "@/components/BurgerMenu";
 import { Button } from "@/components/ui/Button";
 
-// File: app/info-page/page.tsx
-
 interface TextSubSection {
-  type?: "text"; // optional (default)
+  type?: "text";
   heading: string;
   bullets: string[];
 };
@@ -603,7 +601,6 @@ export default function SolaCheckInfoPage() {
   return (
     <div className="min-h-screen bg-white relative overflow-hidden">
       <BurgerMenu showHome showQuiz />
-      {/* Main Content */}
       <main className="mx-auto w-full max-w-3xl px-4 pt-24 pb-24 sm:px-6 sm:pt-28">
         <header className="mb-8">
           <h1 className="mt-2 text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">
@@ -647,7 +644,6 @@ export default function SolaCheckInfoPage() {
         </footer>
       </main>
 
-      {/* Info Buddy – Bottom Left */}
       <div className="fixed bottom-4 left-4 z-30">
         <div className="relative flex items-end gap-2">
           <button
