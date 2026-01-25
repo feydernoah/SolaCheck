@@ -16,7 +16,6 @@ export default function CarbonFootprintPage() {
   const [selectedInfo, setSelectedInfo] = useState<'manufacturing' | 'payback' | 'lifecycle' | null>(null);
 
   useEffect(() => {
-    // Ranking data is stored in sessionStorage
     const loadData = () => {
       if (typeof window !== 'undefined') {
         const storedData = sessionStorage.getItem('carbon-footprint-data');
@@ -74,7 +73,6 @@ export default function CarbonFootprintPage() {
     return 'text-orange-700 bg-orange-50';
   };
 
-  // Kleiner Wald (100 Bäume) absorbiert pro Jahr ca. 2400 kg CO₂
   const forestAbsorptionPerYearKg = 100 * 24;
   const forestYearsToOffset = (ecological.lifecycleEmissionsKg / forestAbsorptionPerYearKg)*-1;
 
@@ -84,7 +82,6 @@ export default function CarbonFootprintPage() {
 
       <div className="flex flex-col items-center justify-center min-h-screen px-4 py-8 md:py-16">
         <Card padding="lg" className="w-full max-w-4xl">
-          {/* Header */}
           <div className="mb-8 text-center">
             <h1 className="text-6xl md:text-7xl font-bold text-gray-800 mb-4">
               CO₂-Bilanz
@@ -93,9 +90,7 @@ export default function CarbonFootprintPage() {
             <p className="text-body text-gray-600">{product.brand}</p>
           </div>
 
-          {/* Main Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-            {/* Manufacturing CO2 Section */}
             <div className="bg-gradient-to-br from-orange-50 to-orange-100 border border-orange-200 rounded-lg p-6">
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-heading-2 font-bold text-orange-900" style={{ fontSize: '1.875rem', lineHeight: '1.2' }}>Herstellung</h2>
@@ -129,7 +124,6 @@ export default function CarbonFootprintPage() {
               </div>
             </div>
 
-            {/* CO2 Payback Section */}
             <div className={`bg-gradient-to-br border rounded-lg p-6 ${
               getPaybackColor(ecological.paybackPeriodYears).includes('green')
                 ? 'from-green-50 to-green-100 border-green-200'
@@ -166,7 +160,6 @@ export default function CarbonFootprintPage() {
             </div>
           </div>
 
-          {/* Lifecycle Section */}
           <div className="bg-gradient-to-br from-green-50 to-green-100 border border-green-200 rounded-lg p-6 mb-8">
             <div className="flex items-center justify-between mb-4">
               <h2 className="font-bold text-green-900" style={{ fontSize: '1.875rem', lineHeight: '1.2' }}>Lebenszyklusanalyse</h2>
@@ -194,7 +187,6 @@ export default function CarbonFootprintPage() {
               </div>
             </div>
 
-            {/* Wald-Vergleich */}
             <div className="mt-6 bg-white rounded-lg p-4 shadow-md flex flex-col gap-4 md:flex-row md:items-center">
               <div className="flex justify-center md:justify-start shrink-0">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -215,7 +207,6 @@ export default function CarbonFootprintPage() {
             </div>
           </div>
 
-          {/* Product Details Section */}
           <div className="bg-gray-50 rounded-lg p-6 mb-8 border border-gray-200">
             <h2 className="text-heading-1 font-bold text-gray-800 mb-4">Produktdetails</h2>
             <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
@@ -246,7 +237,6 @@ export default function CarbonFootprintPage() {
             </div>
           </div>
 
-          {/* Action Buttons */}
           <div className="flex flex-col gap-3 md:flex-row md:gap-4">
             <Link href="/results" className="flex-1">
               <Button variant="primary" size="lg" fullWidth>
@@ -262,7 +252,6 @@ export default function CarbonFootprintPage() {
         </Card>
       </div>
 
-      {/* Info Modal */}
       {selectedInfo && (
         <InfoModal
           isOpen={!!selectedInfo}

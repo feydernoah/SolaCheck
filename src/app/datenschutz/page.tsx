@@ -9,7 +9,6 @@ export default function DatenschutzPage() {
 
       <div className="flex flex-col items-center justify-center">
         <div className="w-full max-w-5xl">
-          {/* Header */}
           <div className="text-center mb-12">
             <h1 className="text-heading-1 md:text-display font-bold text-gray-800 mb-4">
               Datenschutzerklärung
@@ -19,7 +18,6 @@ export default function DatenschutzPage() {
             </p>
           </div>
 
-          {/* Content */}
           <div className="max-w-3xl mx-auto space-y-10 text-gray-700 text-sm md:text-base leading-relaxed">
 
             <section>

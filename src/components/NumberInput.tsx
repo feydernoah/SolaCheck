@@ -14,10 +14,6 @@ interface NumberInputProps {
   optionalText?: string;
 }
 
-/**
- * A reusable number input component for quiz questions.
- * Supports optional values, unit display, and validation.
- */
 export function NumberInput({
   value,
   onChange,
@@ -32,7 +28,6 @@ export function NumberInput({
   const [inputValue, setInputValue] = useState(value);
   const [isFocused, setIsFocused] = useState(false);
 
-  // Sync with external value changes
   useEffect(() => {
     setInputValue(value);
   }, [value]);
@@ -41,7 +36,6 @@ export function NumberInput({
     const newValue = e.target.value;
     setInputValue(newValue);
     
-    // Only propagate valid numbers or empty string
     if (newValue === '' || !isNaN(Number(newValue))) {
       onChange(newValue);
     }
@@ -50,9 +44,8 @@ export function NumberInput({
   const handleBlur = useCallback(() => {
     setIsFocused(false);
     
-    // Validate and clamp on blur
     if (inputValue === '') {
-      return; // Empty is valid for optional fields
+      return;
     }
     
     const numValue = Number(inputValue);
@@ -62,7 +55,6 @@ export function NumberInput({
       return;
     }
     
-    // Clamp to min/max if specified
     let clampedValue = numValue;
     if (numValue < min) {
       clampedValue = min;

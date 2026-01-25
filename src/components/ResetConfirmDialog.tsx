@@ -5,9 +5,6 @@ import { useRouter } from "next/navigation";
 
 const COOKIE_NAME = 'solacheck_quiz_progress';
 
-/**
- * Deletes all client-side cookies
- */
 function deleteClientCookies() {
   if (typeof document === 'undefined') return;
   
@@ -22,18 +19,13 @@ function deleteClientCookies() {
   for (const c of cookies) {
     const name = c.split("=")[0];
 
-    // host-only
     document.cookie = `${name}=; expires=${expires}; path=/`;
 
-    // domain variants
     document.cookie = `${name}=; expires=${expires}; path=/; domain=${hostname}`;
     document.cookie = `${name}=; expires=${expires}; path=/; domain=.${hostname}`;
   }
 }
 
-/**
- * Clears all app storage (localStorage, sessionStorage, cookies)
- */
 function clearAllAppStorage() {
   try {
     localStorage.clear();
@@ -44,30 +36,20 @@ function clearAllAppStorage() {
   }
 }
 
-/**
- * Deletes only the quiz progress cookie
- */
 function deleteQuizCookie() {
   if (typeof document === 'undefined') return;
   document.cookie = `${COOKIE_NAME}=; path=/; max-age=0`;
 }
 
 export interface ResetConfirmOptions {
-  /** The confirmation message to show */
   message?: string;
-  /** Whether to clear all storage or just the quiz cookie */
   clearAll?: boolean;
-  /** The path to navigate to after reset */
   navigateTo?: string;
-  /** Whether to refresh the page after navigation */
   refresh?: boolean;
 }
 
 const DEFAULT_MESSAGE = "Möchtest du wirklich zur Startseite zurückkehren? Dein bisheriger Fortschritt geht verloren.";
 
-/**
- * Hook that provides a unified reset confirmation function
- */
 export function useResetConfirmation() {
   const router = useRouter();
 
@@ -100,10 +82,6 @@ export function useResetConfirmation() {
   return { confirmAndReset };
 }
 
-/**
- * Standalone function for use outside of React components
- * Returns true if the user confirmed, false otherwise
- */
 export function showResetConfirmation(message: string = DEFAULT_MESSAGE): boolean {
   return window.confirm(message);
 }

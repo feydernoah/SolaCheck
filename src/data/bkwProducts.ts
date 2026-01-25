@@ -1,21 +1,6 @@
-/**
- * Mock BKW (Balkonkraftwerk) Product Data
- * 
- * Based on popular products available in Germany 2024/2025:
- * - Priwatt priBalcony/priFlat series
- * - Yuma Balcony/Flat series  
- * - Anker SOLIX series
- * - EcoFlow PowerStream
- * - Kleines Kraftwerk sets
- * - Green Solar sets
- * 
- * Prices reflect 0% VAT (since 2023 for private PV)
- */
-
 import type { BKWProduct } from '@/types/economic';
 
 export const bkwProducts: BKWProduct[] = [
-  // === BUDGET SEGMENT (under 400€) ===
   {
     id: 'yuma-basic-400',
     name: 'Yuma Basic 400',
@@ -57,7 +42,6 @@ export const bkwProducts: BKWProduct[] = [
     
   },
 
-  // === MID-RANGE SEGMENT (400-700€) ===
   {
     id: 'priwatt-pribalcony-duo',
     name: 'priBalcony Duo',
@@ -174,7 +158,6 @@ export const bkwProducts: BKWProduct[] = [
     manufacturingCo2Kg: 96,
   },
 
-  // === UPPER MID-RANGE (700-1000€) ===
   {
     id: 'ecoflow-powerstream-800',
     name: 'EcoFlow PowerStream 800W',
@@ -253,7 +236,6 @@ export const bkwProducts: BKWProduct[] = [
     manufacturingCo2Kg: 115,
   },
 
-  // === PREMIUM SEGMENT (over 1000€) ===
   {
     id: 'ecoflow-delta-2-bundle',
     name: 'EcoFlow PowerStream + Delta 2',
@@ -335,9 +317,6 @@ export const bkwProducts: BKWProduct[] = [
   },
 ];
 
-/**
- * Helper function to get products filtered by budget
- */
 export function getProductsByBudget(budgetRange: string): BKWProduct[] {
   const maxBudget = getBudgetMaxValue(budgetRange);
   if (maxBudget === Infinity) {
@@ -346,23 +325,14 @@ export function getProductsByBudget(budgetRange: string): BKWProduct[] {
   return bkwProducts.filter(product => product.price <= maxBudget);
 }
 
-/**
- * Convert budget range string to max value
- * Supports both legacy range strings and numeric slider values
- */
 export function getBudgetMaxValue(budgetRange: string): number {
-  // Only handle numeric slider values (e.g., "500", "1200")
   const numericValue = parseInt(budgetRange, 10);
-  // 0 or NaN means no budget limit
   if (isNaN(numericValue) || numericValue === 0) {
     return Infinity;
   }
   return numericValue;
 }
 
-/**
- * Get products compatible with a mounting type
- */
 export function getProductsByMounting(mountingType: string): BKWProduct[] {
   if (mountingType === 'weiss-nicht') {
     return bkwProducts;

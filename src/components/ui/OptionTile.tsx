@@ -33,7 +33,6 @@ export function OptionTile({
         }
       `}
     >
-      {/* Icon Container */}
       {icon && (
         <div className={`
           text-5xl sm:text-6xl transition-all duration-200
@@ -43,7 +42,6 @@ export function OptionTile({
         </div>
       )}
       
-      {/* Label */}
       <span className={`
         text-base sm:text-lg font-semibold text-center
         ${selected ? 'text-gray-800' : 'text-gray-700'}
@@ -51,7 +49,6 @@ export function OptionTile({
         {label}
       </span>
       
-      {/* Selection Indicator */}
       {selected && (
         <div className="absolute top-3 right-3 w-6 h-6 bg-yellow-400 rounded-full flex items-center justify-center animate-scale-in">
           <svg 

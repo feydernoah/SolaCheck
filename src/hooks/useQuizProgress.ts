@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { TOTAL_QUESTIONS, VALID_QUESTION_IDS } from '@/lib/quizConstants';
 
 const COOKIE_NAME = 'solacheck_quiz_progress';
-const COOKIE_MAX_AGE = 60 * 60 * 24 * 7; // 7 days
+const COOKIE_MAX_AGE = 60 * 60 * 24 * 7;
 
 interface QuizProgress {
   currentQuestion: number;
@@ -37,13 +37,7 @@ function deleteCookie(name: string): void {
   document.cookie = `${name}=; path=/; max-age=0`;
 }
 
-/**
- * Validates that the saved progress is compatible with the current quiz structure.
- * Returns true if valid, false if the cookie should be reset.
- * Accepts `unknown` to validate raw parsed JSON before type assertion.
- */
 function isProgressValid(progress: unknown): progress is QuizProgress {
-  // Type guard for basic structure
   if (!progress || typeof progress !== 'object') {
     console.warn('Quiz progress reset: progress is not an object');
     return false;
@@ -60,7 +54,6 @@ function isProgressValid(progress: unknown): progress is QuizProgress {
     return false;
   }
 
-  // Ensure answers exists and is an object before processing
   if (!p.answers || typeof p.answers !== 'object') {
     console.warn('Quiz progress reset: answers is missing or not an object');
     return false;
@@ -77,7 +70,6 @@ function isProgressValid(progress: unknown): progress is QuizProgress {
   return true;
 }
 
-// Default preselected appliances for question 9 (devices)
 const DEFAULT_DEVICES = ['kuehlschrank', 'waschmaschine', 'herd', 'fernseher'];
 
 function getProgressFromCookie(): QuizProgress {
@@ -95,7 +87,6 @@ function getProgressFromCookie(): QuizProgress {
       deleteCookie(COOKIE_NAME);
     }
   }
-  // Return default progress with preselected devices
   return { currentQuestion: 0, answers: { 9: DEFAULT_DEVICES } };
 }
 
@@ -104,7 +95,6 @@ export function useQuizProgress(): UseQuizProgressReturn {
   const [answers, setAnswersState] = useState<Record<number, string | string[]>>({});
   const [isLoaded, setIsLoaded] = useState(false);
 
-  // Load from cookie on mount (client-side only)
   useEffect(() => {
     const progress = getProgressFromCookie();
     setCurrentQuestionState(progress.currentQuestion);
@@ -112,7 +102,6 @@ export function useQuizProgress(): UseQuizProgressReturn {
     setIsLoaded(true);
   }, []);
 
-  // Save to cookie whenever state changes
   const saveToStorage = useCallback((question: number, ans: Record<number, string | string[]>) => {
     const progress: QuizProgress = { currentQuestion: question, answers: ans };
     setCookie(COOKIE_NAME, JSON.stringify(progress), COOKIE_MAX_AGE);
@@ -138,7 +127,6 @@ export function useQuizProgress(): UseQuizProgressReturn {
     setCurrentQuestionState(0);
     setAnswersState({});
     deleteCookie(COOKIE_NAME);
-    // Clear animation flag so it shows again on next quiz start
     if (typeof window !== 'undefined') {
       sessionStorage.removeItem('hasSeenQuizAnimation');
     }
