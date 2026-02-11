@@ -21,22 +21,8 @@ export default function ImpressumPage() {
                 Angaben gemäß § 5 DDG
               </h2>
               <p>
-                SolaCheck<br />
-                Studienprojekt – AWP<br />
-                Zukunftsagentur Nachhaltigkeit<br />
-                Fakultät für Elektro- und Informationstechnik
-              </p>
-            </div>
-
-            <div>
-              <h2 className="font-semibold text-gray-800 mb-2">
-                Verantwortlich für den Inhalt
-              </h2>
-              <p>
-                Dr. phil. Cosima Klischat<br />
-                Zukunftsagentur Nachhaltigkeit<br />
-                Fakultät für Elektro- und Informationstechnik<br />
-                Moltkestraße 30<br />
+                Noah Feyder<br />
+                Zähringerstraße 80<br />
                 76133 Karlsruhe<br />
                 Deutschland
               </p>
@@ -44,17 +30,14 @@ export default function ImpressumPage() {
 
             <div>
               <h2 className="font-semibold text-gray-800 mb-2">
-                Kontakt
+                Verantwortlich für den Inhalt & Datenschutz
               </h2>
               <p>
-                Tel.: +49 (0)721 925-1461<br />
-                E-Mail:{" "}
-                <a
-                  href="mailto:cosima.klischat@h-ka.de"
-                  className="underline hover:text-yellow-600"
-                >
-                  cosima.klischat@h-ka.de
-                </a>
+                Noah Feyder<br />
+                Zähringerstraße 80<br />
+                76133 Karlsruhe<br />
+                Deutschland<br />
+                E-Mail: <a href="mailto:noahfeyder@gmail.com" className="underline hover:text-yellow-600">noahfeyder@gmail.com</a>
               </p>
             </div>
 
@@ -63,10 +46,7 @@ export default function ImpressumPage() {
                 Haftungsausschluss
               </h2>
               <p>
-                Dieses Angebot ist ein nicht-kommerzielles Studienprojekt.
-                Die Inhalte dienen ausschließlich Lehr- und Demonstrationszwecken.
-                Trotz sorgfältiger Prüfung übernehmen wir keine Haftung für die
-                Aktualität, Richtigkeit und Vollständigkeit der Inhalte.
+                Dieses Angebot ist ein nicht-kommerzielles Projekt. Die Inhalte dienen ausschließlich Informationszwecken. Trotz sorgfältiger Prüfung übernehmen wir keine Haftung für die Aktualität, Richtigkeit und Vollständigkeit der Inhalte.
               </p>
             </div>
           </div>
