@@ -25,12 +25,11 @@ export default function DatenschutzPage() {
                 1. Verantwortliche Stelle
               </h2>
               <p>
-                SolaCheck - Studienprojekt<br />
-                Zukunftsagentur Nachhaltigkeit<br />
-                Fakultät für Elektro- und Informationstechnik<br />
-                Moltkestraße 30, 76133 Karlsruhe<br />
+                Noah Feyder<br />
+                Zähringerstraße 80<br />
+                76133 Karlsruhe<br />
                 Deutschland<br />
-                E-Mail: cosima.klischat@h-ka.de
+                E-Mail: <a href="mailto:noahfeyder@gmail.com" className="underline hover:text-yellow-600">noahfeyder@gmail.com</a>
               </p>
             </section>
 
@@ -55,32 +54,31 @@ export default function DatenschutzPage() {
                 Im Rahmen des Quiz werden folgende Angaben verarbeitet:
               </p>
               <ul className="list-disc pl-5 mt-2 space-y-1">
-                <li>Wohnort oder Postleitzahl (zur Berechnung der Sonnenstunden)</li>
+                <li>Wohnort oder Postleitzahl (zur Berechnung der Sonnenstunden, Geocoding via Photon, Standortdaten via PVGIS EU API)</li>
                 <li>Anzahl der Personen im Haushalt</li>
                 <li>Wohnsituation (z.B. Wohnung oder Haus)</li>
                 <li>Wohnungs- bzw. Wohnflächengröße</li>
-                <li>Angaben zur baulichen Situation (z.B. Vorhandensein eines Balkons,Ausrichtung oder Montagemöglichkeiten)</li>
+                <li>Angaben zur baulichen Situation (z.B. Vorhandensein eines Balkons, Ausrichtung oder Montagemöglichkeiten)</li>
                 <li>Angaben zum Stromverbrauch</li>
+                <li>E-Mail-Adresse (nur falls Ergebnis per E-Mail gewünscht, Versand via EmailJS)</li>
               </ul>
               <p className="mt-2">
-                Diese Angaben dienen ausschließlich der Berechnung und Darstellung
-                eines individuellen Ergebnisses.
+                Diese Angaben dienen ausschließlich der Berechnung und Darstellung eines individuellen Ergebnisses. Die Daten werden nicht dauerhaft gespeichert.
               </p>
             </section>
 
             <section>
               <h2 className="font-semibold text-gray-800 mb-2">
-                4. Speicherung der Daten
+                4. Speicherung und Übermittlung der Daten
               </h2>
               <p>
-                Die eingegebenen Daten werden <strong>nicht dauerhaft gespeichert</strong>.
-                Sie werden nur temporär im Browser (z.B. über technisch notwendige
-                Cookies oder Local Storage) verarbeitet, um den Quiz-Fortschritt
-                und das Ergebnis darzustellen.
+                Die eingegebenen Daten werden <strong>nicht dauerhaft gespeichert</strong> und nicht auf eigenen Servern abgelegt. Sie werden nur temporär im Browser (z.B. über technisch notwendige Cookies oder Local Storage) verarbeitet, um den Quiz-Fortschritt und das Ergebnis darzustellen.
               </p>
               <p className="mt-2">
-                Die gespeicherten Daten können jederzeit gelöscht werden, z.B.
-                durch das Zurücksetzen des Quiz oder durch das Schließen des Browsers.
+                Für die Berechnung standortspezifischer Daten werden die relevanten Angaben an die Photon Geocoding API und die PVGIS EU API übermittelt. Beim Versand des Ergebnisses per E-Mail wird die E-Mail-Adresse und das Ergebnis über EmailJS verarbeitet. Eine Speicherung dieser Daten durch uns erfolgt nicht.
+              </p>
+              <p className="mt-2">
+                Die gespeicherten Daten können jederzeit gelöscht werden, z.B. durch das Zurücksetzen des Quiz oder durch das Schließen des Browsers.
               </p>
             </section>
 
@@ -120,9 +118,7 @@ export default function DatenschutzPage() {
                 7. Weitergabe von Daten
               </h2>
               <p>
-                Es findet keine Weitergabe der erhobenen Daten an Dritte statt.
-                Die Verarbeitung erfolgt ausschließlich im Rahmen dieses
-                Studienprojekts.
+                Die im Rahmen des Quiz erhobenen Daten werden nicht an Dritte weitergegeben, mit Ausnahme der Übermittlung an die oben genannten externen Dienste (Photon, PVGIS EU API, EmailJS), soweit dies für die Funktionalität erforderlich ist. Eine weitere Verarbeitung oder Speicherung durch uns erfolgt nicht.
               </p>
             </section>
 
